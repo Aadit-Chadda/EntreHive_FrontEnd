@@ -237,3 +237,94 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
+
+/* Social app layout utilities */
+.social-grid-xl {
+  display: grid;
+  grid-template-columns: 15% 70% 15%;
+  gap: 0;
+}
+
+.social-grid-lg {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  gap: 0;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Dark mode improvements */
+.dark {
+  color-scheme: dark;
+}
+
+/* Backdrop blur fix for mobile */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Enhanced transitions for social interactions */
+.post-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.post-card:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark .post-card:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible improvements */
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Mobile-first responsive utilities */
+@media (max-width: 1023px) {
+  .lg\:ml-64 {
+    margin-left: 0 !important;
+  }
+  
+  .xl\:ml-72 {
+    margin-left: 0 !important;
+  }
+}
+
+/* Ensure full width for feed content */
+.feed-content {
+  width: 100%;
+  max-width: none;
+}
+
+/* Left panel sizing */
+.left-panel {
+  width: 256px; /* lg:w-64 */
+}
+
+@media (min-width: 1280px) {
+  .left-panel {
+    width: 288px; /* xl:w-72 */
+  }
+}

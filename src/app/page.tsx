@@ -31,18 +31,18 @@ export default function Home() {
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start animate-fade-in-up stagger-3">
                   <div className="rounded-md shadow transform hover:scale-105 transition-all duration-300">
                     <Link
-                      href="/signup"
+                      href="/feed"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 hover:shadow-lg md:py-4 md:text-lg md:px-10 transition-all duration-300"
                     >
-                      🎓 Join as a Student
+                      🚀 Enter Feed
                     </Link>
                   </div>
                   <div className="mt-3 sm:mt-0 sm:ml-3 transform hover:scale-105 transition-all duration-300">
                     <Link
-                      href="/services"
+                      href="/signup"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 hover:shadow-lg md:py-4 md:text-lg md:px-10 transition-all duration-300"
                     >
-                      🔍 Explore Projects
+                      🎓 Join as a Student
                     </Link>
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export default function Home() {
           </LazyLoad>
           <LazyLoad animationType="scale" delay={300}>
             <Link
-              href="/signup"
+              href="/feed"
               className="mt-8 w-full inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-gray-900 bg-white hover:bg-gray-50 hover:scale-105 sm:w-auto transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Start Your Journey

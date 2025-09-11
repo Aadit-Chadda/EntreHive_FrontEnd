@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LazyLoad from '../components/LazyLoad';
 
 export default function About() {
   return (
@@ -58,35 +59,41 @@ export default function About() {
 
           <div className="mt-16">
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto">
-                  <span className="text-xl">🎓</span>
+              <LazyLoad animationType="scale" delay={100}>
+                <div className="bg-white rounded-lg shadow-md p-6 hover-lift group hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-500 text-white mx-auto group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl">🎓</span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900 text-center group-hover:text-blue-600 transition-colors duration-300">University-Focused</h3>
+                  <p className="mt-2 text-base text-gray-500 text-center">
+                    Built specifically for university environments, understanding the unique needs of students and faculty.
+                  </p>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-gray-900 text-center">University-Focused</h3>
-                <p className="mt-2 text-base text-gray-500 text-center">
-                  Built specifically for university environments, understanding the unique needs of students and faculty.
-                </p>
-              </div>
+              </LazyLoad>
 
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-purple-500 text-white mx-auto">
-                  <span className="text-xl">🤝</span>
+              <LazyLoad animationType="scale" delay={200}>
+                <div className="bg-white rounded-lg shadow-md p-6 hover-lift group hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-purple-500 text-white mx-auto group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl">🤝</span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900 text-center group-hover:text-purple-600 transition-colors duration-300">Peer-to-Peer</h3>
+                  <p className="mt-2 text-base text-gray-500 text-center">
+                    Direct connections between students, removing traditional barriers and hierarchies.
+                  </p>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-gray-900 text-center">Peer-to-Peer</h3>
-                <p className="mt-2 text-base text-gray-500 text-center">
-                  Direct connections between students, removing traditional barriers and hierarchies.
-                </p>
-              </div>
+              </LazyLoad>
 
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white mx-auto">
-                  <span className="text-xl">🚀</span>
+              <LazyLoad animationType="scale" delay={300}>
+                <div className="bg-white rounded-lg shadow-md p-6 hover-lift group hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-green-500 text-white mx-auto group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl">🚀</span>
+                  </div>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900 text-center group-hover:text-green-600 transition-colors duration-300">Innovation-Driven</h3>
+                  <p className="mt-2 text-base text-gray-500 text-center">
+                    Focused on turning ideas into reality through practical experience and real-world applications.
+                  </p>
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-gray-900 text-center">Innovation-Driven</h3>
-                <p className="mt-2 text-base text-gray-500 text-center">
-                  Focused on turning ideas into reality through practical experience and real-world applications.
-                </p>
-              </div>
+              </LazyLoad>
             </div>
           </div>
         </div>
@@ -108,107 +115,234 @@ export default function About() {
           <div className="mt-16">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
               {/* Students Side */}
-              <div className="bg-blue-50 rounded-lg p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">👨‍🎓 Students</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold">
-                        ✓
+              <LazyLoad animationType="fade-left" delay={100}>
+                <div className="bg-blue-50 rounded-lg p-8 hover-lift hover:shadow-lg transition-all duration-300 group">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 group-hover:text-blue-600 transition-colors duration-300">👨‍🎓 Students</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Real-World Skill Building:</strong> Craft real pitch decks, run marketing campaigns, 
+                        and manage projects with actual deadlines and stakeholders.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Real-World Skill Building:</strong> Craft real pitch decks, run marketing campaigns, 
-                      and manage projects with actual deadlines and stakeholders.
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold">
-                        ✓
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Peer Collaboration:</strong> Join plug-and-play teams and connect with students 
+                        from different disciplines for diverse perspectives.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Peer Collaboration:</strong> Join plug-and-play teams and connect with students 
-                      from different disciplines for diverse perspectives.
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold">
-                        ✓
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-blue-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Alternative to Internships:</strong> Gain hands-on experience without formal applications 
+                        or competitive job listings.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Alternative to Internships:</strong> Gain hands-on experience without formal applications 
-                      or competitive job listings.
-                    </p>
                   </div>
                 </div>
-              </div>
+              </LazyLoad>
 
               {/* Faculty Side */}
-              <div className="bg-purple-50 rounded-lg p-8">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">👩‍🏫 Professors/Faculty</h3>
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold">
-                        ✓
+              <LazyLoad animationType="fade-right" delay={200}>
+                <div className="bg-purple-50 rounded-lg p-8 hover-lift hover:shadow-lg transition-all duration-300 group">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6 group-hover:text-purple-600 transition-colors duration-300">👩‍🏫 Professors/Faculty</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Share Expertise:</strong> Provide mentorship and guidance based on years of 
+                        academic and industry experience.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Share Expertise:</strong> Provide mentorship and guidance based on years of 
-                      academic and industry experience.
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold">
-                        ✓
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Invest & Support:</strong> Contribute resources, funding, or services to 
+                        promising student ventures.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Invest & Support:</strong> Contribute resources, funding, or services to 
-                      promising student ventures.
-                    </p>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold">
-                        ✓
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <div className="flex items-center justify-center h-6 w-6 rounded-full bg-purple-500 text-white text-xs font-bold group-hover:scale-110 transition-transform duration-300">
+                          ✓
+                        </div>
                       </div>
+                      <p className="ml-3 text-base text-gray-700">
+                        <strong>Learn & Innovate:</strong> Stay connected with emerging trends and collaborate 
+                        on cutting-edge projects.
+                      </p>
                     </div>
-                    <p className="ml-3 text-base text-gray-700">
-                      <strong>Learn & Innovate:</strong> Stay connected with emerging trends and collaborate 
-                      on cutting-edge projects.
-                    </p>
                   </div>
                 </div>
-              </div>
+              </LazyLoad>
             </div>
           </div>
         </div>
       </section>
 
       {/* No Hierarchy Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-500 to-purple-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
-            Here&apos;s the Catch — No Hierarchy
-          </h2>
-          <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
-            Your role isn&apos;t limited by your title. Whether you&apos;re a student, professor, or faculty member — 
-            you can be an entrepreneur, an investor, a mentor, or someone offering services.
-          </p>
-          <div className="mt-8 bg-white bg-opacity-10 rounded-lg p-6 max-w-2xl mx-auto">
-            <p className="text-lg text-white font-medium">
-              💡 What matters is your <span className="font-bold">idea</span>, your <span className="font-bold">interest</span>, or your <span className="font-bold">expertise</span> — not your position at the university.
+      <section className="relative py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 overflow-hidden">
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-64 h-64 bg-white bg-opacity-5 rounded-full animate-float"></div>
+          <div className="absolute bottom-20 right-20 w-48 h-48 bg-white bg-opacity-10 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/4 w-32 h-32 bg-yellow-300 bg-opacity-20 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
+              Here&apos;s the Catch — <span className="text-yellow-300">No Hierarchy</span>
+            </h2>
+            <p className="text-xl text-blue-100 max-w-4xl mx-auto leading-relaxed">
+              Your role isn&apos;t limited by your title. Whether you&apos;re a student, professor, or faculty member — 
+              you can be an entrepreneur, an investor, a mentor, or someone offering services.
             </p>
-            <div className="mt-4 flex justify-center space-x-4 text-sm text-blue-100">
-              <span>🎓 Students</span>
-              <span>👨‍🏫 Faculty</span>
-              <span>🤝 Equals</span>
+          </div>
+
+          {/* Central Message */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-yellow-300 rounded-full mb-8 animate-glow">
+              <span className="text-4xl">💡</span>
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-6">
+              What matters is your{' '}
+              <span className="relative">
+                <span className="text-yellow-300">idea</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-yellow-300 rounded"></div>
+              </span>
+              , your{' '}
+              <span className="relative">
+                <span className="text-yellow-300">interest</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-yellow-300 rounded"></div>
+              </span>
+              , or your{' '}
+              <span className="relative">
+                <span className="text-yellow-300">expertise</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-yellow-300 rounded"></div>
+              </span>
+            </h3>
+            <p className="text-2xl font-bold text-white">
+              — not your position at the university.
+            </p>
+          </div>
+
+          {/* Interactive Cards */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Students Card */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600 rounded-2xl transform rotate-6 group-hover:rotate-3 transition-transform duration-300 opacity-50"></div>
+              <div className="relative bg-white rounded-2xl p-8 transform group-hover:-translate-y-2 transition-all duration-300 shadow-2xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-3xl">🎓</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Students</h4>
+                  <p className="text-blue-600 font-semibold mb-4">Create & Lead</p>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                      Innovate fearlessly
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                      Build networks
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                      Shape the future
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Faculty Card */}
+            <div className="group relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-purple-600 rounded-2xl transform -rotate-6 group-hover:-rotate-3 transition-transform duration-300 opacity-50"></div>
+              <div className="relative bg-white rounded-2xl p-8 transform group-hover:-translate-y-2 transition-all duration-300 shadow-2xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-3xl">👨‍🏫</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Faculty</h4>
+                  <p className="text-purple-600 font-semibold mb-4">Mentor & Invest</p>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                      Share wisdom
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                      Fund innovation
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                      Guide success
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Together Card */}
+            <div className="group relative md:col-span-1">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-2xl transform rotate-3 group-hover:rotate-1 transition-transform duration-300 opacity-50"></div>
+              <div className="relative bg-white rounded-2xl p-8 transform group-hover:-translate-y-2 transition-all duration-300 shadow-2xl">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-3xl">🤝</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Together</h4>
+                  <p className="text-orange-600 font-semibold mb-4">Build the Future</p>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                      Equal partners
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                      Shared goals
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                      Unlimited potential
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Message */}
+          <div className="text-center mt-16">
+            <div className="inline-flex items-center space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-full px-8 py-4 border border-white border-opacity-20">
+              <span className="text-2xl">🌟</span>
+              <span className="text-black font-medium">Ideas over titles. Impact over hierarchy.</span>
+              <span className="text-2xl">🚀</span>
             </div>
           </div>
         </div>
@@ -229,35 +363,41 @@ export default function About() {
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
-            <div className="text-center">
-              <div className="flex items-center justify-center h-16 w-16 rounded-full bg-yellow-500 text-white mx-auto mb-4">
-                <span className="text-2xl">🌱</span>
+            <LazyLoad animationType="fade-up" delay={100}>
+              <div className="text-center group hover-lift">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-yellow-500 text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">🌱</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-yellow-600 transition-colors duration-300">Nurture Ideas</h3>
+                <p className="mt-2 text-gray-500">
+                  Provide the soil for innovative ideas to grow and flourish in university environments.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">Nurture Ideas</h3>
-              <p className="mt-2 text-gray-500">
-                Provide the soil for innovative ideas to grow and flourish in university environments.
-              </p>
-            </div>
+            </LazyLoad>
 
-            <div className="text-center">
-              <div className="flex items-center justify-center h-16 w-16 rounded-full bg-orange-500 text-white mx-auto mb-4">
-                <span className="text-2xl">🔗</span>
+            <LazyLoad animationType="fade-up" delay={200}>
+              <div className="text-center group hover-lift">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-orange-500 text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">🔗</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">Connect Minds</h3>
+                <p className="mt-2 text-gray-500">
+                  Bridge gaps between different disciplines, backgrounds, and expertise levels.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">Connect Minds</h3>
-              <p className="mt-2 text-gray-500">
-                Bridge gaps between different disciplines, backgrounds, and expertise levels.
-              </p>
-            </div>
+            </LazyLoad>
 
-            <div className="text-center">
-              <div className="flex items-center justify-center h-16 w-16 rounded-full bg-red-500 text-white mx-auto mb-4">
-                <span className="text-2xl">🎯</span>
+            <LazyLoad animationType="fade-up" delay={300}>
+              <div className="text-center group hover-lift">
+                <div className="flex items-center justify-center h-16 w-16 rounded-full bg-red-500 text-white mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors duration-300">Drive Impact</h3>
+                <p className="mt-2 text-gray-500">
+                  Create meaningful change through student-driven innovation and entrepreneurship.
+                </p>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">Drive Impact</h3>
-              <p className="mt-2 text-gray-500">
-                Create meaningful change through student-driven innovation and entrepreneurship.
-              </p>
-            </div>
+            </LazyLoad>
           </div>
         </div>
       </section>

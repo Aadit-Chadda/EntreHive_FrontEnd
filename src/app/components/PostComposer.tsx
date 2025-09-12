@@ -1,24 +1,28 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import { Project } from '@/types';
 
 interface PostComposerProps {
-  onPostCreate: (content: string, image?: string) => void;
+  onPostCreate: (content: string, image?: string, projectId?: string) => void;
+  projects?: Project[];
 }
 
-export default function PostComposer({ onPostCreate }: PostComposerProps) {
+export default function PostComposer({ onPostCreate, projects = [] }: PostComposerProps) {
   const [content, setContent] = useState('');
   const [image, setImage] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<'public' | 'followers' | 'private'>('public');
+  const [selectedProject, setSelectedProject] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = () => {
     if (!content.trim()) return;
     
-    onPostCreate(content, image || undefined);
+    onPostCreate(content, image || undefined, selectedProject || undefined);
     setContent('');
     setImage(null);
+    setSelectedProject('');
     setIsExpanded(false);
   };
 
@@ -68,6 +72,28 @@ export default function PostComposer({ onPostCreate }: PostComposerProps) {
               </div>
             )}
           </div>
+
+          {/* Project Tag Preview */}
+          {selectedProject && (
+            <div className="mt-3 flex items-center space-x-2">
+              <div className="flex items-center space-x-2 px-3 py-1 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-full">
+                <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                  {projects.find(p => p.id === selectedProject)?.title}
+                </span>
+                <button
+                  onClick={() => setSelectedProject('')}
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Image Preview */}
           {image && (
@@ -120,6 +146,27 @@ export default function PostComposer({ onPostCreate }: PostComposerProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
+
+                {/* Project Selector */}
+                {projects.length > 0 && (
+                  <div className="relative">
+                    <select
+                      value={selectedProject}
+                      onChange={(e) => setSelectedProject(e.target.value)}
+                      className="appearance-none bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">No project</option>
+                      {projects.map((project) => (
+                        <option key={project.id} value={project.id}>
+                          {project.title}
+                        </option>
+                      ))}
+                    </select>
+                    <svg className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                )}
               </div>
 
               {/* Post Button */}

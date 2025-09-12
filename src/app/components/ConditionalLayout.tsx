@@ -14,6 +14,7 @@ export default function ConditionalLayout({
   // Pages that should not show the top navigation and footer
   const isAppPage = pathname?.startsWith('/feed') || 
                    pathname?.startsWith('/posts') || 
+                   pathname?.startsWith('/projects') ||
                    pathname?.startsWith('/explore') || 
                    pathname?.startsWith('/profile') ||
                    pathname?.startsWith('/bookmarks') ||

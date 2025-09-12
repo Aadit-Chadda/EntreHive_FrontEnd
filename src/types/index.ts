@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export type Role = "student" | "professor" | "faculty" | "mentor" | "investor";
 
 export type PostType = "help" | "idea" | "update" | "showcase" | "event" | "resource";
@@ -8,14 +10,24 @@ export type ProjectNeed = "design" | "dev" | "marketing" | "research" | "funding
 
 export type CTAType = "join_team" | "offer_help" | "apply" | "register" | "feedback";
 
+// Zod schemas
+export const ProjectType = z.enum(["startup", "side_project", "research", "hackathon", "course_project"]);
+
+export const ProjectStatus = z.enum(["concept", "mvp", "launched"]);
+
+export const Visibility = z.enum(["university", "cross_university", "public"]);
+
 export interface User {
   id: string;
   name: string;
   handle: string;
   role: Role;
   avatar: string;
+  location?: string;
+  university?: string;
   department?: string;
   education?: string;
+  profilePicture?: string;
   links?: {
     linkedin?: string;
     github?: string;
@@ -30,20 +42,26 @@ export interface User {
   bio?: string;
 }
 
-export interface Project {
-  id: string;
-  title: string;
-  ownerId: string;
-  status: ProjectStatus;
-  needs: ProjectNeed[];
-  categories: string[];
-  createdAt: string;
-  previewImage?: string;
-  pitchUrl?: string;
-  repoUrl?: string;
-  description?: string;
-  teamMembers: string[];
-}
+// Enhanced Project schema with Zod validation
+export const Project = z.object({
+  id: z.string().uuid(),
+  ownerId: z.string().uuid(),
+  title: z.string().min(3).max(140),
+  type: ProjectType,
+  status: ProjectStatus.default("concept"),
+  summary: z.string().max(5000).optional(),
+  needs: z.array(z.enum(["design","dev","marketing","research","funding","mentor"])).default([]),
+  categories: z.array(z.string()).default([]), // e.g., ["AI","EdTech"]
+  tags: z.array(z.string()).default([]),
+  previewImage: z.string().url().optional(),
+  pitchUrl: z.string().url().optional(),
+  repoUrl: z.string().url().optional(),
+  visibility: Visibility.default("university"),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+  teamMembers: z.array(z.string()).default([]),
+});
+export type Project = z.infer<typeof Project>;
 
 export interface Post {
   id: string;

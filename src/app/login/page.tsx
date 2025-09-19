@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { ApiError } from '@/lib/api';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,25 +29,19 @@ export default function Login() {
     setError('');
 
     try {
-      // TODO: Replace with actual API endpoint when backend is ready
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // TODO: Handle successful login (store token, redirect, etc.)
-        console.log('Login successful:', data);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed');
-      }
+      await login(formData.email, formData.password);
+      // Redirect is handled by the login function
     } catch (err) {
-      setError('Network error. Please try again.');
+      const apiError = err as ApiError;
+      if (apiError.details?.non_field_errors) {
+        setError(apiError.details.non_field_errors[0]);
+      } else if (apiError.details?.email) {
+        setError(apiError.details.email[0]);
+      } else if (apiError.details?.password) {
+        setError(apiError.details.password[0]);
+      } else {
+        setError(apiError.message || 'Login failed. Please check your credentials.');
+      }
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);

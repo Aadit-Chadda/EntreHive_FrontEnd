@@ -1,5 +1,86 @@
 import { z } from "zod";
 
+// Backend API types
+export type UserRole = "student" | "professor" | "investor";
+
+export interface AuthUser {
+  pk: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+  access_token_expiration: string;
+  refresh_token_expiration: string;
+  user: AuthUser;
+}
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  full_name: string;
+  first_name: string;
+  last_name: string;
+  user_role: UserRole;
+  profile_picture?: string;
+  bio?: string;
+  location?: string;
+  university?: string;
+  major?: string;
+  graduation_year?: number;
+  department?: string;
+  research_interests?: string;
+  investment_focus?: string;
+  company?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  github_url?: string;
+  is_profile_public: boolean;
+  show_email: boolean;
+  role_specific_info: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RegistrationData {
+  username: string;
+  email: string;
+  password1: string;
+  password2: string;
+  first_name: string;
+  last_name: string;
+  user_role: UserRole;
+  bio?: string;
+  location?: string;
+  university?: string;
+}
+
+export interface ProfileUpdateData {
+  first_name?: string;
+  last_name?: string;
+  user_role?: UserRole;
+  bio?: string;
+  location?: string;
+  university?: string;
+  major?: string;
+  graduation_year?: number;
+  department?: string;
+  research_interests?: string;
+  investment_focus?: string;
+  company?: string;
+  linkedin_url?: string;
+  website_url?: string;
+  github_url?: string;
+  is_profile_public?: boolean;
+  show_email?: boolean;
+}
+
+// Legacy types (keep for existing components)
 export type Role = "student" | "professor" | "faculty" | "mentor" | "investor";
 
 export type PostType = "help" | "idea" | "update" | "showcase" | "event" | "resource";

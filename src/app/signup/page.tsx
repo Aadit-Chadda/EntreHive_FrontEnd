@@ -2,23 +2,33 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthService, validatePassword, validateEmail, validateUsername } from '@/lib/auth';
+import { UserRole, RegistrationData } from '@/types';
+import { ApiError } from '@/lib/api';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
+    username: '',
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
+    userRole: 'student' as UserRole,
+    bio: '',
+    location: '',
     university: '',
-    role: '',
-    interests: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [usernameChecking, setUsernameChecking] = useState(false);
+  const [emailChecking, setEmailChecking] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -26,12 +36,85 @@ export default function SignUp() {
       ...prev,
       [name]: value
     }));
+    
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const checkUsernameAvailability = async (username: string) => {
+    if (username.length < 3) return;
+    
+    setUsernameChecking(true);
+    try {
+      const result = await AuthService.checkUsername(username);
+      if (!result.available) {
+        setFieldErrors(prev => ({ ...prev, username: 'Username is already taken' }));
+      }
+    } catch (error) {
+      console.error('Username check failed:', error);
+    } finally {
+      setUsernameChecking(false);
+    }
+  };
+
+  const checkEmailAvailability = async (email: string) => {
+    if (!validateEmail(email)) return;
+    
+    setEmailChecking(true);
+    try {
+      const result = await AuthService.checkEmail(email);
+      if (!result.available) {
+        setFieldErrors(prev => ({ ...prev, email: 'Email is already registered' }));
+      }
+    } catch (error) {
+      console.error('Email check failed:', error);
+    } finally {
+      setEmailChecking(false);
+    }
+  };
+
+  const validateStep1 = (): boolean => {
+    const errors: Record<string, string> = {};
+    
+    // Username validation
+    const usernameErrors = validateUsername(formData.username);
+    if (usernameErrors.length > 0) {
+      errors.username = usernameErrors[0];
+    }
+    
+    // Email validation
+    if (!validateEmail(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    // Name validation
+    if (!formData.firstName.trim()) {
+      errors.firstName = 'First name is required';
+    }
+    if (!formData.lastName.trim()) {
+      errors.lastName = 'Last name is required';
+    }
+    
+    // Password validation
+    const passwordErrors = validatePassword(formData.password);
+    if (passwordErrors.length > 0) {
+      errors.password = passwordErrors[0];
+    }
+    
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const nextStep = () => {
     if (step === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.email) {
-        setError('Please fill in all required fields');
+      if (!validateStep1()) {
+        setError('Please fix the errors above');
         return;
       }
     }
@@ -48,49 +131,52 @@ export default function SignUp() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setFieldErrors({});
 
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setIsLoading(false);
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
+    // Final validation
+    if (!validateStep1()) {
+      setError('Please fix the errors above');
       setIsLoading(false);
       return;
     }
 
     try {
-      // TODO: Replace with actual API endpoint when backend is ready
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          university: formData.university,
-          role: formData.role,
-          interests: formData.interests,
-        }),
-      });
+      const registrationData: RegistrationData = {
+        username: formData.username,
+        email: formData.email,
+        password1: formData.password,
+        password2: formData.confirmPassword,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        user_role: formData.userRole,
+        bio: formData.bio || undefined,
+        location: formData.location || undefined,
+        university: formData.university || undefined,
+      };
 
-      if (response.ok) {
-        const data = await response.json();
-        // TODO: Handle successful signup (store token, redirect, etc.)
-        console.log('Signup successful:', data);
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Signup failed');
-      }
+      await AuthService.register(registrationData);
+      
+      // Show success message and redirect to login
+      setError('');
+      router.push('/login?message=Registration successful! Please log in to continue.');
+      
     } catch (err) {
-      setError('Network error. Please try again.');
-      console.error('Signup error:', err);
+      const apiError = err as ApiError;
+      console.error('Registration error:', apiError);
+      
+      // Handle field-specific errors
+      if (apiError.details) {
+        const newFieldErrors: Record<string, string> = {};
+        Object.entries(apiError.details).forEach(([field, messages]) => {
+          if (Array.isArray(messages) && messages.length > 0) {
+            newFieldErrors[field] = messages[0];
+          }
+        });
+        setFieldErrors(newFieldErrors);
+      }
+      
+      // Set general error message
+      setError(apiError.message || 'Registration failed. Please check your information and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -153,11 +239,47 @@ export default function SignUp() {
           <form onSubmit={step === 2 ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}>
             {step === 1 && (
               <div className="space-y-6 animate-fade-in-up">
+                {/* Username Field */}
+                <div className="group">
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                    Username *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      required
+                      className={`block w-full pl-10 pr-10 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.username ? 'border-red-300' : 'border-gray-300'}`}
+                      placeholder="johndoe123"
+                      value={formData.username}
+                      onChange={handleChange}
+                      onBlur={(e) => checkUsernameAvailability(e.target.value)}
+                    />
+                    {usernameChecking && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <svg className="animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  {fieldErrors.username && (
+                    <p className="mt-1 text-sm text-red-600">{fieldErrors.username}</p>
+                  )}
+                </div>
+
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="group">
                     <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                      First Name
+                      First Name *
                     </label>
                     <div className="relative">
                       <input
@@ -165,16 +287,19 @@ export default function SignUp() {
                         name="firstName"
                         type="text"
                         required
-                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                        className={`block w-full px-4 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.firstName ? 'border-red-300' : 'border-gray-300'}`}
                         placeholder="John"
                         value={formData.firstName}
                         onChange={handleChange}
                       />
+                      {fieldErrors.firstName && (
+                        <p className="mt-1 text-sm text-red-600">{fieldErrors.firstName}</p>
+                      )}
                     </div>
                   </div>
                   <div className="group">
                     <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Last Name
+                      Last Name *
                     </label>
                     <div className="relative">
                       <input
@@ -182,11 +307,14 @@ export default function SignUp() {
                         name="lastName"
                         type="text"
                         required
-                        className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                        className={`block w-full px-4 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.lastName ? 'border-red-300' : 'border-gray-300'}`}
                         placeholder="Doe"
                         value={formData.lastName}
                         onChange={handleChange}
                       />
+                      {fieldErrors.lastName && (
+                        <p className="mt-1 text-sm text-red-600">{fieldErrors.lastName}</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -194,7 +322,7 @@ export default function SignUp() {
                 {/* Email Field */}
                 <div className="group">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email Address
+                    Email Address *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -208,19 +336,31 @@ export default function SignUp() {
                       type="email"
                       autoComplete="email"
                       required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                      className={`block w-full pl-10 pr-10 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.email ? 'border-red-300' : 'border-gray-300'}`}
                       placeholder="john.doe@university.edu"
                       value={formData.email}
                       onChange={handleChange}
+                      onBlur={(e) => checkEmailAvailability(e.target.value)}
                     />
+                    {emailChecking && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <svg className="animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      </div>
+                    )}
                   </div>
+                  {fieldErrors.email && (
+                    <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                  )}
                 </div>
 
                 {/* Password Fields */}
                 <div className="grid grid-cols-1 gap-4">
                   <div className="group">
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                      Password
+                      Password *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -234,7 +374,7 @@ export default function SignUp() {
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="new-password"
                         required
-                        className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                        className={`block w-full pl-10 pr-12 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.password ? 'border-red-300' : 'border-gray-300'}`}
                         placeholder="Create a strong password"
                         value={formData.password}
                         onChange={handleChange}
@@ -256,12 +396,15 @@ export default function SignUp() {
                         )}
                       </button>
                     </div>
-                    <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters</p>
+                    {fieldErrors.password && (
+                      <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+                    )}
+                    <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters with uppercase, lowercase, and number</p>
                   </div>
 
                   <div className="group">
                     <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm Password
+                      Confirm Password *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -275,7 +418,7 @@ export default function SignUp() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         autoComplete="new-password"
                         required
-                        className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                        className={`block w-full pl-10 pr-12 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`}
                         placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -297,6 +440,9 @@ export default function SignUp() {
                         )}
                       </button>
                     </div>
+                    {fieldErrors.confirmPassword && (
+                      <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -304,10 +450,37 @@ export default function SignUp() {
 
             {step === 2 && (
               <div className="space-y-6 animate-fade-in-up">
+                {/* User Role Field */}
+                <div className="group">
+                  <label htmlFor="userRole" className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Role *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <select
+                      id="userRole"
+                      name="userRole"
+                      required
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                      value={formData.userRole}
+                      onChange={handleChange}
+                    >
+                      <option value="student">🎓 Student</option>
+                      <option value="professor">👨‍🏫 Professor</option>
+                      <option value="investor">💼 Investor</option>
+                    </select>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">This determines what features and content you'll see</p>
+                </div>
+
                 {/* University Field */}
                 <div className="group">
                   <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-2">
-                    University
+                    University/Institution
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -319,63 +492,60 @@ export default function SignUp() {
                       id="university"
                       name="university"
                       type="text"
-                      required
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
-                      placeholder="University of Excellence"
+                      placeholder="e.g., Stanford University, MIT, etc."
                       value={formData.university}
                       onChange={handleChange}
                     />
                   </div>
                 </div>
 
-                {/* Role Field */}
+                {/* Location Field */}
                 <div className="group">
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Role
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+                    Location
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
                     </div>
-                    <select
-                      id="role"
-                      name="role"
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
-                      value={formData.role}
-                      onChange={handleChange}
-                    >
-                      <option value="">Select your role</option>
-                      <option value="undergraduate">🎓 Undergraduate Student</option>
-                      <option value="graduate">📚 Graduate Student</option>
-                      <option value="phd">🔬 PhD Student</option>
-                      <option value="faculty">👨‍🏫 Faculty/Professor</option>
-                      <option value="researcher">🧪 Researcher</option>
-                      <option value="alumni">🎖️ Alumni</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Interests Field */}
-                <div className="group">
-                  <label htmlFor="interests" className="block text-sm font-medium text-gray-700 mb-2">
-                    Interests & Skills
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      id="interests"
-                      name="interests"
-                      rows={4}
-                      className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 resize-none"
-                      placeholder="Tell us about your interests, skills, or what kind of projects you'd like to work on...
-
-Examples: Web Development, AI/ML, Marketing, Business Strategy, Mobile Apps, Sustainability, FinTech..."
-                      value={formData.interests}
+                    <input
+                      id="location"
+                      name="location"
+                      type="text"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                      placeholder="e.g., San Francisco, CA"
+                      value={formData.location}
                       onChange={handleChange}
                     />
                   </div>
+                </div>
+
+                {/* Bio Field */}
+                <div className="group">
+                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio/About You
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      rows={4}
+                      className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 resize-none"
+                      placeholder="Tell us about yourself, your interests, skills, or what you're passionate about...
+
+Examples: 
+• Student: Computer Science major interested in AI and startup development
+• Professor: AI researcher focused on machine learning applications in healthcare
+• Investor: Early-stage investor focused on edtech and fintech startups"
+                      value={formData.bio}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">This will be displayed on your public profile</p>
                 </div>
 
                 {/* Terms Checkbox */}

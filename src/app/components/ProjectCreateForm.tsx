@@ -25,6 +25,7 @@ const PROJECT_STATUS = [
 ];
 
 const VISIBILITY_OPTIONS = [
+  { value: 'private', label: 'Private (Only you and team members)' },
   { value: 'university', label: 'University Only' },
   { value: 'cross_university', label: 'Cross University' },
   { value: 'public', label: 'Public' },
@@ -55,7 +56,7 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
     preview_image: '',
     pitch_url: '',
     repo_url: '',
-    visibility: 'university',
+    visibility: 'private',
   });
 
   const [categoryInput, setCategoryInput] = useState('');
@@ -126,10 +127,18 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
 
       const project = await projectApi.createProject(cleanData);
       
+      // Ensure the project has a valid ID before proceeding
+      if (!project || !project.id) {
+        throw new Error('Invalid project response from server');
+      }
+      
       if (onSuccess) {
         onSuccess(project);
       } else {
-        router.push(`/projects/${project.id}`);
+        // Add a small delay to ensure the project is fully created
+        setTimeout(() => {
+          router.push(`/projects/${project.id}`);
+        }, 100);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to create project');
@@ -487,6 +496,7 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                   </select>
                   <div className="mt-2 text-xs text-gray-600">
                     <div className="space-y-1">
+                      <p><strong>Private:</strong> Only visible to you and your team members</p>
                       <p><strong>University Only:</strong> Visible to students and faculty from your university</p>
                       <p><strong>Cross University:</strong> Visible to all verified students and faculty</p>
                       <p><strong>Public:</strong> Visible to everyone on the platform</p>

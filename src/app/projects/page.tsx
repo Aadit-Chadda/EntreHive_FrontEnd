@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import LeftNavigation from '../components/LeftNavigation';
 import RightExplore from '../components/RightExplore';
 import ProjectCard from '../components/ProjectCard';
@@ -11,6 +12,7 @@ import { ProjectData } from '@/types';
 import { projectApi } from '@/lib/api';
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -33,6 +35,7 @@ export default function ProjectsPage() {
       
       const params: any = {};
       if (searchQuery) params.search = searchQuery;
+      
       if (filter !== 'all') {
         // Map filter to appropriate parameter
         if (['startup', 'side_project', 'research', 'hackathon', 'course_project'].includes(filter)) {
@@ -43,7 +46,20 @@ export default function ProjectsPage() {
       }
       
       const response = await projectApi.getProjects(params);
-      setProjects(response.results);
+      let filteredResults = response.results;
+      
+      // Apply client-side filtering for user-specific options
+      if (filter === 'my_projects') {
+        filteredResults = response.results.filter(project => project.can_edit);
+      } else if (filter === 'team_projects') {
+        filteredResults = response.results.filter(project => project.is_team_member && !project.can_edit);
+      }
+      
+      // Ensure unique projects by ID to prevent duplicate keys
+      const uniqueProjects = filteredResults.filter((project, index, self) => 
+        project && project.id && self.findIndex(p => p.id === project.id) === index
+      );
+      setProjects(uniqueProjects);
     } catch (err: any) {
       setError(err.message || 'Failed to load projects');
     } finally {
@@ -52,22 +68,34 @@ export default function ProjectsPage() {
   };
 
   // Sort projects based on selection
-  const sortedProjects = [...projects].sort((a, b) => {
-    switch (sortBy) {
-      case 'recent':
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      case 'popular':
-        return b.team_count - a.team_count;
-      case 'alphabetical':
-        return a.title.localeCompare(b.title);
-      default:
-        return 0;
-    }
-  });
+  const sortedProjects = (projects || [])
+    .filter(project => project && project.id) // Ensure valid projects with IDs
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'recent':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'popular':
+          return b.team_count - a.team_count;
+        case 'alphabetical':
+          return a.title.localeCompare(b.title);
+        default:
+          return 0;
+      }
+    });
 
   const handleProjectCreate = (project: ProjectData) => {
-    setProjects(prev => [project, ...prev]);
+    setProjects(prev => {
+      // Check if project already exists (avoid duplicates)
+      const exists = prev.some(p => p.id === project.id);
+      if (exists) {
+        return prev.map(p => p.id === project.id ? project : p);
+      }
+      return [project, ...prev];
+    });
     setShowCreateForm(false);
+    
+    // Redirect to the newly created project
+    router.push(`/projects/${project.id}`);
   };
 
   const handleProjectUpdate = (updatedProject: ProjectData) => {
@@ -87,6 +115,8 @@ export default function ProjectsPage() {
 
   const filterOptions = [
     { value: 'all', label: 'All Projects' },
+    { value: 'my_projects', label: 'My Projects' },
+    { value: 'team_projects', label: 'Team Projects' },
     { value: 'startup', label: 'Startups' },
     { value: 'side_project', label: 'Side Projects' },
     { value: 'research', label: 'Research' },
@@ -233,14 +263,22 @@ export default function ProjectsPage() {
                     </div>
                   ) : sortedProjects.length > 0 ? (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                      {sortedProjects.map(project => (
-                        <ProjectCard
-                          key={project.id}
-                          project={project}
-                          onUpdate={handleProjectUpdate}
-                          onDelete={handleProjectDelete}
-                        />
-                      ))}
+                      {sortedProjects.map(project => {
+                        // Additional safety check to ensure project has required fields
+                        if (!project || !project.id) {
+                          console.warn('Invalid project data:', project);
+                          return null;
+                        }
+                        
+                        return (
+                          <ProjectCard
+                            key={project.id}
+                            project={project}
+                            onUpdate={handleProjectUpdate}
+                            onDelete={handleProjectDelete}
+                          />
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="text-center py-12">

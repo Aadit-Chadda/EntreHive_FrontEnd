@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { ProjectData } from '@/types';
+import { useRouter } from 'next/navigation';
+import { ProjectData, ProjectUser } from '@/types';
 import { projectApi } from '@/lib/api';
-import ProjectInvitations from './ProjectInvitations';
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -21,325 +21,368 @@ const PROJECT_TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  concept: 'bg-yellow-100 text-yellow-800',
-  mvp: 'bg-blue-100 text-blue-800',
-  launched: 'bg-green-100 text-green-800',
+  concept: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800',
+  mvp: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
+  launched: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800',
 };
 
 const VISIBILITY_COLORS: Record<string, string> = {
-  university: 'bg-purple-100 text-purple-800',
-  cross_university: 'bg-indigo-100 text-indigo-800',
-  public: 'bg-gray-100 text-gray-800',
+  private: 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600',
+  university: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800',
+  cross_university: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800',
+  public: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
+};
+
+const VISIBILITY_ICONS: Record<string, React.ReactElement> = {
+  private: (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  ),
+  university: (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
+    </svg>
+  ),
+  cross_university: (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
+    </svg>
+  ),
+  public: (
+    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
 };
 
 export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCardProps) {
-  const [showTeamModal, setShowTeamModal] = useState(false);
-  const [showInvitationsModal, setShowInvitationsModal] = useState(false);
-  const [teamMemberUsername, setTeamMemberUsername] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
 
-  const handleAddTeamMember = async () => {
-    if (!teamMemberUsername.trim()) return;
-
-    setIsLoading(true);
-    setError(null);
-
+  // Helper function to safely get user display name
+  const getUserDisplayName = (user: ProjectUser): string => {
+    // Add extra safety checks
+    if (!user) return 'Unknown';
+    
     try {
-      await projectApi.addTeamMember(project.id, { username: teamMemberUsername.trim() });
-      // Refresh project data
-      const updatedProject = await projectApi.getProject(project.id);
-      onUpdate?.(updatedProject);
-      setTeamMemberUsername('');
-      setShowTeamModal(false);
-    } catch (err: any) {
-      setError(err.message || 'Failed to add team member');
-    } finally {
-      setIsLoading(false);
+      // Check profile exists and has full_name
+      if (user.profile && typeof user.profile === 'object' && user.profile.full_name) {
+        return user.profile.full_name;
+      }
+      
+      // Fallback to user properties
+      if (user.full_name) return user.full_name;
+      if (user.username) return user.username;
+      
+      return 'Unknown';
+    } catch (error) {
+      console.warn('Error accessing user display name:', error);
+      return user.username || 'Unknown';
     }
   };
 
-  const handleRemoveTeamMember = async (userId: number) => {
-    if (!confirm('Are you sure you want to remove this team member?')) return;
+  // Helper function to safely get user initials
+  const getUserInitials = (user: ProjectUser): string => {
+    const displayName = getUserDisplayName(user);
+    return displayName.charAt(0).toUpperCase();
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+      return;
+    }
 
     try {
-      await projectApi.removeTeamMember(project.id, userId);
-      // Refresh project data
-      const updatedProject = await projectApi.getProject(project.id);
-      onUpdate?.(updatedProject);
-    } catch (err: any) {
-      setError(err.message || 'Failed to remove team member');
+      setIsDeleting(true);
+      await projectApi.deleteProject(project.id);
+      onDelete?.(project.id);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete project';
+      alert(message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6 hover:shadow-lg transition-shadow">
-      {/* Header */}
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex-1">
-          <Link 
-            href={`/projects/${project.id}`}
-            className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors"
-          >
-            {project.title}
-          </Link>
-          <p className="text-sm text-gray-600 mt-1">
-            by {project.owner.full_name || project.owner.username}
-          </p>
-        </div>
-        
-        {/* Status badges */}
-        <div className="flex flex-col items-end space-y-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[project.status]}`}>
-            {project.status.toUpperCase()}
-          </span>
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${VISIBILITY_COLORS[project.visibility]}`}>
-            {project.visibility.replace('_', ' ').toUpperCase()}
-          </span>
-        </div>
-      </div>
-
-      {/* Preview image */}
-      {project.preview_image && (
-        <div className="mb-4">
-          <img
-            src={project.preview_image}
-            alt={project.title}
-            className="w-full h-48 object-cover rounded-md"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        </div>
-      )}
-
-      {/* Project type and summary */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            {PROJECT_TYPE_LABELS[project.project_type]}
-          </span>
-          <span className="text-sm text-gray-500">
-            {project.team_count} team member{project.team_count !== 1 ? 's' : ''}
-          </span>
-        </div>
-        
-        {project.summary && (
-          <p className="text-gray-600 text-sm line-clamp-3">
-            {project.summary}
-          </p>
-        )}
-      </div>
-
-      {/* Needs */}
-      {project.needs.length > 0 && (
-        <div className="mb-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Looking for:</p>
-          <div className="flex flex-wrap gap-1">
-            {project.needs.map(need => (
-              <span
-                key={need}
-                className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full"
-              >
-                {need}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Categories and tags */}
-      {(project.categories.length > 0 || project.tags.length > 0) && (
-        <div className="mb-4">
-          <div className="flex flex-wrap gap-1">
-            {project.categories.map(category => (
-              <span
-                key={category}
-                className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-              >
-                {category}
-              </span>
-            ))}
-            {project.tags.map(tag => (
-              <span
-                key={tag}
-                className="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded-full"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Team members */}
-      <div className="mb-4">
-        <p className="text-sm font-medium text-gray-700 mb-2">Team:</p>
-        <div className="flex flex-wrap gap-2">
-          {/* Owner */}
-          <div className="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full">
-            <span className="text-sm font-medium text-blue-900">
-              {project.owner.full_name || project.owner.username}
+    <Link href={`/projects/${project.id}`} className="block group">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+        {/* Header with Preview Image or Gradient */}
+        <div className="relative h-48 overflow-hidden">
+          {project.preview_image ? (
+            <>
+              <img
+                src={project.preview_image}
+                alt={project.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            </>
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 relative">
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute inset-0" style={{ 
+                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
+                }}></div>
+              </div>
+            </div>
+          )}
+          
+          {/* Floating Badges */}
+          <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${STATUS_COLORS[project.status]}`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current mr-1"></span>
+              {project.status.toUpperCase()}
             </span>
-            <span className="text-xs text-blue-600 bg-blue-200 px-2 py-0.5 rounded-full">
-              Owner
+            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${VISIBILITY_COLORS[project.visibility]}`}>
+              {VISIBILITY_ICONS[project.visibility]}
+              <span className="ml-1">
+                {project.visibility === 'private' ? 'Private' : 
+                 project.visibility === 'university' ? 'University' :
+                 project.visibility === 'cross_university' ? 'Cross-Uni' : 'Public'}
+              </span>
             </span>
           </div>
 
-          {/* Team members */}
-          {project.team_members.map(member => (
-            <div key={member.id} className="flex items-center space-x-2 bg-gray-50 px-3 py-1 rounded-full">
-              <span className="text-sm text-gray-900">
-                {member.full_name || member.username}
-              </span>
+          {/* Project Type Badge */}
+          <div className="absolute top-4 right-4">
+            <span className="inline-flex items-center px-3 py-1 bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-200 text-xs font-medium rounded-full backdrop-blur-sm border border-white/20">
+              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
+              </svg>
+              {PROJECT_TYPE_LABELS[project.project_type]}
+            </span>
+          </div>
+
+          {/* Overlay on Bottom */}
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-200 transition-colors line-clamp-2">
+              {project.title}
+            </h3>
+            <div className="flex items-center text-white/90">
+              <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2">
+                <span className="text-white font-bold text-xs">
+                  {getUserInitials(project.owner)}
+                </span>
+              </div>
+              <span className="text-sm">by {getUserDisplayName(project.owner)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="p-6 space-y-4">
+          {/* Summary */}
+          {project.summary && (
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3">
+              {project.summary}
+            </p>
+          )}
+
+          {/* Project Needs */}
+          {project.needs.length > 0 && (
+            <div>
+              <div className="flex items-center mb-2">
+                <svg className="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Looking for</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {project.needs.slice(0, 3).map(need => (
+                  <span
+                    key={need}
+                    className="inline-flex items-center px-2 py-1 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-xs font-medium rounded-full border border-red-200 dark:border-red-800"
+                  >
+                    <span className="w-1 h-1 bg-red-500 rounded-full mr-1"></span>
+                    {need}
+                  </span>
+                ))}
+                {project.needs.length > 3 && (
+                  <span className="inline-flex items-center px-2 py-1 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full border border-gray-200 dark:border-gray-600">
+                    +{project.needs.length - 3} more
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Categories and Tags */}
+          {(project.categories.length > 0 || project.tags.length > 0) && (
+            <div>
+              <div className="flex flex-wrap gap-1">
+                {project.categories.slice(0, 2).map(category => (
+                  <span
+                    key={category}
+                    className="inline-flex items-center px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full border border-blue-200 dark:border-blue-800"
+                  >
+                    {category}
+                  </span>
+                ))}
+                {project.tags.slice(0, 2).map(tag => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center px-2 py-1 bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs rounded-full border border-gray-200 dark:border-gray-600"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+                {(project.categories.length + project.tags.length) > 4 && (
+                  <span className="inline-flex items-center px-2 py-1 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 text-xs rounded-full border border-gray-200 dark:border-gray-600">
+                    +{(project.categories.length + project.tags.length) - 4}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Team Section */}
+          <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center">
+                {/* Owner Avatar */}
+                <div className="relative">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-sm">
+                    <span className="text-white font-bold text-xs">
+                      {getUserInitials(project.owner)}
+                    </span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border border-white dark:border-gray-800"></div>
+                </div>
+
+                {/* Team Member Avatars */}
+                {project.team_members.slice(0, 2).map((member, index) => (
+                  <div key={member.id} className="w-8 h-8 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-sm -ml-2">
+                    <span className="text-white font-bold text-xs">
+                      {getUserInitials(member)}
+                    </span>
+                  </div>
+                ))}
+
+                {/* More members indicator */}
+                {project.team_members.length > 2 && (
+                  <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center border-2 border-white dark:border-gray-800 shadow-sm -ml-2">
+                    <span className="text-gray-600 dark:text-gray-300 font-bold text-xs">
+                      +{project.team_members.length - 2}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="ml-2">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {project.team_count} member{project.team_count !== 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex items-center space-x-2">
+              {/* Member Badge */}
+              {project.is_team_member && !project.can_edit && (
+                <span className="inline-flex items-center px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full border border-blue-200 dark:border-blue-800">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Member
+                </span>
+              )}
+
+              {/* Owner Badge */}
               {project.can_edit && (
-                <button
-                  onClick={() => handleRemoveTeamMember(member.id)}
-                  className="text-xs text-red-600 hover:text-red-800"
-                  title="Remove team member"
-                >
-                  ×
-                </button>
+                <span className="inline-flex items-center px-2 py-1 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full border border-purple-200 dark:border-purple-800">
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3l14 9-14 9V3z" />
+                  </svg>
+                  Owner
+                </span>
               )}
             </div>
-          ))}
-
-          {/* Add team member and manage invitations buttons */}
-          {project.can_edit && (
-            <>
-              <button
-                onClick={() => setShowTeamModal(true)}
-                className="text-sm text-blue-600 hover:text-blue-800 px-3 py-1 border border-blue-300 rounded-full hover:bg-blue-50"
-              >
-                + Add Member
-              </button>
-              <button
-                onClick={() => setShowInvitationsModal(true)}
-                className="text-sm text-green-600 hover:text-green-800 px-3 py-1 border border-green-300 rounded-full hover:bg-green-50"
-              >
-                📧 Invitations
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Links */}
-      <div className="flex space-x-4 mb-4">
-        {project.pitch_url && (
-          <a
-            href={project.pitch_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 text-sm"
-          >
-            🎥 Demo
-          </a>
-        )}
-        {project.repo_url && (
-          <a
-            href={project.repo_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 text-sm"
-          >
-            💻 Code
-          </a>
-        )}
-      </div>
-
-      {/* Footer */}
-      <div className="flex justify-between items-center text-sm text-gray-500 border-t pt-4">
-        <span>
-          Created {new Date(project.created_at).toLocaleDateString()}
-        </span>
-        
-        {project.can_edit && (
-          <div className="space-x-2">
-            <Link
-              href={`/projects/${project.id}/edit`}
-              className="text-blue-600 hover:text-blue-800"
-            >
-              Edit
-            </Link>
-            <button
-              onClick={() => onDelete?.(project.id)}
-              className="text-red-600 hover:text-red-800"
-            >
-              Delete
-            </button>
           </div>
-        )}
-      </div>
 
-      {/* Add Team Member Modal */}
-      {showTeamModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">Add Team Member</h3>
+          {/* Footer with Links and Actions */}
+          <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center space-x-4">
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {new Date(project.created_at).toLocaleDateString()}
+              </span>
+              
+              {/* External Links */}
+              <div className="flex items-center space-x-2">
+                {project.pitch_url && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open(project.pitch_url, '_blank', 'noopener,noreferrer');
+                    }}
+                    className="inline-flex items-center text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 text-xs transition-colors"
+                    title="View Demo"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                )}
+                {project.repo_url && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      window.open(project.repo_url, '_blank', 'noopener,noreferrer');
+                    }}
+                    className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-xs transition-colors"
+                    title="View Code"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
             
-            {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-700 text-sm">{error}</p>
+            {/* Owner Actions */}
+            {project.can_edit && (
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    router.push(`/projects/${project.id}/edit`);
+                  }}
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                >
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit
+                </button>
+                <button
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                >
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </button>
               </div>
             )}
-
-            <div className="mb-4">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={teamMemberUsername}
-                onChange={(e) => setTeamMemberUsername(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter username"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddTeamMember()}
-              />
-            </div>
-
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => {
-                  setShowTeamModal(false);
-                  setTeamMemberUsername('');
-                  setError(null);
-                }}
-                className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTeamMember}
-                disabled={isLoading || !teamMemberUsername.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? 'Adding...' : 'Add Member'}
-              </button>
-            </div>
           </div>
         </div>
-      )}
 
-      {/* Project Invitations Modal */}
-      {showInvitationsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold">Project Invitations</h3>
-              <button
-                onClick={() => setShowInvitationsModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            
-            <ProjectInvitations projectId={project.id} />
-          </div>
-        </div>
-      )}
-    </div>
+        {/* Hover overlay for better visual feedback */}
+        <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400 dark:group-hover:border-blue-500 rounded-2xl transition-colors pointer-events-none opacity-0 group-hover:opacity-100"></div>
+      </div>
+    </Link>
   );
 }

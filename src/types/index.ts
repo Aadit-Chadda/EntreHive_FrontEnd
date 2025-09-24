@@ -96,7 +96,7 @@ export const ProjectType = z.enum(["startup", "side_project", "research", "hacka
 
 export const ProjectStatus = z.enum(["concept", "mvp", "launched"]);
 
-export const Visibility = z.enum(["university", "cross_university", "public"]);
+export const Visibility = z.enum(["private", "university", "cross_university", "public"]);
 
 export interface User {
   id: string;
@@ -131,6 +131,13 @@ export interface ProjectUser {
   first_name: string;
   last_name: string;
   full_name: string;
+  profile?: {
+    full_name: string;
+    profile_picture: string | null;
+    user_role: string;
+    university: string | null;
+    bio: string | null;
+  } | null;
 }
 
 export interface ProjectData {
@@ -147,7 +154,7 @@ export interface ProjectData {
   preview_image?: string;
   pitch_url?: string;
   repo_url?: string;
-  visibility: "university" | "cross_university" | "public";
+  visibility: "private" | "university" | "cross_university" | "public";
   created_at: string;
   updated_at: string;
   team_count: number;
@@ -166,7 +173,7 @@ export interface ProjectCreateData {
   preview_image?: string;
   pitch_url?: string;
   repo_url?: string;
-  visibility?: "university" | "cross_university" | "public";
+  visibility?: "private" | "university" | "cross_university" | "public";
 }
 
 export interface ProjectUpdateData {
@@ -180,7 +187,7 @@ export interface ProjectUpdateData {
   preview_image?: string;
   pitch_url?: string;
   repo_url?: string;
-  visibility?: "university" | "cross_university" | "public";
+  visibility?: "private" | "university" | "cross_university" | "public";
 }
 
 export interface ProjectInvitation {
@@ -217,7 +224,7 @@ export const Project = z.object({
   previewImage: z.string().url().optional(),
   pitchUrl: z.string().url().optional(),
   repoUrl: z.string().url().optional(),
-  visibility: Visibility.default("university"),
+  visibility: Visibility.default("private"),
   createdAt: z.date(),
   updatedAt: z.date(),
   teamMembers: z.array(z.string()).default([]),

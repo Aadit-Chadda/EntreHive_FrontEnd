@@ -151,3 +151,90 @@ export class ApiClient {
 }
 
 export const apiClient = new ApiClient();
+
+// Project API functions
+import { ProjectData, ProjectCreateData, ProjectUpdateData, ProjectInvitation, ProjectInvitationCreate, AddTeamMemberData } from '@/types';
+
+export const projectApi = {
+  // Get all projects with filtering
+  getProjects: async (params?: {
+    search?: string;
+    type?: string;
+    status?: string;
+    visibility?: string;
+    page?: number;
+    page_size?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const endpoint = `/api/projects/${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    return apiClient.get<{
+      count: number;
+      next: string | null;
+      previous: string | null;
+      results: ProjectData[];
+    }>(endpoint);
+  },
+
+  // Get a specific project
+  getProject: async (projectId: string) => {
+    return apiClient.get<ProjectData>(`/api/projects/${projectId}/`);
+  },
+
+  // Create a new project
+  createProject: async (data: ProjectCreateData) => {
+    return apiClient.post<ProjectData>('/api/projects/', data);
+  },
+
+  // Update a project
+  updateProject: async (projectId: string, data: ProjectUpdateData) => {
+    return apiClient.patch<ProjectData>(`/api/projects/${projectId}/`, data);
+  },
+
+  // Delete a project
+  deleteProject: async (projectId: string) => {
+    return apiClient.delete(`/api/projects/${projectId}/`);
+  },
+
+  // Get projects for a specific user
+  getUserProjects: async (userId: number) => {
+    return apiClient.get<{
+      count: number;
+      next: string | null;
+      previous: string | null;
+      results: ProjectData[];
+    }>(`/api/projects/user/${userId}/`);
+  },
+
+  // Team management
+  addTeamMember: async (projectId: string, data: AddTeamMemberData) => {
+    return apiClient.post(`/api/projects/${projectId}/team/add/`, data);
+  },
+
+  removeTeamMember: async (projectId: string, userId: number) => {
+    return apiClient.delete(`/api/projects/${projectId}/team/remove/${userId}/`);
+  },
+
+  // Invitations
+  getProjectInvitations: async (projectId: string) => {
+    return apiClient.get<ProjectInvitation[]>(`/api/projects/${projectId}/invitations/`);
+  },
+
+  createInvitation: async (projectId: string, data: ProjectInvitationCreate) => {
+    return apiClient.post<ProjectInvitation>(`/api/projects/${projectId}/invitations/`, data);
+  },
+
+  getMyInvitations: async () => {
+    return apiClient.get<ProjectInvitation[]>('/api/projects/invitations/me/');
+  },
+
+  respondToInvitation: async (invitationId: string, action: 'accept' | 'decline') => {
+    return apiClient.post(`/api/projects/invitations/${invitationId}/respond/`, { action });
+  },
+};

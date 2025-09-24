@@ -123,7 +123,87 @@ export interface User {
   bio?: string;
 }
 
-// Enhanced Project schema with Zod validation
+// Backend API Project types
+export interface ProjectUser {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+}
+
+export interface ProjectData {
+  id: string;
+  title: string;
+  owner: ProjectUser;
+  team_members: ProjectUser[];
+  project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
+  status: "concept" | "mvp" | "launched";
+  summary?: string;
+  needs: ("design" | "dev" | "marketing" | "research" | "funding" | "mentor")[];
+  categories: string[];
+  tags: string[];
+  preview_image?: string;
+  pitch_url?: string;
+  repo_url?: string;
+  visibility: "university" | "cross_university" | "public";
+  created_at: string;
+  updated_at: string;
+  team_count: number;
+  is_team_member: boolean;
+  can_edit: boolean;
+}
+
+export interface ProjectCreateData {
+  title: string;
+  project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
+  status?: "concept" | "mvp" | "launched";
+  summary?: string;
+  needs?: ("design" | "dev" | "marketing" | "research" | "funding" | "mentor")[];
+  categories?: string[];
+  tags?: string[];
+  preview_image?: string;
+  pitch_url?: string;
+  repo_url?: string;
+  visibility?: "university" | "cross_university" | "public";
+}
+
+export interface ProjectUpdateData {
+  title?: string;
+  project_type?: "startup" | "side_project" | "research" | "hackathon" | "course_project";
+  status?: "concept" | "mvp" | "launched";
+  summary?: string;
+  needs?: ("design" | "dev" | "marketing" | "research" | "funding" | "mentor")[];
+  categories?: string[];
+  tags?: string[];
+  preview_image?: string;
+  pitch_url?: string;
+  repo_url?: string;
+  visibility?: "university" | "cross_university" | "public";
+}
+
+export interface ProjectInvitation {
+  id: string;
+  project: ProjectData;
+  inviter: ProjectUser;
+  invitee: ProjectUser;
+  message?: string;
+  status: "pending" | "accepted" | "declined" | "cancelled";
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProjectInvitationCreate {
+  invitee_username: string;
+  message?: string;
+}
+
+export interface AddTeamMemberData {
+  username: string;
+}
+
+// Enhanced Project schema with Zod validation (kept for compatibility)
 export const Project = z.object({
   id: z.string().uuid(),
   ownerId: z.string().uuid(),

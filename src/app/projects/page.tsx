@@ -4,152 +4,60 @@ import { useState, useEffect } from 'react';
 import LeftNavigation from '../components/LeftNavigation';
 import RightExplore from '../components/RightExplore';
 import ProjectCard from '../components/ProjectCard';
-import ProjectComposer from '../components/ProjectComposer';
+import ProjectCreateForm from '../components/ProjectCreateForm';
 import { ThemeProvider } from '../components/ThemeProvider';
-import { Project } from '@/types';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { ProjectData } from '@/types';
+import { projectApi } from '@/lib/api';
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<(Project & { owner: { name: string; handle: string; avatar: string } })[]>([]);
-  const [showComposer, setShowComposer] = useState(false);
+  const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [showCreateForm, setShowCreateForm] = useState(false);
   const [filter, setFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('recent');
   const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data - replace with actual API calls
+  // Load projects from API
   useEffect(() => {
-    const mockProjects: (Project & { owner: { name: string; handle: string; avatar: string } })[] = [
-      {
-        id: '1',
-        ownerId: 'user1',
-        title: 'AI-Powered Study Assistant',
-        type: 'startup',
-        status: 'mvp',
-        summary: 'An intelligent study companion that helps students learn more effectively using personalized AI recommendations and spaced repetition algorithms.',
-        needs: ['funding', 'marketing', 'dev'],
-        categories: ['AI', 'EdTech'],
-        tags: ['machine-learning', 'education', 'productivity'],
-        previewImage: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500',
-        pitchUrl: 'https://youtube.com/watch?v=example',
-        repoUrl: 'https://github.com/user/study-assistant',
-        visibility: 'university',
-        createdAt: new Date('2024-01-15'),
-        updatedAt: new Date('2024-01-15'),
-        teamMembers: ['user2', 'user3'],
-        owner: {
-          name: 'Sarah Chen',
-          handle: 'sarahchen',
-          avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b167?w=100'
-        }
-      },
-      {
-        id: '2',
-        ownerId: 'user2',
-        title: 'Campus Food Delivery Platform',
-        type: 'side_project',
-        status: 'concept',
-        summary: 'A platform connecting students with local restaurants and campus dining options, featuring group ordering and cost-splitting functionality.',
-        needs: ['design', 'dev', 'marketing'],
-        categories: ['Food', 'Mobile App'],
-        tags: ['food-delivery', 'social', 'campus'],
-        visibility: 'cross_university',
-        createdAt: new Date('2024-01-10'),
-        updatedAt: new Date('2024-01-10'),
-        teamMembers: [],
-        owner: {
-          name: 'Alex Rodriguez',
-          handle: 'alexr',
-          avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100'
-        }
-      },
-      {
-        id: '3',
-        ownerId: 'user3',
-        title: 'Sustainable Fashion Marketplace',
-        type: 'startup',
-        status: 'launched',
-        summary: 'A peer-to-peer marketplace for students to buy, sell, and trade sustainable clothing. Promoting circular fashion economy on campus.',
-        needs: ['mentor', 'funding'],
-        categories: ['Fashion', 'Sustainability', 'E-commerce'],
-        tags: ['sustainability', 'fashion', 'marketplace', 'circular-economy'],
-        previewImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=500',
-        repoUrl: 'https://github.com/user/fashion-marketplace',
-        visibility: 'public',
-        createdAt: new Date('2023-12-20'),
-        updatedAt: new Date('2024-01-05'),
-        teamMembers: ['user4', 'user5', 'user6'],
-        owner: {
-          name: 'Emma Thompson',
-          handle: 'emmathompson',
-          avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100'
-        }
-      },
-      {
-        id: '4',
-        ownerId: 'user4',
-        title: 'Mental Health Check-in App',
-        type: 'research',
-        status: 'mvp',
-        summary: 'Research project studying the effectiveness of daily mental health check-ins and mood tracking for college students.',
-        needs: ['research', 'dev'],
-        categories: ['Mental Health', 'Research'],
-        tags: ['mental-health', 'research', 'wellbeing', 'students'],
-        visibility: 'university',
-        createdAt: new Date('2024-01-08'),
-        updatedAt: new Date('2024-01-12'),
-        teamMembers: ['user7'],
-        owner: {
-          name: 'Dr. Michael Kim',
-          handle: 'drmichaelkim',
-          avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100'
-        }
-      },
-      {
-        id: '5',
-        ownerId: 'user5',
-        title: 'Campus Event Discovery',
-        type: 'hackathon',
-        status: 'concept',
-        summary: 'Built during HackU 2024. An app that aggregates all campus events and helps students discover activities based on their interests.',
-        needs: ['design', 'marketing'],
-        categories: ['Social', 'Events'],
-        tags: ['events', 'campus', 'social', 'discovery'],
-        previewImage: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500',
-        pitchUrl: 'https://youtube.com/watch?v=example2',
-        visibility: 'cross_university',
-        createdAt: new Date('2024-01-01'),
-        updatedAt: new Date('2024-01-03'),
-        teamMembers: ['user8', 'user9'],
-        owner: {
-          name: 'James Wilson',
-          handle: 'jameswilson',
-          avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100'
+    loadProjects();
+  }, [filter, searchQuery]);
+
+  const loadProjects = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const params: any = {};
+      if (searchQuery) params.search = searchQuery;
+      if (filter !== 'all') {
+        // Map filter to appropriate parameter
+        if (['startup', 'side_project', 'research', 'hackathon', 'course_project'].includes(filter)) {
+          params.type = filter;
+        } else if (['concept', 'mvp', 'launched'].includes(filter)) {
+          params.status = filter;
         }
       }
-    ];
-    
-    setProjects(mockProjects);
-  }, []);
+      
+      const response = await projectApi.getProjects(params);
+      setProjects(response.results);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load projects');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const filteredProjects = projects.filter(project => {
-    const matchesFilter = filter === 'all' || project.type === filter || project.status === filter;
-    const matchesSearch = searchQuery === '' || 
-      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.categories.some(cat => cat.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      project.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    return matchesFilter && matchesSearch;
-  });
-
-  const sortedProjects = [...filteredProjects].sort((a, b) => {
+  // Sort projects based on selection
+  const sortedProjects = [...projects].sort((a, b) => {
     switch (sortBy) {
       case 'recent':
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       case 'popular':
-        // Mock popularity based on team size and activity
-        return (b.teamMembers.length + 1) - (a.teamMembers.length + 1);
+        return b.team_count - a.team_count;
       case 'alphabetical':
         return a.title.localeCompare(b.title);
       default:
@@ -157,23 +65,24 @@ export default function ProjectsPage() {
     }
   });
 
-  const handleProjectCreate = (project: Partial<Project>) => {
-    const newProject = {
-      ...project,
-      id: Date.now().toString(),
-      ownerId: 'current-user',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      teamMembers: [],
-      owner: {
-        name: 'Current User',
-        handle: 'currentuser',
-        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100'
-      }
-    } as Project & { owner: { name: string; handle: string; avatar: string } };
+  const handleProjectCreate = (project: ProjectData) => {
+    setProjects(prev => [project, ...prev]);
+    setShowCreateForm(false);
+  };
 
-    setProjects(prev => [newProject, ...prev]);
-    setShowComposer(false);
+  const handleProjectUpdate = (updatedProject: ProjectData) => {
+    setProjects(prev => prev.map(p => p.id === updatedProject.id ? updatedProject : p));
+  };
+
+  const handleProjectDelete = async (projectId: string) => {
+    if (!confirm('Are you sure you want to delete this project?')) return;
+    
+    try {
+      await projectApi.deleteProject(projectId);
+      setProjects(prev => prev.filter(p => p.id !== projectId));
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete project');
+    }
   };
 
   const filterOptions = [
@@ -195,7 +104,8 @@ export default function ProjectsPage() {
   ];
 
   return (
-    <ThemeProvider>
+    <ProtectedRoute>
+      <ThemeProvider>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
         {/* Mobile Header */}
         <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
@@ -216,7 +126,7 @@ export default function ProjectsPage() {
           </div>
 
           <button
-            onClick={() => setShowComposer(true)}
+            onClick={() => setShowCreateForm(true)}
             className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +159,7 @@ export default function ProjectsPage() {
                         </span>
                       </div>
                       <button
-                        onClick={() => setShowComposer(true)}
+                        onClick={() => setShowCreateForm(true)}
                         className="hidden lg:flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -306,16 +216,29 @@ export default function ProjectsPage() {
                     </div>
                   </div>
 
-                  {/* Projects Grid */}
-                  {sortedProjects.length > 0 ? (
+                  {/* Loading State */}
+                  {isLoading ? (
+                    <div className="flex justify-center items-center py-12">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    </div>
+                  ) : error ? (
+                    <div className="text-center py-12">
+                      <div className="text-red-500 mb-4">{error}</div>
+                      <button
+                        onClick={loadProjects}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        Try Again
+                      </button>
+                    </div>
+                  ) : sortedProjects.length > 0 ? (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                       {sortedProjects.map(project => (
                         <ProjectCard
                           key={project.id}
                           project={project}
-                          onLike={(projectId) => console.log('Liked project:', projectId)}
-                          onSave={(projectId) => console.log('Saved project:', projectId)}
-                          onJoinTeam={(projectId) => console.log('Join team:', projectId)}
+                          onUpdate={handleProjectUpdate}
+                          onDelete={handleProjectDelete}
                         />
                       ))}
                     </div>
@@ -331,7 +254,7 @@ export default function ProjectsPage() {
                       {!searchQuery && (
                         <div className="mt-6">
                           <button
-                            onClick={() => setShowComposer(true)}
+                            onClick={() => setShowCreateForm(true)}
                             className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                           >
                             <svg className="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -372,11 +295,11 @@ export default function ProjectsPage() {
           </div>
         </div>
 
-        {/* Project Composer Modal */}
-        {showComposer && (
-          <ProjectComposer
-            onProjectCreate={handleProjectCreate}
-            onClose={() => setShowComposer(false)}
+        {/* Project Create Form Modal */}
+        {showCreateForm && (
+          <ProjectCreateForm
+            onSuccess={handleProjectCreate}
+            onCancel={() => setShowCreateForm(false)}
           />
         )}
 
@@ -391,6 +314,7 @@ export default function ProjectsPage() {
           />
         )}
       </div>
-    </ThemeProvider>
+      </ThemeProvider>
+    </ProtectedRoute>
   );
 }

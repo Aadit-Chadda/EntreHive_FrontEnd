@@ -35,7 +35,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${rocaTwo.variable} ${canvaSans.variable} ${inter.variable} font-sans antialiased bg-gray-50`}
+        className={`${rocaTwo.variable} ${canvaSans.variable} ${inter.variable} font-sans antialiased`}
+        style={{backgroundColor: 'var(--background)'}}
       >
         <AuthProvider>
           <ConditionalLayout>

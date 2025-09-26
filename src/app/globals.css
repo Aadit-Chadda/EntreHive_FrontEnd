@@ -27,17 +27,22 @@
   --accent-navy: #000080;
   --neutral-light-orange: #fdeedb;
   --neutral-off-white: #F5F5F5;
+  --primary-white: #ffffff;
   
-  /* Theme Colors */
+  /* Light Theme Variables */
   --primary: var(--primary-orange);
   --primary-dark: var(--secondary-charcoal);
   --secondary: var(--accent-pine);
   --accent: var(--accent-terracotta);
   --background: var(--neutral-off-white);
-  --surface: #ffffff;
+  --surface: var(--primary-white);
   --text-primary: var(--primary-black);
   --text-secondary: var(--secondary-taupe);
+  --text-muted: var(--secondary-charcoal);
   --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --hover-bg: rgba(243, 172, 59, 0.1);
+  --active-bg: var(--neutral-light-orange);
 }
 
 @theme inline {
@@ -46,17 +51,40 @@
   --font-sans: var(--font-inter);
 }
 
+/* Dark Theme */
+.dark {
+  /* Dark Theme Variables */
+  --primary: var(--primary-orange);
+  --primary-dark: var(--accent-pine);
+  --secondary: var(--accent-terracotta);
+  --accent: var(--accent-pine);
+  --background: var(--primary-black);
+  --surface: var(--secondary-charcoal);
+  --text-primary: var(--primary-white);
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --border: #4b5563;
+  --border-light: #374151;
+  --hover-bg: rgba(243, 172, 59, 0.15);
+  --active-bg: rgba(33, 79, 56, 0.2);
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --secondary: #8b5cf6;
-    --accent: #fbbf24;
-    --background: #111827;
-    --surface: #1f2937;
-    --text-primary: #f9fafb;
+  :root:not(.light) {
+    /* Auto Dark Theme Variables */
+    --primary: var(--primary-orange);
+    --primary-dark: var(--accent-pine);
+    --secondary: var(--accent-terracotta);
+    --accent: var(--accent-pine);
+    --background: var(--primary-black);
+    --surface: var(--secondary-charcoal);
+    --text-primary: var(--primary-white);
     --text-secondary: #d1d5db;
-    --border: #374151;
+    --text-muted: #9ca3af;
+    --border: #4b5563;
+    --border-light: #374151;
+    --hover-bg: rgba(243, 172, 59, 0.15);
+    --active-bg: rgba(33, 79, 56, 0.2);
   }
 }
 
@@ -335,6 +363,46 @@ p, .body-text {
 
 .dark .post-card:hover {
   background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes hexagon-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(-1deg);
+  }
+}
+
+.animate-hexagon-float {
+  animation: hexagon-float 6s ease-in-out infinite;
+}
+
+.hexagon-pattern {
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(243, 172, 59, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 80% 50%, rgba(33, 79, 56, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 40% 20%, rgba(231, 159, 116, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 60% 80%, rgba(54, 69, 79, 0.1) 2px, transparent 2px);
+  background-size: 30px 30px, 40px 40px, 35px 35px, 45px 45px;
+  background-position: 0 0, 15px 15px, 5px 5px, 25px 25px;
 }
 
 /* Smooth scrolling */

@@ -60,20 +60,20 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
   ];
 
   const categories = [
-    { id: 'ai', name: 'AI', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300' },
-    { id: 'design', name: 'Design', color: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300' },
-    { id: 'research', name: 'Research', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' },
-    { id: 'startups', name: 'Startups', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' },
-    { id: 'fintech', name: 'FinTech', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300' },
-    { id: 'climate', name: 'Climate', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' },
+    { id: 'ai', name: 'AI', color: 'rgba(231, 159, 116, 0.2)', textColor: 'var(--accent-terracotta)' },
+    { id: 'design', name: 'Design', color: 'rgba(33, 79, 56, 0.2)', textColor: 'var(--accent-pine)' },
+    { id: 'research', name: 'Research', color: 'rgba(243, 172, 59, 0.2)', textColor: 'var(--primary-orange)' },
+    { id: 'startups', name: 'Startups', color: 'rgba(138, 107, 83, 0.2)', textColor: 'var(--secondary-taupe)' },
+    { id: 'fintech', name: 'FinTech', color: 'rgba(119, 11, 11, 0.2)', textColor: 'var(--secondary-red)' },
+    { id: 'climate', name: 'Climate', color: 'rgba(0, 0, 128, 0.2)', textColor: 'var(--accent-navy)' },
   ];
 
   return (
-    <div className="h-screen bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 overflow-y-auto">
+    <div className="h-screen overflow-y-auto" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
       {/* Header */}
-      <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 lg:hidden">
+      <div className="sticky top-0 p-4 lg:hidden" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Explore</h2>
+          <h2 className="text-lg font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Explore</h2>
           <button
             onClick={() => setShowRightPanel(false)}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -98,23 +98,38 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search EntreHive"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500 dark:placeholder-gray-400"
+            className="block w-full pl-10 pr-3 py-2 rounded-lg text-sm font-canva-sans focus:outline-none focus:ring-2 focus:border-transparent"
+            style={{
+              backgroundColor: 'var(--hover-bg)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-primary)',
+              '::placeholder': { color: 'var(--text-muted)' }
+            }}
+            onFocus={(e) => {
+              e.target.style.ring = '2px solid var(--primary-orange)';
+              e.target.style.borderColor = 'var(--primary-orange)';
+            }}
+            onBlur={(e) => {
+              e.target.style.ring = 'none';
+              e.target.style.borderColor = 'var(--border)';
+            }}
           />
         </div>
 
         {/* Browse Categories */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Browse Categories</h3>
+          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>Browse Categories</h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 ${
-                  selectedCategory === category.id
-                    ? 'ring-2 ring-blue-500 ' + category.color
-                    : category.color
-                }`}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium font-canva-sans transition-all duration-200 hover:scale-105`}
+                style={{
+                  backgroundColor: category.color,
+                  color: category.textColor,
+                  border: selectedCategory === category.id ? '2px solid var(--primary-orange)' : 'none'
+                }}
               >
                 #{category.name}
               </button>
@@ -124,15 +139,18 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
 
         {/* Recent Posts */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recent Posts</h3>
+          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>Recent Posts</h3>
           <div className="space-y-3">
             {recentPosts.map((post) => (
-              <div key={post.id} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
+              <div key={post.id} className="p-3 rounded-lg transition-colors cursor-pointer"
+                   style={{backgroundColor: 'var(--hover-bg)'}}
+                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-sm text-gray-900 dark:text-white">@{post.author}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{post.timestamp}</span>
+                  <span className="font-medium text-sm font-canva-sans" style={{color: 'var(--text-primary)'}}>@{post.author}</span>
+                  <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>{post.timestamp}</span>
                 </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">{post.content}</p>
+                <p className="text-sm font-canva-sans line-clamp-2" style={{color: 'var(--text-muted)'}}>{post.content}</p>
               </div>
             ))}
           </div>
@@ -140,10 +158,13 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
 
         {/* People to Follow */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">People to Follow</h3>
+          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>People to Follow</h3>
           <div className="space-y-3">
             {peopleToFollow.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+              <div key={person.id} className="flex items-center justify-between p-3 rounded-lg transition-colors"
+                   style={{backgroundColor: 'transparent'}}
+                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
                   <img
                     src={person.avatar}
@@ -151,12 +172,15 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
                     className="w-10 h-10 rounded-full object-cover"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-gray-900 dark:text-white truncate">{person.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">@{person.username}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-300 truncate">{person.bio}</p>
+                    <p className="font-medium text-sm font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>{person.name}</p>
+                    <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>@{person.username}</p>
+                    <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-muted)'}}>{person.bio}</p>
                   </div>
                 </div>
-                <button className="px-4 py-1.5 bg-blue-500 text-white text-xs font-medium rounded-full hover:bg-blue-600 transition-colors flex-shrink-0">
+                <button className="px-4 py-1.5 text-white text-xs font-medium font-canva-sans rounded-full transition-colors flex-shrink-0"
+                        style={{backgroundColor: 'var(--primary-orange)'}}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-terracotta)'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--primary-orange)'}>
                   Follow
                 </button>
               </div>
@@ -165,14 +189,14 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
         </div>
 
         {/* Footer Links */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
-            <a href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">About</a>
-            <a href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">Terms</a>
-            <a href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">Privacy</a>
-            <a href="#" className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors">Help</a>
+        <div className="pt-4" style={{borderTop: '1px solid var(--border)'}}>
+          <div className="flex flex-wrap gap-3 text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>
+            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>About</a>
+            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Terms</a>
+            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Privacy</a>
+            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Help</a>
           </div>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">© 2024 EntreHive</p>
+          <p className="text-xs font-canva-sans mt-2" style={{color: 'var(--text-muted)'}}>© 2024 EntreHive</p>
         </div>
       </div>
     </div>

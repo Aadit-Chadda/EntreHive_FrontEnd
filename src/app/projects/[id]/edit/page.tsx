@@ -233,7 +233,7 @@ export default function EditProjectPage() {
   return (
     <ProtectedRoute>
       <ThemeProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <div className="min-h-screen transition-colors duration-200" style={{backgroundColor: 'var(--background)'}}>
           {/* Mobile Header */}
           <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
             <button

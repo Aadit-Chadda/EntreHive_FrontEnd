@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import LeftNavigation from '../components/LeftNavigation';
 import RightExplore from '../components/RightExplore';
 import ProjectCard from '../components/ProjectCard';
@@ -136,12 +137,15 @@ export default function ProjectsPage() {
   return (
     <ProtectedRoute>
       <ThemeProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div className="min-h-screen transition-colors duration-200" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
           <button
             onClick={() => setShowMobileNav(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-lg transition-colors"
+            style={{color: 'var(--text-primary)'}}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -149,15 +153,24 @@ export default function ProjectsPage() {
           </button>
           
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">E</span>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+              <Image
+                src="/logo_w_name.png"
+                alt="EntreHive Logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-contain p-0.5"
+              />
             </div>
-            <span className="font-bold text-lg">Projects</span>
+            <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</span>
           </div>
 
           <button
             onClick={() => setShowCreateForm(true)}
-            className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="p-2 text-white rounded-lg transition-colors"
+            style={{backgroundColor: 'var(--primary-orange)'}}
+            onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-terracotta)'}
+            onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--primary-orange)'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -177,20 +190,31 @@ export default function ProjectsPage() {
           <div className="flex-1 min-h-screen pt-16 lg:pt-0 flex">
             {/* Main Projects Content - Takes maximum available space */}
             <div className="flex-1 min-w-0 max-w-none">
-              <div className="h-screen overflow-y-auto bg-gray-50 dark:bg-gray-900">
+              <div className="h-screen overflow-y-auto" style={{backgroundColor: 'var(--background)'}}>
                 {/* Header */}
-                <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+                <div className="sticky top-0 z-10" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
                   <div className="px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                       <div className="flex items-center space-x-4">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Projects</h1>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                        <h1 className="text-2xl font-bold font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</h1>
+                        <span className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
                           {sortedProjects.length} project{sortedProjects.length !== 1 ? 's' : ''}
                         </span>
                       </div>
                       <button
                         onClick={() => setShowCreateForm(true)}
-                        className="hidden lg:flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                        className="hidden lg:flex items-center space-x-2 px-4 py-2 text-white rounded-lg font-semibold font-canva-sans transition-all duration-300 shadow-lg"
+                        style={{backgroundColor: 'var(--primary-orange)'}}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(243, 172, 59, 0.3)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(243, 172, 59, 0.2)';
+                        }}
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -203,7 +227,7 @@ export default function ProjectsPage() {
 
                 <div className="px-4 sm:px-6 lg:px-8 py-6">
                   {/* Filters and Search */}
-                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 lg:p-6 mb-6">
+                  <div className="rounded-xl p-4 lg:p-6 mb-6 shadow-lg border-2" style={{backgroundColor: 'var(--surface)', borderColor: 'var(--border)', boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'}}>
                     <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:gap-4">
                       {/* Search */}
                       <div className="flex-1">
@@ -216,7 +240,20 @@ export default function ProjectsPage() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search projects, categories, or tags..."
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                            className="w-full pl-10 pr-4 py-2 rounded-lg text-sm font-canva-sans border-2 transition-all duration-300"
+                            style={{
+                              backgroundColor: 'var(--hover-bg)',
+                              borderColor: 'var(--border)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.target.style.borderColor = 'var(--primary-orange)';
+                              e.target.style.boxShadow = '0 0 0 3px rgba(243, 172, 59, 0.1)';
+                            }}
+                            onBlur={(e) => {
+                              e.target.style.borderColor = 'var(--border)';
+                              e.target.style.boxShadow = 'none';
+                            }}
                           />
                         </div>
                       </div>
@@ -226,7 +263,20 @@ export default function ProjectsPage() {
                         <select
                           value={filter}
                           onChange={(e) => setFilter(e.target.value)}
-                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="px-3 py-2 rounded-lg text-sm font-canva-sans border-2 transition-all duration-300"
+                          style={{
+                            backgroundColor: 'var(--hover-bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text-primary)'
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = 'var(--primary-orange)';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(243, 172, 59, 0.1)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = 'var(--border)';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         >
                           {filterOptions.map(option => (
                             <option key={option.value} value={option.value}>{option.label}</option>
@@ -236,7 +286,20 @@ export default function ProjectsPage() {
                         <select
                           value={sortBy}
                           onChange={(e) => setSortBy(e.target.value)}
-                          className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                          className="px-3 py-2 rounded-lg text-sm font-canva-sans border-2 transition-all duration-300"
+                          style={{
+                            backgroundColor: 'var(--hover-bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text-primary)'
+                          }}
+                          onFocus={(e) => {
+                            e.target.style.borderColor = 'var(--primary-orange)';
+                            e.target.style.boxShadow = '0 0 0 3px rgba(243, 172, 59, 0.1)';
+                          }}
+                          onBlur={(e) => {
+                            e.target.style.borderColor = 'var(--border)';
+                            e.target.style.boxShadow = 'none';
+                          }}
                         >
                           {sortOptions.map(option => (
                             <option key={option.value} value={option.value}>{option.label}</option>
@@ -249,14 +312,17 @@ export default function ProjectsPage() {
                   {/* Loading State */}
                   {isLoading ? (
                     <div className="flex justify-center items-center py-12">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{borderColor: 'var(--primary-orange)'}}></div>
                     </div>
                   ) : error ? (
                     <div className="text-center py-12">
-                      <div className="text-red-500 mb-4">{error}</div>
+                      <div className="mb-4 font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</div>
                       <button
                         onClick={loadProjects}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="px-4 py-2 text-white rounded-lg font-semibold font-canva-sans transition-all duration-300"
+                        style={{backgroundColor: 'var(--primary-orange)'}}
+                        onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-terracotta)'}
+                        onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--primary-orange)'}
                       >
                         Try Again
                       </button>
@@ -282,18 +348,21 @@ export default function ProjectsPage() {
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="mx-auto h-12 w-12" style={{color: 'var(--text-muted)'}} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                       </svg>
-                      <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No projects found</h3>
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      <h3 className="mt-2 text-sm font-medium font-roca-two" style={{color: 'var(--text-primary)'}}>No projects found</h3>
+                      <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
                         {searchQuery ? 'Try adjusting your search or filters.' : 'Get started by creating your first project.'}
                       </p>
                       {!searchQuery && (
                         <div className="mt-6">
                           <button
                             onClick={() => setShowCreateForm(true)}
-                            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            className="inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium font-canva-sans rounded-md text-white transition-all duration-300"
+                            style={{backgroundColor: 'var(--primary-orange)'}}
+                            onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-terracotta)'}
+                            onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--primary-orange)'}
                           >
                             <svg className="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -324,7 +393,10 @@ export default function ProjectsPage() {
             {/* Toggle button for right panel on lg screens */}
             <button
               onClick={() => setShowRightPanel(!showRightPanel)}
-              className="hidden lg:block xl:hidden fixed bottom-6 right-6 z-50 w-12 h-12 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 transition-all duration-200 hover:scale-105"
+              className="hidden lg:block xl:hidden fixed bottom-6 right-6 z-50 w-12 h-12 text-white rounded-full shadow-lg transition-all duration-200 hover:scale-105"
+              style={{backgroundColor: 'var(--primary-orange)'}}
+              onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-terracotta)'}
+              onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--primary-orange)'}
             >
               <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -344,7 +416,8 @@ export default function ProjectsPage() {
         {/* Overlay for mobile panels */}
         {(showMobileNav || showRightPanel) && (
           <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            className="fixed inset-0 z-30 lg:hidden"
+            style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
             onClick={() => {
               setShowMobileNav(false);
               setShowRightPanel(false);

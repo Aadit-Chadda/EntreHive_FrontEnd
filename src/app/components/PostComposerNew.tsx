@@ -134,12 +134,33 @@ export default function PostComposer({
   if (compact && !isExpanded) {
     return (
       <motion.button
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.02, y: -2 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setIsExpanded(true)}
-        className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-left text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-all"
+        className="w-full p-6 rounded-xl text-left font-canva-sans transition-all duration-300 shadow-sm border-2"
+        style={{
+          backgroundColor: 'var(--surface)',
+          borderColor: 'var(--border)',
+          color: 'var(--text-secondary)'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+          e.currentTarget.style.borderColor = 'var(--primary-orange)';
+          e.currentTarget.style.boxShadow = '0 8px 30px rgba(243, 172, 59, 0.15)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--surface)';
+          e.currentTarget.style.borderColor = 'var(--border)';
+          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+        }}
+        data-composer
       >
-        {placeholder}
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{backgroundColor: 'var(--primary-orange)'}}>
+            <span className="text-white font-bold font-roca-two">✨</span>
+          </div>
+          <span className="text-base">{placeholder}</span>
+        </div>
       </motion.button>
     );
   }
@@ -149,30 +170,65 @@ export default function PostComposer({
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 space-y-4"
+      className="rounded-xl p-6 space-y-5 shadow-lg border-2"
+      style={{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--primary-orange)',
+        boxShadow: '0 10px 40px rgba(243, 172, 59, 0.1)'
+      }}
+      data-composer
     >
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="font-medium text-gray-900 dark:text-white">Create Post</h3>
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{backgroundColor: 'var(--primary-orange)'}}>
+            <span className="text-white text-sm font-bold font-roca-two">📝</span>
+          </div>
+          <h3 className="font-semibold font-roca-two text-lg" style={{color: 'var(--text-primary)'}}>Create Post</h3>
+        </div>
         {compact && (
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={() => setIsExpanded(false)}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-full transition-colors"
+            style={{color: 'var(--text-muted)'}}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+              e.currentTarget.style.color = 'var(--secondary-red)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'var(--text-muted)';
+            }}
           >
-            <X className="w-4 h-4 text-gray-500" />
-          </button>
+            <X className="w-5 h-5" />
+          </motion.button>
         )}
       </div>
 
       {/* Content Input */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <motion.textarea
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder={placeholder}
           autoFocus={autoFocus}
-          className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
+          className="w-full p-4 rounded-xl resize-none transition-all duration-300 font-canva-sans text-base border-2"
+          style={{
+            backgroundColor: 'var(--hover-bg)',
+            borderColor: 'var(--border)',
+            color: 'var(--text-primary)'
+          }}
+          onFocus={(e) => {
+            e.target.style.borderColor = 'var(--primary-orange)';
+            e.target.style.boxShadow = '0 0 0 3px rgba(243, 172, 59, 0.1)';
+          }}
+          onBlur={(e) => {
+            e.target.style.borderColor = 'var(--border)';
+            e.target.style.boxShadow = 'none';
+          }}
           rows={4}
           maxLength={2000}
           initial={{ height: 100 }}
@@ -180,9 +236,14 @@ export default function PostComposer({
         />
         
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
             {content.length}/2000
           </span>
+          {content.length > 1900 && (
+            <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>
+              {2000 - content.length} characters remaining
+            </span>
+          )}
         </div>
       </div>
 
@@ -301,8 +362,8 @@ export default function PostComposer({
       </AnimatePresence>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between pt-5" style={{borderTop: '1px solid var(--border)'}}>
+        <div className="flex items-center gap-3">
           {/* Image upload */}
           <input
             ref={fileInputRef}
@@ -312,10 +373,25 @@ export default function PostComposer({
             className="hidden"
           />
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all"
+            className="p-3 rounded-xl transition-all duration-300 shadow-sm border"
+            style={{
+              backgroundColor: 'var(--hover-bg)',
+              borderColor: 'var(--border)',
+              color: 'var(--accent-terracotta)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--active-bg)';
+              e.currentTarget.style.borderColor = 'var(--accent-terracotta)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(231, 159, 116, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+              e.currentTarget.style.borderColor = 'var(--border)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            }}
             title="Add image"
           >
             <ImageIcon className="w-5 h-5" />
@@ -323,13 +399,28 @@ export default function PostComposer({
 
           {/* Project tagging */}
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.1, y: -2 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => {
               setShowProjectSelector(!showProjectSelector);
               if (!showProjectSelector) loadUserProjects();
             }}
-            className="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 transition-all"
+            className="p-3 rounded-xl transition-all duration-300 shadow-sm border"
+            style={{
+              backgroundColor: 'var(--hover-bg)',
+              borderColor: 'var(--border)',
+              color: 'var(--accent-pine)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--active-bg)';
+              e.currentTarget.style.borderColor = 'var(--accent-pine)';
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(33, 79, 56, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+              e.currentTarget.style.borderColor = 'var(--border)';
+              e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            }}
             title="Tag projects"
           >
             <Tag className="w-5 h-5" />
@@ -338,13 +429,28 @@ export default function PostComposer({
           {/* Visibility selector */}
           <div className="relative">
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowVisibilityDropdown(!showVisibilityDropdown)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+              className="flex items-center gap-2 px-4 py-3 rounded-xl transition-all duration-300 shadow-sm border"
+              style={{
+                backgroundColor: 'var(--hover-bg)',
+                borderColor: 'var(--border)',
+                color: 'var(--text-primary)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--active-bg)';
+                e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(243, 172, 59, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+              }}
             >
               <selectedVisibility.icon className="w-4 h-4" />
-              <span className="text-sm">{selectedVisibility.label}</span>
+              <span className="text-sm font-canva-sans font-medium">{selectedVisibility.label}</span>
             </motion.button>
 
             <AnimatePresence>
@@ -390,18 +496,36 @@ export default function PostComposer({
 
         {/* Submit button */}
         <motion.button
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleSubmit}
           disabled={!content.trim() || isSubmitting}
-          className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
+          className="flex items-center gap-3 px-8 py-3 text-white rounded-xl font-semibold font-canva-sans transition-all duration-300 shadow-lg disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: !content.trim() || isSubmitting ? 'var(--text-muted)' : 'var(--primary-orange)',
+            boxShadow: !content.trim() || isSubmitting ? 'none' : '0 4px 16px rgba(243, 172, 59, 0.3)'
+          }}
+          onMouseEnter={(e) => {
+            if (!e.currentTarget.disabled) {
+              e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(231, 159, 116, 0.4)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!e.currentTarget.disabled) {
+              e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(243, 172, 59, 0.3)';
+            }
+          }}
         >
           {isSubmitting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           )}
-          {isSubmitting ? 'Posting...' : 'Post'}
+          <span className="text-base">
+            {isSubmitting ? 'Sharing...' : 'Share Post'}
+          </span>
         </motion.button>
       </div>
     </motion.div>

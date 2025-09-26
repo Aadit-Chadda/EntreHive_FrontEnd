@@ -73,17 +73,45 @@ export default function ProjectDetailsPage() {
     course_project: 'Course Project',
   };
 
-  const STATUS_COLORS: Record<string, string> = {
-    concept: 'bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800',
-    mvp: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
-    launched: 'bg-green-50 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800',
+  const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+    concept: { 
+      bg: 'rgba(243, 172, 59, 0.1)', 
+      text: 'var(--primary-orange)', 
+      border: 'var(--primary-orange)' 
+    },
+    mvp: { 
+      bg: 'rgba(33, 79, 56, 0.1)', 
+      text: 'var(--accent-pine)', 
+      border: 'var(--accent-pine)' 
+    },
+    launched: { 
+      bg: 'rgba(231, 159, 116, 0.1)', 
+      text: 'var(--accent-terracotta)', 
+      border: 'var(--accent-terracotta)' 
+    },
   };
 
-  const VISIBILITY_COLORS: Record<string, string> = {
-    private: 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600',
-    university: 'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800',
-    cross_university: 'bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800',
-    public: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
+  const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+    private: { 
+      bg: 'rgba(54, 69, 79, 0.1)', 
+      text: 'var(--secondary-charcoal)', 
+      border: 'var(--secondary-charcoal)' 
+    },
+    university: { 
+      bg: 'rgba(119, 11, 11, 0.1)', 
+      text: 'var(--secondary-red)', 
+      border: 'var(--secondary-red)' 
+    },
+    cross_university: { 
+      bg: 'rgba(0, 0, 128, 0.1)', 
+      text: 'var(--accent-navy)', 
+      border: 'var(--accent-navy)' 
+    },
+    public: { 
+      bg: 'rgba(33, 79, 56, 0.1)', 
+      text: 'var(--accent-pine)', 
+      border: 'var(--accent-pine)' 
+    },
   };
 
   const VISIBILITY_ICONS: Record<string, string> = {
@@ -97,7 +125,7 @@ export default function ProjectDetailsPage() {
     return (
       <ProtectedRoute>
         <ThemeProvider>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: 'var(--background)'}}>
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <p className="text-gray-600 dark:text-gray-400">Loading project...</p>
@@ -112,7 +140,7 @@ export default function ProjectDetailsPage() {
     return (
       <ProtectedRoute>
         <ThemeProvider>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: 'var(--background)'}}>
             <div className="text-center">
               <div className="text-red-500 mb-4">
                 <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

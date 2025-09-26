@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ThemeToggle } from './ThemeProvider';
 
 interface LeftNavigationProps {
@@ -26,39 +27,74 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
     <>
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex lg:w-64 xl:w-72 lg:flex-shrink-0">
-        <div className="flex flex-col w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+        <div className="flex flex-col w-full relative overflow-hidden" style={{backgroundColor: 'var(--surface)', borderRight: '1px solid var(--border)'}}>
+          {/* Hexagon decorative background */}
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <div className="hexagon-pattern h-full w-full"></div>
+          </div>
+          
+          {/* Floating hexagons */}
+          <div className="absolute top-20 right-4 w-6 h-6 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--primary-orange)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '0s'}}></div>
+          <div className="absolute top-40 left-2 w-4 h-4 opacity-15 animate-hexagon-float" style={{backgroundColor: 'var(--accent-pine)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '2s'}}></div>
+          <div className="absolute bottom-32 right-2 w-5 h-5 opacity-25 animate-hexagon-float" style={{backgroundColor: 'var(--accent-terracotta)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '4s'}}></div>
+          <div className="absolute top-1/2 left-4 w-3 h-3 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--secondary-taupe)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 left-8 w-4 h-4 opacity-30 animate-hexagon-float" style={{backgroundColor: 'var(--accent-navy)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '3s'}}></div>
           {/* Logo */}
-          <div className="flex items-center flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center flex-shrink-0 px-6 py-4 relative z-10" style={{borderBottom: '1px solid var(--border)'}}>
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">E</span>
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+                <Image
+                  src="/logo_w_name.png"
+                  alt="EntreHive Logo"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain p-1"
+                />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-xl text-gray-900 dark:text-white">EntreHive</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400">Student Network</span>
+                <span className="font-bold text-xl font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
+                <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>Student Network</span>
               </div>
             </div>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="flex-1 px-4 py-6 space-y-2 relative z-10">
             {navItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
                 onClick={() => setActiveItem(item.id)}
                 className={`
-                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative
+                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-200 relative
                   ${activeItem === item.id 
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shadow-sm' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white'
+                    ? 'shadow-sm' 
+                    : 'hover:text-gray-900 dark:hover:text-white'
                   }
                 `}
+                style={{
+                  backgroundColor: activeItem === item.id ? 'var(--active-bg)' : 'transparent',
+                  color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-secondary)',
+                  '&:hover': {
+                    backgroundColor: 'var(--hover-bg)'
+                  }
+                }}
+                onMouseEnter={(e) => {
+                  if (activeItem !== item.id) {
+                    e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeItem !== item.id) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
               >
                 <svg
-                  className={`mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${
-                    activeItem === item.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 group-hover:text-gray-500'
-                  }`}
+                  className={`mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-110`}
+                  style={{
+                    color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-muted)'
+                  }}
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -70,26 +106,29 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 </svg>
                 <span className="truncate">{item.label}</span>
                 {activeItem === item.id && (
-                  <div className="absolute right-2 w-1.5 h-1.5 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                  <div className="absolute right-2 w-1.5 h-1.5 rounded-full" style={{backgroundColor: 'var(--primary-orange)'}}></div>
                 )}
               </Link>
             ))}
           </nav>
 
           {/* Theme Toggle & User Info */}
-          <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 space-y-4">
+          <div className="flex-shrink-0 p-4 space-y-4" style={{borderTop: '1px solid var(--border)'}}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+              <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
               <ThemeToggle />
             </div>
             
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">JD</span>
+            <div className="flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer" 
+                 style={{backgroundColor: 'var(--hover-bg)'}}
+                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
+                <span className="text-white font-semibold text-sm font-roca-two">JD</span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">John Doe</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">@johndoe</p>
+                <p className="text-sm font-medium font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>John Doe</p>
+                <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>@johndoe</p>
               </div>
             </div>
           </div>
@@ -101,14 +140,29 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
         lg:hidden fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out
         ${showMobileNav ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <div className="flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-xl">
+        <div className="flex flex-col h-full shadow-xl relative overflow-hidden" style={{backgroundColor: 'var(--surface)', borderRight: '1px solid var(--border)'}}>
+          {/* Mobile hexagon decorations */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none">
+            <div className="hexagon-pattern h-full w-full"></div>
+          </div>
+          
+          {/* Mobile floating hexagons */}
+          <div className="absolute top-16 right-3 w-4 h-4 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--primary-orange)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '0s'}}></div>
+          <div className="absolute top-32 left-2 w-3 h-3 opacity-15 animate-hexagon-float" style={{backgroundColor: 'var(--accent-pine)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '1.5s'}}></div>
+          <div className="absolute bottom-24 right-2 w-3 h-3 opacity-25 animate-hexagon-float" style={{backgroundColor: 'var(--accent-terracotta)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '3s'}}></div>
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between px-4 py-4 relative z-10" style={{borderBottom: '1px solid var(--border)'}}>
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">E</span>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+                <Image
+                  src="/logo_w_name.png"
+                  alt="EntreHive Logo"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain p-1"
+                />
               </div>
-              <span className="font-bold text-lg text-gray-900 dark:text-white">EntreHive</span>
+              <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
             </div>
             <button
               onClick={() => setShowMobileNav(false)}
@@ -121,7 +175,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto relative z-10">
             {navItems.map((item) => (
               <Link
                 key={item.id}
@@ -131,17 +185,28 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                   setShowMobileNav(false);
                 }}
                 className={`
-                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
-                  ${activeItem === item.id 
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
-                  }
+                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-200
                 `}
+                style={{
+                  backgroundColor: activeItem === item.id ? 'var(--active-bg)' : 'transparent',
+                  color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                }}
+                onMouseEnter={(e) => {
+                  if (activeItem !== item.id) {
+                    e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (activeItem !== item.id) {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }
+                }}
               >
                 <svg
-                  className={`mr-3 h-5 w-5 ${
-                    activeItem === item.id ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'
-                  }`}
+                  className={`mr-3 h-5 w-5`}
+                  style={{
+                    color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-muted)'
+                  }}
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -157,9 +222,9 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
           </nav>
 
           {/* Theme Toggle */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+          <div className="p-4" style={{borderTop: '1px solid var(--border)'}}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+              <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
               <ThemeToggle />
             </div>
           </div>

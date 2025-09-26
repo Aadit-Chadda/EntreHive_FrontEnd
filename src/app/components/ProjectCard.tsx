@@ -20,17 +20,45 @@ const PROJECT_TYPE_LABELS: Record<string, string> = {
   course_project: 'Course Project',
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  concept: 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800',
-  mvp: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800',
-  launched: 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800',
+const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  concept: { 
+    bg: 'rgba(243, 172, 59, 0.1)', 
+    text: 'var(--primary-orange)', 
+    border: 'var(--primary-orange)' 
+  },
+  mvp: { 
+    bg: 'rgba(33, 79, 56, 0.1)', 
+    text: 'var(--accent-pine)', 
+    border: 'var(--accent-pine)' 
+  },
+  launched: { 
+    bg: 'rgba(231, 159, 116, 0.1)', 
+    text: 'var(--accent-terracotta)', 
+    border: 'var(--accent-terracotta)' 
+  },
 };
 
-const VISIBILITY_COLORS: Record<string, string> = {
-  private: 'bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600',
-  university: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800',
-  cross_university: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800',
-  public: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800',
+const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  private: { 
+    bg: 'rgba(54, 69, 79, 0.1)', 
+    text: 'var(--secondary-charcoal)', 
+    border: 'var(--secondary-charcoal)' 
+  },
+  university: { 
+    bg: 'rgba(119, 11, 11, 0.1)', 
+    text: 'var(--secondary-red)', 
+    border: 'var(--secondary-red)' 
+  },
+  cross_university: { 
+    bg: 'rgba(0, 0, 128, 0.1)', 
+    text: 'var(--accent-navy)', 
+    border: 'var(--accent-navy)' 
+  },
+  public: { 
+    bg: 'rgba(33, 79, 56, 0.1)', 
+    text: 'var(--accent-pine)', 
+    border: 'var(--accent-pine)' 
+  },
 };
 
 const VISIBILITY_ICONS: Record<string, React.ReactElement> = {
@@ -110,7 +138,20 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
 
   return (
     <Link href={`/projects/${project.id}`} className="block group">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg dark:shadow-gray-900/20 border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]">
+      <div className="rounded-2xl shadow-sm hover:shadow-lg overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] border-2" 
+           style={{
+             backgroundColor: 'var(--surface)',
+             borderColor: 'var(--border)',
+             boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)'
+           }}
+           onMouseEnter={(e) => {
+             e.currentTarget.style.borderColor = 'var(--primary-orange)';
+             e.currentTarget.style.boxShadow = '0 8px 32px rgba(243, 172, 59, 0.2)';
+           }}
+           onMouseLeave={(e) => {
+             e.currentTarget.style.borderColor = 'var(--border)';
+             e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
+           }}>
         {/* Header with Preview Image or Gradient */}
         <div className="relative h-48 overflow-hidden">
           {project.preview_image ? (
@@ -126,7 +167,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             </>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 relative">
+            <div className="w-full h-full relative" style={{background: 'linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-terracotta) 50%, var(--accent-pine) 100%)'}}>
               <div className="absolute inset-0 opacity-20">
                 <div className="absolute inset-0" style={{ 
                   backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
@@ -137,11 +178,21 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
           
           {/* Floating Badges */}
           <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${STATUS_COLORS[project.status]}`}>
+            <span className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
+                  style={{
+                    backgroundColor: STATUS_COLORS[project.status].bg,
+                    color: STATUS_COLORS[project.status].text,
+                    borderColor: STATUS_COLORS[project.status].border
+                  }}>
               <span className="w-1.5 h-1.5 rounded-full bg-current mr-1"></span>
               {project.status.toUpperCase()}
             </span>
-            <span className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-full border backdrop-blur-sm ${VISIBILITY_COLORS[project.visibility]}`}>
+            <span className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
+                  style={{
+                    backgroundColor: VISIBILITY_COLORS[project.visibility].bg,
+                    color: VISIBILITY_COLORS[project.visibility].text,
+                    borderColor: VISIBILITY_COLORS[project.visibility].border
+                  }}>
               {VISIBILITY_ICONS[project.visibility]}
               <span className="ml-1">
                 {project.visibility === 'private' ? 'Private' : 
@@ -181,7 +232,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
         <div className="p-6 space-y-4">
           {/* Summary */}
           {project.summary && (
-            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed line-clamp-3">
+            <p className="text-sm leading-relaxed line-clamp-3 font-canva-sans" style={{color: 'var(--text-secondary)'}}>
               {project.summary}
             </p>
           )}
@@ -190,10 +241,10 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
           {project.needs.length > 0 && (
             <div>
               <div className="flex items-center mb-2">
-                <svg className="w-4 h-4 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-red)'}}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Looking for</span>
+                <span className="text-xs font-medium font-canva-sans uppercase tracking-wider" style={{color: 'var(--text-muted)'}}>Looking for</span>
               </div>
               <div className="flex flex-wrap gap-1">
                 {project.needs.slice(0, 3).map(need => (
@@ -358,7 +409,14 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
                     e.stopPropagation();
                     router.push(`/projects/${project.id}/edit`);
                   }}
-                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-md border transition-colors"
+                  style={{
+                    backgroundColor: 'rgba(33, 79, 56, 0.1)',
+                    color: 'var(--accent-pine)',
+                    borderColor: 'var(--accent-pine)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(33, 79, 56, 0.2)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(33, 79, 56, 0.1)'}
                 >
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -368,7 +426,14 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
                 <button
                   onClick={handleDelete}
                   disabled={isDeleting}
-                  className="inline-flex items-center px-2 py-1 text-xs font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-md border transition-colors disabled:opacity-50"
+                  style={{
+                    backgroundColor: 'rgba(119, 11, 11, 0.1)',
+                    color: 'var(--secondary-red)',
+                    borderColor: 'var(--secondary-red)'
+                  }}
+                  onMouseEnter={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'rgba(119, 11, 11, 0.2)')}
+                  onMouseLeave={(e) => !e.currentTarget.disabled && (e.currentTarget.style.backgroundColor = 'rgba(119, 11, 11, 0.1)')}
                 >
                   <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

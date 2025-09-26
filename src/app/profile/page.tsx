@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import PostCard from '../components/PostCard';
+import PostCardNew from '../components/PostCardNew';
 import ProjectCard from '../components/ProjectCard';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
-import { User, Post, Project, UserProfile, ProfileUpdateData } from '@/types';
+import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData } from '@/types';
 import { ApiError } from '@/lib/api';
 
 export default function ProfilePage() {
@@ -68,8 +68,7 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  // TODO: Replace with actual API calls for posts and projects
-  const [userPosts, setUserPosts] = useState<Post[]>([]);
+  // TODO: Replace with actual API calls for projects  
   const [userProjects, setUserProjects] = useState<(Project & { owner: { name: string; handle: string; avatar: string } })[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -688,7 +687,7 @@ export default function ProfilePage() {
                       : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                   }`}
                 >
-                  Posts ({userPosts.length})
+                  Posts ({profile?.user_posts?.length || 0})
                 </button>
                 <button
                   onClick={() => setActiveTab('projects')}
@@ -707,25 +706,48 @@ export default function ProfilePage() {
             <div className="p-6">
               {activeTab === 'posts' && (
                 <div className="space-y-6">
-                  {userPosts.length > 0 ? (
-                    userPosts.map(post => (
-                      <div key={post.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-                        <PostCard
-                          post={{
-                            ...post,
-                            author: {
-                              name: profile.full_name || profile.username,
-                              username: profile.username,
-                              avatar: profile.profile_picture || '',
-                            },
-                            timestamp: new Date(post.createdAt),
-                            isFollowing: false
-                          }}
-                          onLike={(postId) => console.log('Liked post:', postId)}
-                          onFollow={(postId) => console.log('Followed user from post:', postId)}
-                        />
-                      </div>
-                    ))
+                  {profile?.user_posts && profile.user_posts.length > 0 ? (
+                    profile.user_posts.map(postSummary => {
+                      // Convert PostSummary to PostData format for PostCardNew
+                      const postData: PostData = {
+                        id: postSummary.id,
+                        author: {
+                          id: profile.id,
+                          username: profile.username,
+                          full_name: profile.full_name || profile.username,
+                          profile_picture: profile.profile_picture,
+                          user_role: profile.user_role
+                        },
+                        content: postSummary.content,
+                        image_url: postSummary.image_url,
+                        visibility: postSummary.visibility,
+                        tagged_projects: [], // Will be populated from API if needed
+                        is_edited: postSummary.is_edited,
+                        likes_count: postSummary.likes_count,
+                        comments_count: postSummary.comments_count,
+                        is_liked: false, // Will be determined by API
+                        can_edit: true, // User can edit their own posts
+                        can_delete: true, // User can delete their own posts
+                        created_at: postSummary.created_at,
+                        updated_at: postSummary.created_at
+                      };
+
+                      return (
+                        <div key={postSummary.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                          <PostCardNew
+                            post={postData}
+                            onPostUpdate={(updatedPost) => {
+                              // Refresh profile to get updated posts
+                              refreshProfile();
+                            }}
+                            onPostDelete={(deletedPostId) => {
+                              // Refresh profile to remove deleted post
+                              refreshProfile();
+                            }}
+                          />
+                        </div>
+                      );
+                    })
                   ) : (
                     <div className="text-center py-12">
                       <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

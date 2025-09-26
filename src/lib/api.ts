@@ -1,5 +1,5 @@
 // API configuration and utilities
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 export interface ApiError {
   message: string;
@@ -130,6 +130,22 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
+  async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    const headers: Record<string, string> = {};
+    
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    return this.handleResponse<T>(response);
+  }
+
   private async refreshToken(refreshToken: string): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/api/auth/token/refresh/`, {
@@ -153,7 +169,10 @@ export class ApiClient {
 export const apiClient = new ApiClient();
 
 // Project API functions
-import { ProjectData, ProjectCreateData, ProjectUpdateData, ProjectInvitation, ProjectInvitationCreate, AddTeamMemberData } from '@/types';
+import { 
+  ProjectData, ProjectCreateData, ProjectUpdateData, ProjectInvitation, ProjectInvitationCreate, AddTeamMemberData,
+  PostData, PostCreateData, PostUpdateData, PostComment, CommentCreateData, PostLike, PostsResponse 
+} from '@/types';
 
 export const projectApi = {
   // Get all projects with filtering
@@ -236,5 +255,148 @@ export const projectApi = {
 
   respondToInvitation: async (invitationId: string, action: 'accept' | 'decline') => {
     return apiClient.post(`/api/projects/invitations/${invitationId}/respond/`, { action });
+  },
+};
+
+// Posts API
+export const postsApi = {
+  // Get posts feed
+  getPosts: async (params?: {
+    page?: number;
+    page_size?: number;
+    search?: string;
+    visibility?: string;
+    author__profile__user_role?: string;
+    ordering?: string;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<PostsResponse>(`/api/posts/${query ? `?${query}` : ''}`);
+  },
+
+  // Get single post
+  getPost: async (postId: string) => {
+    return apiClient.get<PostData>(`/api/posts/${postId}/`);
+  },
+
+  // Create post
+  createPost: async (data: PostCreateData) => {
+    if (data.image) {
+      // Handle file upload
+      const formData = new FormData();
+      formData.append('content', data.content);
+      if (data.visibility) formData.append('visibility', data.visibility);
+      if (data.tagged_project_ids && data.tagged_project_ids.length > 0) {
+        // Append each project ID individually for proper array handling
+        data.tagged_project_ids.forEach(projectId => {
+          formData.append('tagged_project_ids', projectId);
+        });
+      }
+      formData.append('image', data.image);
+      
+      return apiClient.postFormData<PostData>('/api/posts/', formData);
+    } else {
+      // Filter out empty arrays to avoid sending empty tagged_project_ids
+      const postPayload: any = {
+        content: data.content,
+        visibility: data.visibility,
+      };
+      
+      if (data.tagged_project_ids && data.tagged_project_ids.length > 0) {
+        postPayload.tagged_project_ids = data.tagged_project_ids;
+      }
+      
+      return apiClient.post<PostData>('/api/posts/', postPayload);
+    }
+  },
+
+  // Update post
+  updatePost: async (postId: string, data: PostUpdateData) => {
+    return apiClient.patch<PostData>(`/api/posts/${postId}/`, data);
+  },
+
+  // Delete post
+  deletePost: async (postId: string) => {
+    return apiClient.delete(`/api/posts/${postId}/`);
+  },
+
+  // Like/unlike post
+  toggleLike: async (postId: string) => {
+    return apiClient.post<{
+      message: string;
+      liked: boolean;
+      likes_count: number;
+    }>(`/api/posts/${postId}/like/`);
+  },
+
+  // Get post likes
+  getPostLikes: async (postId: string) => {
+    return apiClient.get<PostLike[]>(`/api/posts/${postId}/likes/`);
+  },
+
+  // Share post
+  sharePost: async (postId: string) => {
+    return apiClient.post<{
+      message: string;
+      share_url: string;
+    }>(`/api/posts/${postId}/share/`);
+  },
+
+  // Get my posts
+  getMyPosts: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<PostsResponse>(`/api/posts/my_posts/${query ? `?${query}` : ''}`);
+  },
+
+  // Get personalized feed
+  getFeed: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<PostsResponse>(`/api/posts/feed/${query ? `?${query}` : ''}`);
+  },
+};
+
+// Comments API
+export const commentsApi = {
+  // Get comments for a post
+  getComments: async (postId: string) => {
+    return apiClient.get<PostComment[]>(`/api/posts/${postId}/comments/`);
+  },
+
+  // Create comment
+  createComment: async (postId: string, data: CommentCreateData) => {
+    return apiClient.post<PostComment>(`/api/posts/${postId}/comments/`, data);
+  },
+
+  // Update comment
+  updateComment: async (postId: string, commentId: string, data: { content: string }) => {
+    return apiClient.patch<PostComment>(`/api/posts/${postId}/comments/${commentId}/`, data);
+  },
+
+  // Delete comment
+  deleteComment: async (postId: string, commentId: string) => {
+    return apiClient.delete(`/api/posts/${postId}/comments/${commentId}/`);
   },
 };

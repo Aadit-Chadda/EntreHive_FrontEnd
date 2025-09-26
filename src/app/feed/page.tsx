@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '../components/LeftNavigation';
-import MainFeed from '../components/MainFeed';
+import MainFeedNew from '../components/MainFeedNew';
 import RightExplore from '../components/RightExplore';
 import FloatingComposer from '../components/FloatingComposer';
 import { ThemeProvider } from '../components/ThemeProvider';
@@ -57,7 +57,7 @@ export default function Feed() {
           <div className="flex-1 min-h-screen pt-16 lg:pt-0 flex">
             {/* Main Feed - Takes maximum available space */}
             <div className="flex-1 min-w-0 max-w-none">
-              <MainFeed />
+              <MainFeedNew feedType="home" showComposer={true} />
             </div>
 
             {/* Right Explore Panel */}

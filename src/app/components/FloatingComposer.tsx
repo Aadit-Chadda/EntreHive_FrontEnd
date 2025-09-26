@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import PostComposerNew from './PostComposerNew';
 
 interface FloatingComposerProps {
   isOpen: boolean;
@@ -8,158 +8,38 @@ interface FloatingComposerProps {
 }
 
 export default function FloatingComposer({ isOpen, onClose }: FloatingComposerProps) {
-  const [content, setContent] = useState('');
-  const [image, setImage] = useState<string | null>(null);
-  const [visibility, setVisibility] = useState<'public' | 'followers' | 'private'>('public');
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleSubmit = () => {
-    if (!content.trim()) return;
-    
-    // Here you would typically call an API to create the post
-    console.log('Creating post:', { content, image, visibility });
-    
-    // Reset form and close modal
-    setContent('');
-    setImage(null);
-    setVisibility('public');
+  const handlePostCreated = () => {
     onClose();
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImage(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+    // You could add a callback to refresh the feed here if needed
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative bg-white dark:bg-gray-800 w-full sm:max-w-lg mx-4 rounded-t-2xl sm:rounded-2xl shadow-xl transform transition-all max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Create Post</h3>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={onClose}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Create Post</h2>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
 
         {/* Content */}
-        <div className="p-4 max-h-[calc(90vh-140px)] overflow-y-auto">
-          <div className="flex space-x-3">
-            {/* User Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold text-sm">JD</span>
-              </div>
-            </div>
-
-            {/* Composer */}
-            <div className="flex-1">
-              <textarea
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="What's happening?"
-                className="w-full resize-none border-none outline-none text-lg placeholder-gray-500 dark:placeholder-gray-400 bg-transparent text-gray-900 dark:text-white min-h-[120px]"
-                autoFocus
-              />
-
-              {/* Character count */}
-              <div className="text-xs text-gray-400 text-right mb-4">
-                {content.length}/280
-              </div>
-
-              {/* Image Preview */}
-              {image && (
-                <div className="mb-4 relative">
-                  <img 
-                    src={image} 
-                    alt="Upload preview" 
-                    className="max-h-64 w-full rounded-lg object-cover"
-                  />
-                  <button
-                    onClick={() => setImage(null)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-70 transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              )}
-
-              {/* Controls */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-4">
-                  {/* Attachment Button */}
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
-                    title="Add image"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </button>
-
-                  {/* Visibility Selector */}
-                  <div className="relative">
-                    <select
-                      value={visibility}
-                      onChange={(e) => setVisibility(e.target.value as any)}
-                      className="appearance-none bg-transparent border border-gray-300 dark:border-gray-600 rounded-full px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8"
-                    >
-                      <option value="public">Public</option>
-                      <option value="followers">Followers</option>
-                      <option value="private">Private</option>
-                    </select>
-                    <svg className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Post Button */}
-                <button
-                  onClick={handleSubmit}
-                  disabled={!content.trim()}
-                  className="px-6 py-2 bg-blue-500 text-white rounded-full font-medium text-sm hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="p-4">
+          <PostComposerNew 
+            onPostCreated={handlePostCreated}
+            placeholder="What's happening in your projects?"
+            autoFocus={true}
+            compact={false}
+          />
         </div>
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          className="hidden"
-        />
       </div>
     </div>
   );

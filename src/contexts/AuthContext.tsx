@@ -3,11 +3,11 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
-import { AuthUser, LoginResponse, UserProfile } from '@/types';
+import { AuthUser, LoginResponse, UserProfile, EnhancedUserProfile } from '@/types';
 
 interface AuthContextType {
   user: AuthUser | null;
-  profile: UserProfile | null;
+  profile: EnhancedUserProfile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -32,7 +32,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profile, setProfile] = useState<EnhancedUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       // Get user profile to verify token and get user data
-      const profileData = await apiClient.get<UserProfile>('/api/accounts/profile/me/');
+      const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
       setProfile(profileData);
       
       // Create AuthUser from profile data
@@ -114,7 +114,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refreshProfile = async (): Promise<void> => {
     try {
-      const profileData = await apiClient.get<UserProfile>('/api/accounts/profile/me/');
+      const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
       setProfile(profileData);
       
       // Update user data from profile

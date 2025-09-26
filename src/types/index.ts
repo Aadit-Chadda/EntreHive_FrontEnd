@@ -293,3 +293,119 @@ export interface NotificationItem {
   read: boolean;
   content: string;
 }
+
+// New Posts API Types
+export interface PostAuthor {
+  id: number;
+  username: string;
+  full_name: string;
+  profile_picture?: string;
+  user_role: UserRole;
+}
+
+export interface PostProject {
+  id: string;
+  title: string;
+  project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
+  status: "concept" | "mvp" | "launched";
+}
+
+export interface PostComment {
+  id: string;
+  author: PostAuthor;
+  content: string;
+  parent?: string;
+  is_edited: boolean;
+  created_at: string;
+  updated_at: string;
+  replies: PostComment[];
+  replies_count: number;
+  can_edit: boolean;
+  can_delete: boolean;
+}
+
+export interface PostData {
+  id: string;
+  author: PostAuthor;
+  content: string;
+  image_url?: string;
+  visibility: "public" | "university" | "private";
+  tagged_projects: PostProject[];
+  is_edited: boolean;
+  likes_count: number;
+  comments_count: number;
+  is_liked: boolean;
+  comments?: PostComment[];
+  can_edit: boolean;
+  can_delete: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PostCreateData {
+  content: string;
+  visibility?: "public" | "university" | "private";
+  tagged_project_ids?: string[];
+  image?: File;
+}
+
+export interface PostUpdateData {
+  content?: string;
+  visibility?: "public" | "university" | "private";
+  tagged_project_ids?: string[];
+}
+
+export interface CommentCreateData {
+  content: string;
+  parent?: string;
+}
+
+export interface PostLike {
+  id: string;
+  user: PostAuthor;
+  created_at: string;
+}
+
+export interface PostsResponse {
+  count: number;
+  next?: string;
+  previous?: string;
+  results: PostData[];
+}
+
+// Enhanced Profile Types with Posts and Projects
+export interface PostSummary {
+  id: string;
+  content: string;
+  image_url?: string;
+  visibility: "public" | "university" | "private";
+  is_edited: boolean;
+  likes_count: number;
+  comments_count: number;
+  created_at: string;
+}
+
+export interface ProjectSummary {
+  id: string;
+  title: string;
+  project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
+  status: "concept" | "mvp" | "launched";
+  visibility: "private" | "university" | "cross_university" | "public";
+  preview_image?: string;
+  created_at: string;
+  team_count: number;
+}
+
+export interface ProjectsCount {
+  owned: number;
+  member: number;
+  total: number;
+}
+
+export interface EnhancedUserProfile extends UserProfile {
+  user_posts: PostSummary[];
+  owned_projects: ProjectSummary[];
+  member_projects: ProjectSummary[];
+  posts_count: number;
+  projects_count: ProjectsCount;
+}

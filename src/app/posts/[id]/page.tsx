@@ -21,10 +21,28 @@ import { postsApi, commentsApi } from '@/lib/api';
 import PostCardNew from '@/app/components/PostCardNew';
 
 interface PostDetailsPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
+// Helper function to deduplicate comments and their replies
+const deduplicateComments = (comments: PostComment[]): PostComment[] => {
+  const seen = new Set<string>();
+  return comments
+    .filter(comment => {
+      if (seen.has(comment.id)) {
+        return false;
+      }
+      seen.add(comment.id);
+      return true;
+    })
+    .map(comment => ({
+      ...comment,
+      replies: comment.replies ? deduplicateComments(comment.replies) : []
+    }));
+};
+
 export default function PostDetailsPage({ params }: PostDetailsPageProps) {
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
   const [post, setPost] = useState<PostData | null>(null);
   const [comments, setComments] = useState<PostComment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,18 +55,21 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
   
   const router = useRouter();
 
-  const loadPost = useCallback(async () => {
+  const loadPost = useCallback(async (postId: string) => {
     try {
-      const postData = await postsApi.getPost(params.id);
+      const postData = await postsApi.getPost(postId);
       setPost(postData);
       
       if (postData.comments) {
-        setComments(postData.comments);
+        // Deduplicate comments and their replies
+        const deduplicatedComments = deduplicateComments(postData.comments);
+        setComments(deduplicatedComments);
       } else {
         // Load comments separately if not included in post data
         setCommentsLoading(true);
-        const commentsData = await commentsApi.getComments(params.id);
-        setComments(commentsData);
+        const commentsData = await commentsApi.getComments(postId);
+        const deduplicatedComments = deduplicateComments(commentsData);
+        setComments(deduplicatedComments);
         setCommentsLoading(false);
       }
     } catch (error) {
@@ -57,11 +78,23 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
     } finally {
       setLoading(false);
     }
-  }, [params.id]);
+  }, []);
 
   useEffect(() => {
-    loadPost();
-  }, [loadPost]);
+    const resolveParams = async () => {
+      try {
+        const resolved = await params;
+        setResolvedParams(resolved);
+        loadPost(resolved.id);
+      } catch (error) {
+        console.error('Failed to resolve params:', error);
+        setError('Failed to load post. Please try again.');
+        setLoading(false);
+      }
+    };
+    
+    resolveParams();
+  }, [params, loadPost]);
 
   const handlePostUpdate = (updatedPost: PostData) => {
     setPost(updatedPost);
@@ -73,7 +106,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
 
   const handleCommentSubmit = async (parentId?: string) => {
     const content = parentId ? replyContent.trim() : newComment.trim();
-    if (!content || submitting) return;
+    if (!content || submitting || !resolvedParams) return;
 
     setSubmitting(true);
     try {
@@ -82,20 +115,38 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
         parent: parentId || undefined,
       };
 
-      const newCommentObj = await commentsApi.createComment(params.id, commentData);
+      const newCommentObj = await commentsApi.createComment(resolvedParams.id, commentData);
       
       if (parentId) {
-        // Add reply to parent comment
+        // Add reply to parent comment with deduplication
         setComments(prev => prev.map(comment => 
           comment.id === parentId 
-            ? { ...comment, replies: [...comment.replies, newCommentObj], replies_count: comment.replies_count + 1 }
+            ? { 
+                ...comment, 
+                replies: [
+                  ...(comment.replies || []).filter(reply => reply.id !== newCommentObj.id),
+                  newCommentObj
+                ], 
+                replies_count: (comment.replies_count || 0) + 1 
+              }
             : comment
         ));
         setReplyContent('');
         setReplyTo(null);
       } else {
-        // Add new top-level comment
-        setComments(prev => [newCommentObj, ...prev]);
+        // Add new top-level comment with deduplication
+        setComments(prev => {
+          const existingCommentIndex = prev.findIndex(c => c.id === newCommentObj.id);
+          if (existingCommentIndex >= 0) {
+            // Replace existing comment
+            const newComments = [...prev];
+            newComments[existingCommentIndex] = newCommentObj;
+            return newComments;
+          } else {
+            // Add new comment
+            return [newCommentObj, ...prev];
+          }
+        });
         setNewComment('');
       }
 
@@ -111,8 +162,10 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
   };
 
   const handleCommentEdit = async (commentId: string, content: string, parentId?: string) => {
+    if (!resolvedParams) return;
+    
     try {
-      const updatedComment = await commentsApi.updateComment(params.id, commentId, { content });
+      const updatedComment = await commentsApi.updateComment(resolvedParams.id, commentId, { content });
       
       if (parentId) {
         // Update reply
@@ -120,7 +173,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
           comment.id === parentId 
             ? { 
                 ...comment, 
-                replies: comment.replies.map(reply => 
+                replies: (comment.replies || []).map(reply => 
                   reply.id === commentId ? updatedComment : reply
                 )
               }
@@ -139,9 +192,10 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
 
   const handleCommentDelete = async (commentId: string, parentId?: string) => {
     if (!confirm('Are you sure you want to delete this comment?')) return;
+    if (!resolvedParams) return;
 
     try {
-      await commentsApi.deleteComment(params.id, commentId);
+      await commentsApi.deleteComment(resolvedParams.id, commentId);
       
       if (parentId) {
         // Remove reply
@@ -149,8 +203,8 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
           comment.id === parentId 
             ? { 
                 ...comment, 
-                replies: comment.replies.filter(reply => reply.id !== commentId),
-                replies_count: Math.max(0, comment.replies_count - 1)
+                replies: (comment.replies || []).filter(reply => reply.id !== commentId),
+                replies_count: Math.max(0, (comment.replies_count || 0) - 1)
               }
             : comment
         ));
@@ -168,7 +222,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
     }
   };
 
-  if (loading) {
+  if (loading || !resolvedParams) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-2xl mx-auto p-6">
@@ -266,7 +320,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
             </div>
 
             {/* Comments List */}
-            <AnimatePresence>
+            <div>
               {commentsLoading ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
@@ -277,27 +331,37 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <CommentCard
-                      key={comment.id}
-                      comment={comment}
-                      postId={params.id}
-                      onEdit={handleCommentEdit}
-                      onDelete={handleCommentDelete}
-                      onReply={(commentId) => {
-                        setReplyTo(replyTo === commentId ? null : commentId);
-                        setReplyContent('');
-                      }}
-                      replyTo={replyTo}
-                      replyContent={replyContent}
-                      setReplyContent={setReplyContent}
-                      onReplySubmit={() => handleCommentSubmit(replyTo!)}
-                      submitting={submitting}
-                    />
-                  ))}
+                  <AnimatePresence>
+                    {comments.map((comment, index) => (
+                      <motion.div
+                        key={`comment-${comment.id}-${index}`}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: index * 0.1 }}
+                        layout
+                      >
+                        <CommentCard
+                          comment={comment}
+                          postId={resolvedParams?.id || ''}
+                          onEdit={handleCommentEdit}
+                          onDelete={handleCommentDelete}
+                          onReply={(commentId) => {
+                            setReplyTo(replyTo === commentId ? null : commentId);
+                            setReplyContent('');
+                          }}
+                          replyTo={replyTo}
+                          replyContent={replyContent}
+                          setReplyContent={setReplyContent}
+                          onReplySubmit={() => handleCommentSubmit(replyTo!)}
+                          submitting={submitting}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
               )}
-            </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
@@ -366,28 +430,29 @@ function CommentCard({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={`${isReply ? 'ml-12' : ''}`}
-    >
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+    <div className={`${isReply ? 'ml-6' : ''}`}>
+      {isReply && (
+        <div className="flex items-center mb-2">
+          <div className="w-6 h-px bg-gray-300 dark:bg-gray-600"></div>
+          <Reply className="w-3 h-3 text-gray-400 ml-1" />
+        </div>
+      )}
+      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 ${isReply ? 'bg-gray-50 dark:bg-gray-750 border-l-2 border-l-blue-200 dark:border-l-blue-600' : ''}`}>
         {/* Comment Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
-            <Link href={`/profile/${comment.author.username}`}>
-              <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
-                {comment.author.profile_picture ? (
+            <Link href={`/profile/${comment.author?.username || ''}`}>
+              <div className={`relative ${isReply ? 'w-6 h-6' : 'w-8 h-8'} rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0`}>
+                {comment.author?.profile_picture ? (
                   <Image
                     src={comment.author.profile_picture}
-                    alt={comment.author.full_name}
+                    alt={comment.author?.full_name || 'User'}
                     fill
                     className="object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm font-medium">
-                    {comment.author.full_name.charAt(0).toUpperCase()}
+                    {comment.author?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                 )}
               </div>
@@ -395,13 +460,13 @@ function CommentCard({
             
             <div>
               <Link 
-                href={`/profile/${comment.author.username}`}
-                className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm"
+                href={`/profile/${comment.author?.username || ''}`}
+                className={`font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${isReply ? 'text-xs' : 'text-sm'}`}
               >
-                {comment.author.full_name}
+                {comment.author?.full_name || 'Unknown User'}
               </Link>
               <div className="flex items-center gap-2 text-xs text-gray-500">
-                <span>@{comment.author.username}</span>
+                <span>@{comment.author?.username || 'unknown'}</span>
                 <span>·</span>
                 <span>{formatTimestamp(comment.created_at)}</span>
                 {comment.is_edited && (
@@ -495,7 +560,7 @@ function CommentCard({
               </div>
             </div>
           ) : (
-            <p className="text-gray-900 dark:text-white text-sm leading-relaxed">
+            <p className={`text-gray-900 dark:text-white ${isReply ? 'text-xs' : 'text-sm'} leading-relaxed`}>
               {comment.content}
             </p>
           )}
@@ -511,18 +576,19 @@ function CommentCard({
               <Reply className="w-3 h-3" />
               Reply
             </button>
-            {comment.replies_count > 0 && (
+            {(comment.replies_count || 0) > 0 && (
               <span className="text-xs text-gray-500">
-                {comment.replies_count} {comment.replies_count === 1 ? 'reply' : 'replies'}
+                {comment.replies_count || 0} {(comment.replies_count || 0) === 1 ? 'reply' : 'replies'}
               </span>
             )}
           </div>
         )}
 
         {/* Reply Form */}
-        <AnimatePresence>
-          {replyTo === comment.id && (
+        {replyTo === comment.id && (
+          <AnimatePresence>
             <motion.div
+              key={`reply-form-${comment.id}`}
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -531,7 +597,7 @@ function CommentCard({
               <textarea
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
-                placeholder={`Reply to ${comment.author.full_name}...`}
+                placeholder={`Reply to ${comment.author?.full_name || 'this comment'}...`}
                 className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm"
                 rows={2}
                 maxLength={1000}
@@ -560,39 +626,42 @@ function CommentCard({
                 </div>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
       </div>
 
       {/* Replies */}
-      <AnimatePresence>
-        {comment.replies.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="mt-4 space-y-4"
-          >
-            {comment.replies.map((reply) => (
-              <CommentCard
-                key={reply.id}
-                comment={reply}
-                postId={postId}
-                onEdit={onEdit}
-                onDelete={onDelete}
-                onReply={onReply}
-                replyTo={replyTo}
-                replyContent={replyContent}
-                setReplyContent={setReplyContent}
-                onReplySubmit={onReplySubmit}
-                submitting={submitting}
-                isReply={true}
-                parentId={comment.id}
-              />
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="mt-3 space-y-3">
+          <AnimatePresence>
+            {comment.replies.map((reply, index) => (
+              <motion.div
+                key={`reply-${reply.id}-${comment.id}-${index}`}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ delay: index * 0.05 }}
+                layout
+              >
+                <CommentCard
+                  comment={reply}
+                  postId={postId}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  onReply={onReply}
+                  replyTo={replyTo}
+                  replyContent={replyContent}
+                  setReplyContent={setReplyContent}
+                  onReplySubmit={onReplySubmit}
+                  submitting={submitting}
+                  isReply={true}
+                  parentId={comment.id}
+                />
+              </motion.div>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+    </div>
   );
 }

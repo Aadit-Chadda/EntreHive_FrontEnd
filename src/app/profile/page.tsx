@@ -7,7 +7,7 @@ import ProjectCard from '../components/ProjectCard';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
-import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData } from '@/types';
+import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
 import { ApiError } from '@/lib/api';
 
 export default function ProfilePage() {
@@ -68,8 +68,11 @@ export default function ProfilePage() {
     }
   }, [profile]);
 
-  // TODO: Replace with actual API calls for projects  
-  const [userProjects, setUserProjects] = useState<(Project & { owner: { name: string; handle: string; avatar: string } })[]>([]);
+  // Get projects from enhanced profile (both owned and member projects)
+  const allUserProjects = [
+    ...(profile?.owned_projects || []),
+    ...(profile?.member_projects || [])
+  ];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -697,7 +700,7 @@ export default function ProfilePage() {
                       : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                   }`}
                 >
-                  Projects ({userProjects.length})
+                  Projects ({allUserProjects.length})
                 </button>
               </nav>
             </div>
@@ -764,17 +767,44 @@ export default function ProfilePage() {
 
               {activeTab === 'projects' && (
                 <div className="space-y-6">
-                  {userProjects.length > 0 ? (
-                    userProjects.map(project => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        onLike={(projectId) => console.log('Liked project:', projectId)}
-                        onSave={(projectId) => console.log('Saved project:', projectId)}
-                        onJoinTeam={(projectId) => console.log('Join team:', projectId)}
-                      />
-                    ))
-                  ) : (
+                  {/* Owned Projects Section */}
+                  {profile?.owned_projects && profile.owned_projects.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Owned Projects ({profile.owned_projects.length})
+                      </h3>
+                      <div className="grid gap-6 md:grid-cols-2">
+                        {profile.owned_projects.map(project => (
+                          <ProjectSummaryCard
+                            key={project.id}
+                            project={project}
+                            role="owner"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Member Projects Section */}
+                  {profile?.member_projects && profile.member_projects.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Member Projects ({profile.member_projects.length})
+                      </h3>
+                      <div className="grid gap-6 md:grid-cols-2">
+                        {profile.member_projects.map(project => (
+                          <ProjectSummaryCard
+                            key={project.id}
+                            project={project}
+                            role="member"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* No Projects State */}
+                  {allUserProjects.length === 0 && (
                     <div className="text-center py-12">
                       <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -792,5 +822,90 @@ export default function ProfilePage() {
         </div>
       </div>
     </ProtectedRoute>
+  );
+}
+
+// ProjectSummaryCard component for profile display
+interface ProjectSummaryCardProps {
+  project: ProjectSummary;
+  role: 'owner' | 'member';
+}
+
+function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
+  const router = useRouter();
+
+  const handleProjectClick = () => {
+    router.push(`/projects/${project.id}`);
+  };
+
+  const getProjectTypeColor = (type: string) => {
+    switch (type) {
+      case 'startup': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'side_project': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'research': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'hackathon': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      case 'course_project': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'concept': return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      case 'mvp': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'launched': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+    }
+  };
+
+  return (
+    <div 
+      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={handleProjectClick}
+    >
+      {/* Header with role badge */}
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-900 dark:text-white text-lg mb-2">
+            {project.title}
+          </h4>
+          <div className="flex items-center gap-2 mb-2">
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getProjectTypeColor(project.project_type)}`}>
+              {project.project_type.replace('_', ' ')}
+            </span>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+              {project.status}
+            </span>
+          </div>
+        </div>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          role === 'owner' 
+            ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200'
+            : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+        }`}>
+          {role === 'owner' ? 'Owner' : 'Member'}
+        </span>
+      </div>
+
+      {/* Project preview image */}
+      {project.preview_image && (
+        <div className="mb-3">
+          <img 
+            src={project.preview_image} 
+            alt={project.title}
+            className="w-full h-32 object-cover rounded-lg"
+          />
+        </div>
+      )}
+
+      {/* Footer */}
+      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-4">
+          <span>{project.team_count} {project.team_count === 1 ? 'member' : 'members'}</span>
+          <span className="capitalize">{project.visibility}</span>
+        </div>
+        <span>{new Date(project.created_at).toLocaleDateString()}</span>
+      </div>
+    </div>
   );
 }

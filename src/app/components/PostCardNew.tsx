@@ -281,9 +281,11 @@ export default function PostCard({
             </div>
           </div>
         ) : (
-          <p className="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed">
-            {post.content}
-          </p>
+          <Link href={`/posts/${post.id}`} className="block">
+            <p className="text-gray-900 dark:text-white whitespace-pre-wrap leading-relaxed hover:text-gray-700 dark:hover:text-gray-300 transition-colors cursor-pointer">
+              {post.content}
+            </p>
+          </Link>
         )}
       </div>
 
@@ -308,13 +310,15 @@ export default function PostCard({
       {/* Image */}
       {post.image_url && (
         <div className="mb-4 rounded-lg overflow-hidden">
-          <Image
-            src={post.image_url}
-            alt="Post image"
-            width={600}
-            height={400}
-            className="w-full h-auto object-cover"
-          />
+          <Link href={`/posts/${post.id}`}>
+            <Image
+              src={post.image_url}
+              alt="Post image"
+              width={600}
+              height={400}
+              className="w-full h-auto object-cover cursor-pointer hover:opacity-95 transition-opacity"
+            />
+          </Link>
         </div>
       )}
 

@@ -139,19 +139,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const updateProfile = async (data: Partial<UserProfile>): Promise<UserProfile> => {
     try {
       const updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', data);
-      setProfile(updatedProfile);
       
-      // Update user data if name fields changed
-      if (data.first_name || data.last_name || data.email) {
-        const updatedUser: AuthUser = {
-          pk: updatedProfile.id,
-          username: updatedProfile.username,
-          email: updatedProfile.email,
-          first_name: updatedProfile.first_name,
-          last_name: updatedProfile.last_name,
-        };
-        setUser(updatedUser);
-      }
+      // Refresh the full enhanced profile to get updated projects and posts
+      await refreshProfile();
       
       return updatedProfile;
     } catch (error) {

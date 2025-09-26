@@ -16,14 +16,27 @@
 }
 
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --secondary: #7c3aed;
-  --accent: #f59e0b;
-  --background: #f9fafb;
+  /* Official EntreHive Brand Colors */
+  --primary-black: #000000;
+  --primary-orange: #F3AC3B;
+  --secondary-taupe: #8a6b53;
+  --secondary-charcoal: #36454F;
+  --secondary-red: #770B0B;
+  --accent-pine: #214F38;
+  --accent-terracotta: #E79F74;
+  --accent-navy: #000080;
+  --neutral-light-orange: #fdeedb;
+  --neutral-off-white: #F5F5F5;
+  
+  /* Theme Colors */
+  --primary: var(--primary-orange);
+  --primary-dark: var(--secondary-charcoal);
+  --secondary: var(--accent-pine);
+  --accent: var(--accent-terracotta);
+  --background: var(--neutral-off-white);
   --surface: #ffffff;
-  --text-primary: #1f2937;
-  --text-secondary: #6b7280;
+  --text-primary: var(--primary-black);
+  --text-secondary: var(--secondary-taupe);
   --border: #e5e7eb;
 }
 
@@ -50,7 +63,26 @@
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-canva-sans), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Official EntreHive Typography */
+.font-roca-two {
+  font-family: var(--font-roca-two), 'Inter', serif;
+}
+
+.font-canva-sans {
+  font-family: var(--font-canva-sans), 'Inter', sans-serif;
+}
+
+/* Header fonts - Roca Two */
+h1, h2, .heading {
+  font-family: var(--font-roca-two), 'Inter', serif;
+}
+
+/* Body text - Canva Sans */
+p, .body-text {
+  font-family: var(--font-canva-sans), 'Inter', sans-serif;
 }
 
 /* Custom scrollbar */
@@ -308,6 +340,82 @@ body {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* EntreHive Hexagon Theme */
+.hexagon {
+  width: 60px;
+  height: 34.64px;
+  background: var(--primary-orange);
+  position: relative;
+  margin: 17.32px 0;
+}
+
+.hexagon:before,
+.hexagon:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  border-left: 30px solid transparent;
+  border-right: 30px solid transparent;
+}
+
+.hexagon:before {
+  bottom: 100%;
+  border-bottom: 17.32px solid var(--primary-orange);
+}
+
+.hexagon:after {
+  top: 100%;
+  border-top: 17.32px solid var(--primary-orange);
+}
+
+/* Hexagon grid pattern */
+.hexagon-pattern {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(243, 172, 59, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(33, 79, 56, 0.1) 2px, transparent 2px);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+}
+
+/* Bee-inspired animations */
+@keyframes bee-hover {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+  75% {
+    transform: translateY(5px) rotate(-2deg);
+  }
+}
+
+@keyframes hexagon-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(180deg);
+  }
+}
+
+.animate-bee-hover {
+  animation: bee-hover 3s ease-in-out infinite;
+}
+
+.animate-hexagon-float {
+  animation: hexagon-float 6s ease-in-out infinite;
+}
+
+/* Hive-inspired gradient backgrounds */
+.gradient-hive {
+  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-terracotta) 50%, var(--accent-pine) 100%);
+}
+
+.gradient-bee {
+  background: linear-gradient(45deg, var(--primary-orange) 0%, var(--primary-black) 50%, var(--primary-orange) 100%);
 }
 
 /* Focus visible improvements */

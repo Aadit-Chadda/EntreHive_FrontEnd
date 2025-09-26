@@ -144,7 +144,7 @@ export default function Home() {
                 Who We Are
               </h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold font-roca-two tracking-tight sm:text-4xl"
-                 style={{color: 'var(--text-primary)'}}>
+                 style={{color: 'var(--secondary-charcoal)'}}>
                 A Hive for Entrepreneurs to Connect
               </p>
               <p className="mt-4 max-w-2xl text-xl font-canva-sans lg:mx-auto"
@@ -174,7 +174,7 @@ export default function Home() {
                     <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300 hexagon">
                       <span className="text-2xl">🎯</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Real-World Skill Building</p>
+                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Real-World Skill Building</p>
                   </dt>
                   <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Craft real pitch decks, run marketing campaigns, and get feedback from industry professionals. 
@@ -190,7 +190,7 @@ export default function Home() {
                          style={{backgroundColor: 'var(--accent-pine)'}}>
                       <span className="text-2xl">🤝</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Peer-to-Peer Collaboration</p>
+                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Peer-to-Peer Collaboration</p>
                   </dt>
                   <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Join plug-and-play teams, connect across disciplines, and build lasting partnerships 
@@ -206,7 +206,7 @@ export default function Home() {
                          style={{backgroundColor: 'var(--accent-terracotta)'}}>
                       <span className="text-2xl">💼</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Alternative to Internships</p>
+                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Alternative to Internships</p>
                   </dt>
                   <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Skip the competitive internship hunt. Gain hands-on experience with early-stage startups 
@@ -222,7 +222,7 @@ export default function Home() {
                          style={{backgroundColor: 'var(--secondary-red)'}}>
                       <span className="text-2xl">🌟</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>No Hierarchy, Pure Collaboration</p>
+                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>No Hierarchy, Pure Collaboration</p>
                   </dt>
                   <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Whether you're a student or professor, entrepreneur or investor - your ideas matter. 
@@ -244,7 +244,7 @@ export default function Home() {
                 Explore Projects
               </h2>
               <p className="mt-2 text-3xl leading-8 font-extrabold font-roca-two tracking-tight sm:text-4xl"
-                 style={{color: 'var(--text-primary)'}}>
+                 style={{color: 'var(--secondary-charcoal)'}}>
                 Discover Innovation in Action
               </p>
               <p className="mt-4 max-w-2xl text-xl font-canva-sans mx-auto"
@@ -279,10 +279,12 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <LazyLoad animationType="fade-up">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl font-extrabold font-roca-two text-white sm:text-4xl">
+              <h2 className="text-3xl font-extrabold font-roca-two sm:text-4xl"
+                  style={{color: 'var(--primary-white)'}}>
                 Join the University Innovation Movement
               </h2>
-              <p className="mt-3 text-xl text-white/90 font-canva-sans sm:mt-4">
+              <p className="mt-3 text-xl font-canva-sans sm:mt-4"
+                 style={{color: 'var(--primary-white)'}}>
                 Students and faculty across universities are already building the future in our hive
               </p>
             </div>
@@ -290,22 +292,28 @@ export default function Home() {
           <LazyLoad animationType="scale" delay={300}>
             <dl className="mt-10 text-center sm:max-w-3xl sm:mx-auto sm:grid sm:grid-cols-3 sm:gap-8">
               <div className="flex flex-col group hover-lift">
-                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans text-white/80 group-hover:text-white transition-colors duration-300">
+                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans transition-colors duration-300"
+                    style={{color: 'var(--primary-white)'}}>
                   Universities Connected
                 </dt>
-                <dd className="order-1 text-5xl font-extrabold font-roca-two text-white group-hover:scale-110 transition-transform duration-300">25+</dd>
+                <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
+                    style={{color: 'var(--primary-white)'}}>25+</dd>
               </div>
               <div className="flex flex-col mt-10 sm:mt-0 group hover-lift">
-                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans text-white/80 group-hover:text-white transition-colors duration-300">
+                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans transition-colors duration-300"
+                    style={{color: 'var(--primary-white)'}}>
                   Active Projects
                 </dt>
-                <dd className="order-1 text-5xl font-extrabold font-roca-two text-white group-hover:scale-110 transition-transform duration-300">150+</dd>
+                <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
+                    style={{color: 'var(--primary-white)'}}>150+</dd>
               </div>
               <div className="flex flex-col mt-10 sm:mt-0 group hover-lift">
-                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans text-white/80 group-hover:text-white transition-colors duration-300">
+                <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans transition-colors duration-300"
+                    style={{color: 'var(--primary-white)'}}>
                   Student Entrepreneurs
                 </dt>
-                <dd className="order-1 text-5xl font-extrabold font-roca-two text-white group-hover:scale-110 transition-transform duration-300">1000+</dd>
+                <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
+                    style={{color: 'var(--primary-white)'}}>1000+</dd>
               </div>
             </dl>
           </LazyLoad>
@@ -321,10 +329,12 @@ export default function Home() {
                 <span>Bee Entrepreneurial</span>
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold font-roca-two text-white sm:text-4xl">
+            <h2 className="text-3xl font-extrabold font-roca-two sm:text-4xl"
+                style={{color: 'var(--primary-white)'}}>
               <span className="block">Ready to join the hive?</span>
             </h2>
-            <p className="mt-4 text-lg leading-6 font-canva-sans text-gray-200">
+            <p className="mt-4 text-lg leading-6 font-canva-sans"
+               style={{color: 'var(--primary-white)'}}>
               Join thousands of student entrepreneurs turning ideas into reality. Your journey in the entrepreneurial hive starts here.
             </p>
           </LazyLoad>

@@ -183,52 +183,73 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      {/* Background decoration */}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: 'var(--background)'}}>
+      {/* Hexagonal background decoration */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-10 right-10 w-24 h-24 bg-purple-500 bg-opacity-10 rounded-full animate-float"></div>
-        <div className="absolute bottom-10 left-10 w-20 h-20 bg-blue-500 bg-opacity-10 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/3 left-1/3 w-16 h-16 bg-green-500 bg-opacity-10 rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+        {[...Array(15)].map((_, i) => (
+          <div 
+            key={i}
+            className="hexagon absolute animate-hexagon-float"
+            style={{
+              top: `${3 + (i % 5) * 20}%`,
+              left: `${2 + (i % 4) * 25}%`,
+              animationDelay: `${i * 0.6}s`,
+              opacity: 0.04,
+              transform: `scale(${0.5 + (i % 4) * 0.3})`
+            }}
+          />
+        ))}
       </div>
 
       <div className="relative max-w-lg w-full space-y-8">
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-600">Step {step} of 2</span>
-            <span className="text-sm text-gray-500">{step === 1 ? 'Personal Info' : 'Account Setup'}</span>
+            <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>Step {step} of 2</span>
+            <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>{step === 1 ? 'Personal Info' : 'Account Setup'}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full rounded-full h-2" style={{backgroundColor: 'var(--neutral-off-white)'}}>
             <div 
-              className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${(step / 2) * 100}%` }}
+              className="h-2 rounded-full transition-all duration-500 ease-out"
+              style={{ 
+                width: `${(step / 2) * 100}%`,
+                backgroundColor: 'var(--primary-orange)'
+              }}
             ></div>
           </div>
         </div>
 
         {/* Card Container */}
-        <div className="bg-white/70 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8 animate-fade-in-up">
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: 'var(--primary-orange)'}}>
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto h-16 w-16 flex items-center justify-center mb-6">
-              <div className="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300">
-                <span className="text-white font-bold text-2xl">E</span>
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 border-2 hexagon" style={{
+                backgroundColor: 'var(--primary-orange)',
+                borderColor: 'var(--primary-orange)'
+              }}>
+                <img 
+                  src="/logo_official.jpeg" 
+                  alt="EntreHive Logo" 
+                  className="w-12 h-12 rounded-full object-cover"
+                />
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
-              {step === 1 ? 'Join EntreHive' : 'Complete Setup'}
+            <h2 className="text-3xl font-extrabold font-roca-two mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+              {step === 1 ? 'Join the Hive' : 'Complete Your Profile'}
             </h2>
-            <p className="text-gray-600">
+            <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
               {step === 1 
                 ? 'Start your entrepreneurial journey with fellow students' 
-                : 'Tell us about your university background'
+                : 'Tell us about your university background and interests'
               }
             </p>
-            <p className="mt-4 text-sm text-gray-500">
+            <p className="mt-4 text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-200"
+                className="font-semibold hover:scale-105 transition-all duration-200"
+                style={{color: 'var(--primary-orange)'}}
               >
                 Sign in here
               </Link>
@@ -241,12 +262,12 @@ export default function SignUp() {
               <div className="space-y-6 animate-fade-in-up">
                 {/* Username Field */}
                 <div className="group">
-                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="username" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
                     Username *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -255,7 +276,12 @@ export default function SignUp() {
                       name="username"
                       type="text"
                       required
-                      className={`block w-full pl-10 pr-10 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.username ? 'border-red-300' : 'border-gray-300'}`}
+                      className={`block w-full pl-10 pr-10 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${fieldErrors.username ? 'border-red-300' : ''}`}
+                      style={{
+                        borderColor: fieldErrors.username ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                        color: 'var(--secondary-charcoal)',
+                        '--tw-ring-color': 'var(--primary-orange)'
+                      }}
                       placeholder="johndoe123"
                       value={formData.username}
                       onChange={handleChange}
@@ -271,14 +297,14 @@ export default function SignUp() {
                     )}
                   </div>
                   {fieldErrors.username && (
-                    <p className="mt-1 text-sm text-red-600">{fieldErrors.username}</p>
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.username}</p>
                   )}
                 </div>
 
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="group">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="firstName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
                       First Name *
                     </label>
                     <div className="relative">
@@ -287,18 +313,23 @@ export default function SignUp() {
                         name="firstName"
                         type="text"
                         required
-                        className={`block w-full px-4 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.firstName ? 'border-red-300' : 'border-gray-300'}`}
+                        className={`block w-full px-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${fieldErrors.firstName ? '' : ''}`}
+                        style={{
+                          borderColor: fieldErrors.firstName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                          color: 'var(--secondary-charcoal)',
+                          '--tw-ring-color': 'var(--primary-orange)'
+                        }}
                         placeholder="John"
                         value={formData.firstName}
                         onChange={handleChange}
                       />
                       {fieldErrors.firstName && (
-                        <p className="mt-1 text-sm text-red-600">{fieldErrors.firstName}</p>
+                        <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.firstName}</p>
                       )}
                     </div>
                   </div>
                   <div className="group">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="lastName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
                       Last Name *
                     </label>
                     <div className="relative">
@@ -307,13 +338,18 @@ export default function SignUp() {
                         name="lastName"
                         type="text"
                         required
-                        className={`block w-full px-4 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.lastName ? 'border-red-300' : 'border-gray-300'}`}
+                        className={`block w-full px-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70`}
+                        style={{
+                          borderColor: fieldErrors.lastName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                          color: 'var(--secondary-charcoal)',
+                          '--tw-ring-color': 'var(--primary-orange)'
+                        }}
                         placeholder="Doe"
                         value={formData.lastName}
                         onChange={handleChange}
                       />
                       {fieldErrors.lastName && (
-                        <p className="mt-1 text-sm text-red-600">{fieldErrors.lastName}</p>
+                        <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.lastName}</p>
                       )}
                     </div>
                   </div>
@@ -577,15 +613,18 @@ Examples:
 
             {/* Error Message */}
             {error && (
-              <div className="rounded-xl bg-red-50 border border-red-200 p-4 animate-fade-in-up mt-6">
+              <div className="rounded-xl border-2 p-4 animate-fade-in-up mt-6" style={{
+                backgroundColor: 'rgba(231, 159, 116, 0.1)',
+                borderColor: 'var(--secondary-red)'
+              }}>
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-red)'}}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-red-800">{error}</p>
+                    <p className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</p>
                   </div>
                 </div>
               </div>
@@ -594,19 +633,27 @@ Examples:
             {/* Buttons */}
             <div className="flex gap-4 mt-8">
               {step === 2 && (
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="flex-1 py-3 px-4 border border-gray-300 rounded-xl shadow-sm bg-white/50 backdrop-blur-sm text-base font-medium text-gray-700 hover:bg-white/70 hover:scale-105 transition-all duration-200"
-                >
-                  Back
-                </button>
+              <button
+                type="button"
+                onClick={prevStep}
+                className="flex-1 py-3 px-4 border-2 rounded-xl shadow-sm bg-white/50 backdrop-blur-sm text-base font-medium font-canva-sans hover:bg-white/70 hover:scale-105 transition-all duration-200"
+                style={{
+                  borderColor: 'var(--secondary-taupe)',
+                  color: 'var(--secondary-charcoal)'
+                }}
+              >
+                Back
+              </button>
               )}
               
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 group relative flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="flex-1 group relative flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                style={{
+                  backgroundColor: 'var(--primary-orange)',
+                  '--tw-ring-color': 'var(--primary-orange)'
+                }}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   {isLoading ? (
@@ -630,10 +677,10 @@ Examples:
                 <div className="mt-8">
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300" />
+                      <div className="w-full border-t" style={{borderColor: 'var(--secondary-taupe)'}} />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white text-gray-500 rounded-full">Or continue with</span>
+                      <span className="px-4 bg-white rounded-full font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>Or continue with</span>
                     </div>
                   </div>
                 </div>
@@ -669,11 +716,11 @@ Examples:
 
         {/* Bottom text */}
         <div className="text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
             By creating an account, you agree to our{' '}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Terms of Service</a>
+            <a href="#" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Terms of Service</a>
             {' '}and{' '}
-            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">Privacy Policy</a>
+            <a href="#" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Privacy Policy</a>
           </p>
         </div>
       </div>

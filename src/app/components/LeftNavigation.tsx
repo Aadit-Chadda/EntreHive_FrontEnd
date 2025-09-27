@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ThemeToggle } from './ThemeProvider';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LeftNavigationProps {
   showMobileNav: boolean;
@@ -12,15 +13,12 @@ interface LeftNavigationProps {
 
 export default function LeftNavigation({ showMobileNav, setShowMobileNav }: LeftNavigationProps) {
   const [activeItem, setActiveItem] = useState('home');
+  const { user, profile } = useAuth();
 
   const navItems = [
     { id: 'home', label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', href: '/feed' },
-    { id: 'posts', label: 'Posts', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', href: '/posts' },
     { id: 'projects', label: 'Projects', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', href: '/projects' },
-    { id: 'explore', label: 'Explore', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', href: '/explore' },
     { id: 'profile', label: 'Profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', href: '/profile' },
-    { id: 'bookmarks', label: 'Bookmarks', icon: 'M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z', href: '/bookmarks' },
-    { id: 'settings', label: 'Settings', icon: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z M15 12a3 3 0 11-6 0 3 3 0 016 0z', href: '/settings' },
   ];
 
   return (
@@ -119,18 +117,32 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
               <ThemeToggle />
             </div>
             
-            <div className="flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer" 
+            <Link href="/profile" className="flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer" 
                  style={{backgroundColor: 'var(--hover-bg)'}}
                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
-                <span className="text-white font-semibold text-sm font-roca-two">JD</span>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
+                {profile?.profile_picture ? (
+                  <img
+                    src={profile.profile_picture}
+                    alt={profile.full_name || profile.username}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-white font-semibold text-sm font-roca-two">
+                    {profile?.first_name?.[0]?.toUpperCase() || profile?.username?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase() || 'U'}
+                  </span>
+                )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>John Doe</p>
-                <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>@johndoe</p>
+                <p className="text-sm font-medium font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>
+                  {profile?.full_name || profile?.first_name || user?.username || 'User'}
+                </p>
+                <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>
+                  @{profile?.username || user?.username || 'username'}
+                </p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </div>

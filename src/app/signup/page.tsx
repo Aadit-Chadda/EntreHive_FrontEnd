@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthService, validatePassword, validateEmail, validateUsername } from '@/lib/auth';
 import { UserRole, RegistrationData } from '@/types';
-import { ApiError } from '@/lib/api';
+import { ApiError, apiClient } from '@/lib/api';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -19,6 +19,25 @@ export default function SignUp() {
     bio: '',
     location: '',
     university: '',
+  });
+  const [universityVerification, setUniversityVerification] = useState<{
+    verified: boolean;
+    university: {
+      id: string;
+      name: string;
+      short_name: string;
+      city: string;
+      country: string;
+    } | null;
+    checking: boolean;
+    error: string;
+    message: string;
+  }>({
+    verified: false,
+    university: null,
+    checking: false,
+    error: '',
+    message: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -40,6 +59,11 @@ export default function SignUp() {
     // Clear field error when user starts typing
     if (fieldErrors[name]) {
       setFieldErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
+    // Re-verify university when role changes and email exists
+    if (name === 'userRole' && formData.email && validateEmail(formData.email)) {
+      verifyUniversityDomain(formData.email);
     }
   };
 
@@ -67,11 +91,60 @@ export default function SignUp() {
       const result = await AuthService.checkEmail(email);
       if (!result.available) {
         setFieldErrors(prev => ({ ...prev, email: 'Email is already registered' }));
+      } else {
+        // If email is available, also verify university domain
+        await verifyUniversityDomain(email);
       }
     } catch (error) {
       console.error('Email check failed:', error);
     } finally {
       setEmailChecking(false);
+    }
+  };
+
+  const verifyUniversityDomain = async (email: string) => {
+    if (!validateEmail(email)) return;
+    
+    setUniversityVerification(prev => ({ ...prev, checking: true, error: '', message: '' }));
+    
+    try {
+      const data = await apiClient.post('/api/universities/verify-email/', {
+        email: email,
+        user_role: formData.userRole
+      });
+      setUniversityVerification({
+        verified: data.verified,
+        university: data.university,
+        checking: false,
+        error: '',
+        message: data.message
+      });
+      
+      // Clear any previous email errors if verification succeeds
+      if (data.verified) {
+        setFieldErrors(prev => ({ ...prev, email: '' }));
+      }
+    } catch (error) {
+      console.error('University verification failed:', error);
+      const apiError = error as ApiError;
+      
+      setUniversityVerification({
+        verified: false,
+        university: null,
+        checking: false,
+        error: formData.userRole !== 'investor' 
+          ? (apiError.message || 'Sorry, you are not eligible at the moment! This application is available only to students from partner universities.')
+          : '',
+        message: ''
+      });
+      
+      // Set email error for non-investors only
+      if (formData.userRole !== 'investor') {
+        setFieldErrors(prev => ({ 
+          ...prev, 
+          email: apiError.message || 'University verification failed' 
+        }));
+      }
     }
   };
 
@@ -117,6 +190,12 @@ export default function SignUp() {
         setError('Please fix the errors above');
         return;
       }
+      
+      // Check university verification for students and professors
+      if (formData.userRole !== 'investor' && !universityVerification.verified) {
+        setError('Please use your institutional email address to verify your university affiliation');
+        return;
+      }
     }
     setError('');
     setStep(step + 1);
@@ -151,7 +230,8 @@ export default function SignUp() {
         user_role: formData.userRole,
         bio: formData.bio || undefined,
         location: formData.location || undefined,
-        university: formData.university || undefined,
+        university_id: universityVerification.university?.id || undefined,
+        verified_university: universityVerification.verified,
       };
 
       await AuthService.register(registrationData);
@@ -206,7 +286,7 @@ export default function SignUp() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>Step {step} of 2</span>
-            <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>{step === 1 ? 'Personal Info' : 'Account Setup'}</span>
+            <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>{step === 1 ? 'Account Info' : 'Profile Setup'}</span>
           </div>
           <div className="w-full rounded-full h-2" style={{backgroundColor: 'var(--neutral-off-white)'}}>
             <div 
@@ -241,7 +321,7 @@ export default function SignUp() {
             <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
               {step === 1 
                 ? 'Start your entrepreneurial journey with fellow students' 
-                : 'Tell us about your university background and interests'
+                : 'Complete your profile to join the community'
               }
             </p>
             <p className="mt-4 text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
@@ -260,6 +340,40 @@ export default function SignUp() {
           <form onSubmit={step === 2 ? handleSubmit : (e) => { e.preventDefault(); nextStep(); }}>
             {step === 1 && (
               <div className="space-y-6 animate-fade-in-up">
+                {/* User Role Field - moved to step 1 */}
+                <div className="group">
+                  <label htmlFor="userRole" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                    Your Role *
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <select
+                      id="userRole"
+                      name="userRole"
+                      required
+                      className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
+                      style={{
+                        borderColor: 'var(--secondary-taupe)',
+                        color: 'var(--secondary-charcoal)',
+                        '--tw-ring-color': 'var(--primary-orange)'
+                      }}
+                      value={formData.userRole}
+                      onChange={handleChange}
+                    >
+                      <option value="student">🎓 Student</option>
+                      <option value="professor">👨‍🏫 Professor</option>
+                      <option value="investor">💼 Investor</option>
+                    </select>
+                  </div>
+                  <p className="mt-1 text-xs font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                    This determines what features and content you&apos;ll see
+                  </p>
+                </div>
+
                 {/* Username Field */}
                 <div className="group">
                   <label htmlFor="username" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
@@ -357,12 +471,17 @@ export default function SignUp() {
 
                 {/* Email Field */}
                 <div className="group">
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
                     Email Address *
+                    {formData.userRole !== 'investor' && (
+                      <span className="text-xs ml-2" style={{color: 'var(--secondary-taupe)'}}>
+                        (Use your institutional email)
+                      </span>
+                    )}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                       </svg>
                     </div>
@@ -372,13 +491,28 @@ export default function SignUp() {
                       type="email"
                       autoComplete="email"
                       required
-                      className={`block w-full pl-10 pr-10 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.email ? 'border-red-300' : 'border-gray-300'}`}
-                      placeholder="john.doe@university.edu"
+                      className={`block w-full pl-10 pr-10 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${
+                        fieldErrors.email 
+                          ? 'border-red-300' 
+                          : universityVerification.verified 
+                            ? 'border-green-300' 
+                            : ''
+                      }`}
+                      style={{
+                        borderColor: fieldErrors.email 
+                          ? 'var(--secondary-red)' 
+                          : universityVerification.verified 
+                            ? '#10B981' 
+                            : 'var(--secondary-taupe)',
+                        color: 'var(--secondary-charcoal)',
+                        '--tw-ring-color': 'var(--primary-orange)'
+                      }}
+                      placeholder={formData.userRole === 'investor' ? "your.email@company.com" : "john.doe@university.edu"}
                       value={formData.email}
                       onChange={handleChange}
                       onBlur={(e) => checkEmailAvailability(e.target.value)}
                     />
-                    {emailChecking && (
+                    {(emailChecking || universityVerification.checking) && (
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                         <svg className="animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -386,9 +520,35 @@ export default function SignUp() {
                         </svg>
                       </div>
                     )}
+                    {universityVerification.verified && !universityVerification.checking && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    )}
                   </div>
+                  
+                  
+                  {universityVerification.verified && formData.userRole === 'investor' && (
+                    <div className="mt-2 p-3 rounded-lg border" style={{backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: '#3B82F6'}}>
+                      <div className="flex items-center">
+                        <svg className="h-4 w-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p className="text-sm font-medium text-blue-700">
+                          Investor account - University verification not required
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
                   {fieldErrors.email && (
-                    <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.email}</p>
+                  )}
+                  
+                  {universityVerification.error && !fieldErrors.email && formData.userRole !== 'investor' && (
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{universityVerification.error}</p>
                   )}
                 </div>
 
@@ -486,55 +646,52 @@ export default function SignUp() {
 
             {step === 2 && (
               <div className="space-y-6 animate-fade-in-up">
-                {/* User Role Field */}
-                <div className="group">
-                  <label htmlFor="userRole" className="block text-sm font-medium text-gray-700 mb-2">
-                    Your Role *
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
+                {/* University Information Display */}
+                {formData.userRole !== 'investor' && universityVerification.verified && universityVerification.university && (
+                  <div className="group">
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                      Verified University
+                    </label>
+                    <div className="p-4 rounded-lg border-2" style={{backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: '#10B981'}}>
+                      <div className="flex items-center">
+                        <svg className="h-5 w-5 text-green-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                          <p className="text-lg font-semibold font-canva-sans text-green-700">
+                            {universityVerification.university.name}
+                          </p>
+                          <p className="text-sm font-canva-sans text-green-600">
+                            {universityVerification.university.city}, {universityVerification.university.country}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <select
-                      id="userRole"
-                      name="userRole"
-                      required
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
-                      value={formData.userRole}
-                      onChange={handleChange}
-                    >
-                      <option value="student">🎓 Student</option>
-                      <option value="professor">👨‍🏫 Professor</option>
-                      <option value="investor">💼 Investor</option>
-                    </select>
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">This determines what features and content you'll see</p>
-                </div>
-
-                {/* University Field */}
-                <div className="group">
-                  <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-2">
-                    University/Institution
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
+                )}
+                
+                {formData.userRole === 'investor' && (
+                  <div className="group">
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                      Account Type
+                    </label>
+                    <div className="p-4 rounded-lg border-2" style={{backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: '#3B82F6'}}>
+                      <div className="flex items-center">
+                        <svg className="h-5 w-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div>
+                          <p className="text-lg font-semibold font-canva-sans text-blue-700">
+                            💼 Investor Account
+                          </p>
+                          <p className="text-sm font-canva-sans text-blue-600">
+                            No university affiliation required
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <input
-                      id="university"
-                      name="university"
-                      type="text"
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
-                      placeholder="e.g., Stanford University, MIT, etc."
-                      value={formData.university}
-                      onChange={handleChange}
-                    />
                   </div>
-                </div>
+                )}
 
                 {/* Location Field */}
                 <div className="group">

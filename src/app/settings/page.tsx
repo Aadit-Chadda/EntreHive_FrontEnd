@@ -23,6 +23,7 @@ export default function SettingsPage() {
     bio: profile?.bio || '',
     location: profile?.location || '',
     university: profile?.university || '',
+    university_name: profile?.university_name || '',
     major: profile?.major || '',
     graduation_year: profile?.graduation_year || undefined,
     department: profile?.department || '',
@@ -380,11 +381,13 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   name="university"
-                  value={formData.university || ''}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
+                  value={profile?.university_name || 'No university set'}
+                  disabled
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  University changes require verification. Contact support if needed.
+                </p>
               </div>
             </div>
 

@@ -31,6 +31,7 @@ export interface UserProfile {
   bio?: string;
   location?: string;
   university?: string;
+  university_name?: string;
   major?: string;
   graduation_year?: number;
   department?: string;
@@ -57,7 +58,8 @@ export interface RegistrationData {
   user_role: UserRole;
   bio?: string;
   location?: string;
-  university?: string;
+  university_id?: string;
+  verified_university?: boolean;
 }
 
 export interface ProfileUpdateData {
@@ -67,6 +69,7 @@ export interface ProfileUpdateData {
   bio?: string;
   location?: string;
   university?: string;
+  university_name?: string;
   major?: string;
   graduation_year?: number;
   department?: string;

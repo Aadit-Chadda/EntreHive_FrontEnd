@@ -401,12 +401,12 @@ export default function ProfilePage() {
 
                       {/* Education & Location */}
                       <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        {profile.university && (
+                        {profile.university_name && (
                           <div className="flex items-center space-x-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H9m0 0H5m0 0h2M7 7h10M7 11h10M7 15h10" />
                             </svg>
-                            <span>{profile.university}</span>
+                            <span>{profile.university_name}</span>
                           </div>
                         )}
                         {profile.location && (
@@ -523,10 +523,13 @@ export default function ProfilePage() {
                           <input
                             type="text"
                             name="university"
-                            value={formData.university || ''}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            value={profile?.university_name || 'No university set'}
+                            disabled
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed"
                           />
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            University changes require verification. Contact support if needed.
+                          </p>
                         </div>
                       </div>
 

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
-import { AuthUser, LoginResponse, UserProfile, EnhancedUserProfile } from '@/types';
+import { AuthUser, LoginResponse, UserProfile, EnhancedUserProfile, ProfileUpdateData } from '@/types';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -13,7 +13,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   refreshProfile: () => Promise<void>;
-  updateProfile: (data: Partial<UserProfile>) => Promise<UserProfile>;
+  updateProfile: (data: ProfileUpdateData) => Promise<UserProfile>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -136,9 +136,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const updateProfile = async (data: Partial<UserProfile>): Promise<UserProfile> => {
+  const updateProfile = async (data: ProfileUpdateData): Promise<UserProfile> => {
     try {
-      const updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', data);
+      let updatedProfile: UserProfile;
+
+      // Check if we have a file upload (banner_image) that needs FormData
+      const hasFileUpload = data.banner_image instanceof File;
+
+      console.log('Profile update data:', data);
+      console.log('Has file upload:', hasFileUpload);
+
+      if (hasFileUpload) {
+        // Create FormData for file upload
+        const formData = new FormData();
+        
+        // Add all the form fields to FormData, but skip empty strings and undefined values
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            if (value instanceof File) {
+              formData.append(key, value);
+            } else {
+              formData.append(key, String(value));
+            }
+          }
+        });
+
+        // Debug: Log what's in FormData
+        console.log('FormData contents:');
+        for (let [key, value] of formData.entries()) {
+          console.log(key, value);
+        }
+
+        console.log('Sending FormData for file upload');
+        updatedProfile = await apiClient.uploadFile<UserProfile>('/api/accounts/profile/', formData);
+      } else {
+        // Use regular JSON PATCH for non-file updates
+        console.log('Sending JSON PATCH for regular update');
+        updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', data);
+      }
       
       // Refresh the full enhanced profile to get updated projects and posts
       await refreshProfile();

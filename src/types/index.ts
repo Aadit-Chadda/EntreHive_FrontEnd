@@ -41,6 +41,9 @@ export interface UserProfile {
   linkedin_url?: string;
   website_url?: string;
   github_url?: string;
+  banner_style: "gradient" | "image";
+  banner_gradient: string;
+  banner_image?: string | null;
   is_profile_public: boolean;
   show_email: boolean;
   role_specific_info: Record<string, unknown>;
@@ -83,6 +86,9 @@ export interface ProfileUpdateData {
   linkedin_url?: string;
   website_url?: string;
   github_url?: string;
+  banner_style?: "gradient" | "image";
+  banner_gradient?: string;
+  banner_image?: File | null | string | undefined;
   is_profile_public?: boolean;
   show_email?: boolean;
 }

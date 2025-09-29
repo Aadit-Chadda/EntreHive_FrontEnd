@@ -12,7 +12,9 @@ import { AuthService } from '@/lib/auth';
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
 import { ApiError } from '@/lib/api';
 import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
-import { Palette, Image as ImageIcon } from 'lucide-react';
+import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT, PROFILE_BANNER_GRADIENTS } from '@/lib/profileBranding';
+import type { ProfileBannerStyle } from '@/lib/profileBranding';
+import { Palette, Image as ImageIcon, Edit3 } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
@@ -26,6 +28,8 @@ export default function ProfilePage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+  const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
 
   // Form state for editing
   const [formData, setFormData] = useState<ProfileUpdateData>({
@@ -44,6 +48,9 @@ export default function ProfilePage() {
     linkedin_url: '',
     website_url: '',
     github_url: '',
+    banner_style: 'gradient',
+    banner_gradient: DEFAULT_PROFILE_BANNER_GRADIENT,
+    banner_image: undefined,
     is_profile_public: true,
     show_email: false,
   });
@@ -67,6 +74,9 @@ export default function ProfilePage() {
         linkedin_url: profile.linkedin_url || '',
         website_url: profile.website_url || '',
         github_url: profile.github_url || '',
+        banner_style: profile.banner_style || 'gradient',
+        banner_gradient: profile.banner_gradient || DEFAULT_PROFILE_BANNER_GRADIENT,
+        banner_image: profile.banner_image || undefined,
         is_profile_public: profile.is_profile_public ?? true,
         show_email: profile.show_email ?? false,
       });
@@ -115,6 +125,9 @@ export default function ProfilePage() {
         linkedin_url: profile.linkedin_url || '',
         website_url: profile.website_url || '',
         github_url: profile.github_url || '',
+        banner_style: profile.banner_style || 'gradient',
+        banner_gradient: profile.banner_gradient || DEFAULT_PROFILE_BANNER_GRADIENT,
+        banner_image: profile.banner_image || undefined,
         is_profile_public: profile.is_profile_public ?? true,
         show_email: profile.show_email ?? false,
       });
@@ -184,6 +197,38 @@ export default function ProfilePage() {
       setError(apiError.message || 'Failed to delete image');
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleBannerUpdate = async ({
+    style,
+    gradientId,
+    file,
+  }: {
+    style: ProfileBannerStyle;
+    gradientId: string;
+    file?: File | null;
+  }) => {
+    if (!profile) return;
+
+    setIsUpdatingBanner(true);
+    setError('');
+
+    try {
+      const updatedData: ProfileUpdateData = {
+        banner_style: style,
+        banner_gradient: gradientId || DEFAULT_PROFILE_BANNER_GRADIENT,
+        banner_image: style === 'image' ? file : null,
+      };
+
+      await updateProfile(updatedData);
+      setSuccess('Profile banner updated successfully!');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || 'Failed to update banner');
+    } finally {
+      setIsUpdatingBanner(false);
+      setIsBannerModalOpen(false);
     }
   };
 
@@ -283,22 +328,55 @@ export default function ProfilePage() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* Status Messages */}
               {error && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-red-600">{error}</p>
+                <div className="mb-6 p-4 bg-[var(--secondary-red)]/10 border border-[var(--secondary-red)]/20 rounded-lg">
+                  <p className="text-[var(--secondary-red)]">{error}</p>
                 </div>
               )}
               
               {success && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-green-600">{success}</p>
+                <div className="mb-6 p-4 bg-[var(--accent-pine)]/10 border border-[var(--accent-pine)]/20 rounded-lg">
+                  <p className="text-[var(--accent-pine)]">{success}</p>
                 </div>
               )}
 
               {/* Profile Header */}
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
-                {/* Cover Photo */}
-                <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                {/* Profile Banner */}
+                <div className="h-48 relative">
+                  {profile?.banner_style === 'image' && profile?.banner_image ? (
+                    <>
+                      <img
+                        src={profile.banner_image}
+                        alt="Profile banner"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    </>
+                  ) : (
+                    <div 
+                      className="w-full h-full relative" 
+                      style={{ 
+                        background: getProfileBannerGradient(profile?.banner_gradient || DEFAULT_PROFILE_BANNER_GRADIENT).gradient 
+                      }}
+                    >
+                      <div className="absolute inset-0 opacity-10"
+                           style={{ 
+                             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
+                           }}
+                      ></div>
+                    </div>
+                  )}
+                  
+                  {/* Banner Edit Button - Only visible in edit mode */}
+                  {isEditing && (
+                    <button
+                      onClick={() => setIsBannerModalOpen(true)}
+                      className="absolute top-4 right-4 flex items-center space-x-2 px-3 py-2 bg-white/90 text-gray-800 rounded-lg hover:bg-white transition-colors shadow-sm"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      <span className="text-sm font-medium">Edit Banner</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Profile Info */}
@@ -335,7 +413,7 @@ export default function ProfilePage() {
                       {!isEditing && (
                         <button
                           onClick={handleEditProfile}
-                          className="flex items-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 border border-[var(--primary-orange)] text-[var(--primary-orange)] rounded-lg hover:bg-[var(--neutral-light-orange)] transition-colors"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -385,9 +463,9 @@ export default function ProfilePage() {
                         <p className="text-lg text-gray-600 dark:text-gray-400">@{profile.username}</p>
                         <div className="mt-1">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            profile.user_role === 'student' ? 'bg-blue-100 text-blue-800' :
-                            profile.user_role === 'professor' ? 'bg-purple-100 text-purple-800' :
-                            'bg-green-100 text-green-800'
+                            profile.user_role === 'student' ? 'bg-[var(--neutral-light-orange)] text-[var(--primary-orange)] border border-[var(--primary-orange)]/20' :
+                            profile.user_role === 'professor' ? 'bg-[var(--accent-pine)]/10 text-[var(--accent-pine)] border border-[var(--accent-pine)]/20' :
+                            'bg-[var(--accent-terracotta)]/10 text-[var(--accent-terracotta)] border border-[var(--accent-terracotta)]/20'
                           }`}>
                             {profile.user_role === 'student' ? '🎓 Student' : 
                              profile.user_role === 'professor' ? '👨‍🏫 Professor' : 
@@ -706,7 +784,7 @@ export default function ProfilePage() {
                           type="button"
                           onClick={handleSaveProfile}
                           disabled={isLoading}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                          className="px-4 py-2 bg-[var(--primary-orange)] text-white rounded-lg hover:bg-[var(--secondary-taupe)] disabled:opacity-50 transition-colors"
                         >
                           {isLoading ? 'Saving...' : 'Save Changes'}
                         </button>
@@ -725,8 +803,8 @@ export default function ProfilePage() {
                       onClick={() => setActiveTab('posts')}
                       className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === 'posts'
-                          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
+                          ? 'border-[var(--primary-orange)] text-[var(--primary-orange)]'
+                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-[var(--primary-orange)] hover:border-[var(--primary-orange)]/30'
                       }`}
                     >
                       Posts ({profile?.user_posts?.length || 0})
@@ -735,8 +813,8 @@ export default function ProfilePage() {
                       onClick={() => setActiveTab('projects')}
                       className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === 'projects'
-                          ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
+                          ? 'border-[var(--primary-orange)] text-[var(--primary-orange)]'
+                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-[var(--primary-orange)] hover:border-[var(--primary-orange)]/30'
                       }`}
                     >
                       Projects ({allUserProjects.length})
@@ -870,6 +948,19 @@ export default function ProfilePage() {
           />
         )}
         </div>
+
+        {/* Profile Banner Editor Modal */}
+        {isBannerModalOpen && (
+          <ProfileBannerEditor
+            isOpen={isBannerModalOpen}
+            onClose={() => setIsBannerModalOpen(false)}
+            onApply={handleBannerUpdate}
+            isSubmitting={isUpdatingBanner}
+            currentStyle={profile?.banner_style || 'gradient'}
+            currentGradient={profile?.banner_gradient || DEFAULT_PROFILE_BANNER_GRADIENT}
+            currentImage={profile?.banner_image}
+          />
+        )}
       </ThemeProvider>
     </ProtectedRoute>
   );
@@ -993,6 +1084,209 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
           <span className="capitalize">{project.visibility}</span>
         </div>
         <span>{new Date(project.created_at).toLocaleDateString()}</span>
+      </div>
+    </div>
+  );
+}
+
+// Profile Banner Editor Component
+interface ProfileBannerEditorProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (payload: { style: ProfileBannerStyle; gradientId: string; file?: File | null }) => void | Promise<void>;
+  isSubmitting: boolean;
+  currentStyle: ProfileBannerStyle;
+  currentGradient: string;
+  currentImage?: string | null;
+}
+
+function ProfileBannerEditor({
+  isOpen,
+  onClose,
+  onApply,
+  isSubmitting,
+  currentStyle,
+  currentGradient,
+  currentImage,
+}: ProfileBannerEditorProps) {
+  const [selectedStyle, setSelectedStyle] = useState<ProfileBannerStyle>(currentStyle);
+  const [selectedGradient, setSelectedGradient] = useState<string>(currentGradient || DEFAULT_PROFILE_BANNER_GRADIENT);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(currentStyle === 'image' ? currentImage ?? null : null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setSelectedStyle(currentStyle);
+    setSelectedGradient(currentGradient || DEFAULT_PROFILE_BANNER_GRADIENT);
+    setSelectedFile(null);
+    setPreviewUrl(currentStyle === 'image' ? currentImage ?? null : null);
+  }, [currentStyle, currentGradient, currentImage, isOpen]);
+
+  useEffect(() => {
+    if (!selectedFile) return;
+    const objectUrl = URL.createObjectURL(selectedFile);
+    setPreviewUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedFile]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      if (selectedStyle !== 'image') {
+        setSelectedStyle('image');
+      }
+    }
+  };
+
+  const handleApply = () => {
+    onApply({
+      style: selectedStyle,
+      gradientId: selectedGradient,
+      file: selectedStyle === 'image' ? selectedFile ?? null : undefined,
+    });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Customize Profile Banner
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Preview */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Preview</h3>
+            <div className="h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+              {selectedStyle === 'image' && (previewUrl || currentImage) ? (
+                <img
+                  src={previewUrl || currentImage || ''}
+                  alt="Banner preview"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-full h-full"
+                  style={{ background: getProfileBannerGradient(selectedGradient).gradient }}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Style Selection */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Banner Style</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setSelectedStyle('gradient')}
+                className={`p-3 rounded-lg border-2 flex items-center space-x-2 transition-colors ${
+                  selectedStyle === 'gradient'
+                    ? 'border-[var(--primary-orange)] bg-[var(--neutral-light-orange)]'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <Palette className="w-5 h-5" />
+                <span className="font-medium">Gradient</span>
+              </button>
+              <button
+                onClick={() => setSelectedStyle('image')}
+                className={`p-3 rounded-lg border-2 flex items-center space-x-2 transition-colors ${
+                  selectedStyle === 'image'
+                    ? 'border-[var(--primary-orange)] bg-[var(--neutral-light-orange)]'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <ImageIcon className="w-5 h-5" />
+                <span className="font-medium">Custom Image</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Gradient Selection */}
+          {selectedStyle === 'gradient' && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Choose Gradient</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {PROFILE_BANNER_GRADIENTS.map((gradient) => (
+                  <button
+                    key={gradient.id}
+                    onClick={() => setSelectedGradient(gradient.id)}
+                    className={`relative h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      selectedGradient === gradient.id
+                        ? 'border-[var(--primary-orange)] ring-2 ring-[var(--primary-orange)]/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    <div
+                      className="w-full h-full"
+                      style={{ background: gradient.gradient }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-2">
+                      <span className="text-white text-xs font-medium">{gradient.name}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Image Upload */}
+          {selectedStyle === 'image' && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Upload Image</h3>
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="banner-upload"
+                />
+                <label
+                  htmlFor="banner-upload"
+                  className="cursor-pointer flex flex-col items-center space-y-2"
+                >
+                  <ImageIcon className="w-8 h-8 text-gray-400" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {selectedFile ? selectedFile.name : 'Click to upload or drag and drop'}
+                  </span>
+                  <span className="text-xs text-gray-500">PNG, JPG up to 10MB</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleApply}
+              disabled={isSubmitting}
+              className="px-4 py-2 bg-[var(--primary-orange)] text-white rounded-lg hover:bg-[var(--secondary-taupe)] disabled:opacity-50 transition-colors"
+            >
+              {isSubmitting ? 'Updating...' : 'Apply Changes'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LeftNavigation from '../../components/LeftNavigation';
 import { api } from '@/lib/api';
 import { EnhancedUserProfile } from '@/types';
+import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib/profileBranding';
 
 export default function PublicProfilePage() {
   const params = useParams();
@@ -140,42 +141,57 @@ export default function PublicProfilePage() {
 
         <div className="max-w-6xl mx-auto p-4 lg:p-8">
           {/* Enhanced Profile Header */}
-          <div className="relative rounded-2xl overflow-hidden mb-8" 
-               style={{ background: 'linear-gradient(135deg, var(--surface) 0%, var(--hover-bg) 100%)', 
-                        border: '1px solid var(--border)', 
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)' }}>
+          <div className="relative rounded-2xl overflow-hidden mb-8 shadow-xl border border-gray-200 dark:border-gray-700">
             
-            {/* Hexagonal Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute top-4 right-4 w-8 h-8 transform rotate-45" style={{ backgroundColor: 'var(--primary-orange)', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }}></div>
-              <div className="absolute top-12 right-12 w-6 h-6 transform rotate-12" style={{ backgroundColor: 'var(--accent-pine)', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }}></div>
-              <div className="absolute bottom-8 left-8 w-10 h-10 transform -rotate-12" style={{ backgroundColor: 'var(--accent-terracotta)', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }}></div>
-              <div className="absolute bottom-4 right-20 w-4 h-4 transform rotate-45" style={{ backgroundColor: 'var(--accent-navy)', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }}></div>
-              <div className="absolute top-1/2 left-4 w-5 h-5 transform -rotate-30" style={{ backgroundColor: 'var(--primary-orange)', clipPath: 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)' }}></div>
+            {/* Profile Banner */}
+            <div className="h-48 relative">
+              {profile?.banner_style === 'image' && profile?.banner_image ? (
+                <>
+                  <img
+                    src={profile.banner_image}
+                    alt="Profile banner"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                </>
+              ) : (
+                <div 
+                  className="w-full h-full relative" 
+                  style={{ 
+                    background: getProfileBannerGradient(profile?.banner_gradient || DEFAULT_PROFILE_BANNER_GRADIENT).gradient 
+                  }}
+                >
+                  <div className="absolute inset-0 opacity-10"
+                       style={{ 
+                         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
+                       }}
+                  ></div>
+                </div>
+              )}
             </div>
 
-            <div className="relative p-8 lg:p-10">
-              <div className="flex flex-col lg:flex-row lg:items-start gap-8">
+            {/* Profile Content - overlapping the banner */}
+            <div className="relative px-8 pb-8 -mt-20">
+              <div className="flex flex-col lg:flex-row lg:items-end gap-8">
                 {/* Enhanced Profile Picture */}
                 <div className="flex-shrink-0 relative">
                   <div className="relative">
-                    <div className="w-36 h-36 lg:w-40 lg:h-40 rounded-2xl flex items-center justify-center overflow-hidden shadow-xl" 
-                         style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))',
-                                  border: '4px solid var(--surface)' }}>
+                    <div className="w-32 h-32 lg:w-36 lg:h-36 rounded-full flex items-center justify-center overflow-hidden shadow-xl border-4 border-white dark:border-gray-800" 
+                         style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}>
                       {profile.profile_picture ? (
-                        <div 
-                          className="w-full h-full object-cover bg-cover bg-center"
-                          style={{ backgroundImage: `url(${profile.profile_picture})` }}
-                          aria-label={profile.full_name}
+                        <img
+                          src={profile.profile_picture}
+                          alt={profile.full_name}
+                          className="w-full h-full object-cover"
                         />
                       ) : (
-                        <span className="text-white font-bold text-5xl lg:text-6xl font-roca-two">
+                        <span className="text-white font-bold text-4xl lg:text-5xl font-roca-two">
                           {profile.full_name?.[0]?.toUpperCase() || profile.username?.[0]?.toUpperCase() || 'U'}
                         </span>
                       )}
                     </div>
                     {/* Online Status Indicator */}
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-4 border-white shadow-lg"
+                    <div className="absolute bottom-2 right-2 w-6 h-6 rounded-full border-4 border-white shadow-lg"
                          style={{ backgroundColor: 'var(--accent-pine)' }}></div>
                   </div>
                 </div>

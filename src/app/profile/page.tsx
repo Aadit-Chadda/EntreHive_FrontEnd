@@ -597,16 +597,10 @@ export default function ProfilePage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
-                          <select
-                            name="user_role"
-                            value={formData.user_role}
-                            onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                          >
-                            <option value="student">Student</option>
-                            <option value="professor">Professor</option>
-                            <option value="investor">Investor</option>
-                          </select>
+                          <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                            <span className="capitalize">{formData.user_role}</span>
+                            <span className="text-xs ml-2 text-gray-500">(Contact support to change)</span>
+                          </div>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">University</label>

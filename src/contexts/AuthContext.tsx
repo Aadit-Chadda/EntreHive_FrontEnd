@@ -138,49 +138,105 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateProfile = async (data: ProfileUpdateData): Promise<UserProfile> => {
     try {
+      console.log('=== FRONTEND DEBUG: Profile Update Start ===');
+      console.log('Original form data received:', JSON.stringify(data, null, 2));
+      console.log('Data keys:', Object.keys(data));
+      console.log('Data values:', Object.values(data));
+      
       let updatedProfile: UserProfile;
 
       // Check if we have a file upload (banner_image) that needs FormData
       const hasFileUpload = data.banner_image instanceof File;
 
-      console.log('Profile update data:', data);
       console.log('Has file upload:', hasFileUpload);
+      console.log('Banner image type:', typeof data.banner_image);
+      console.log('Banner image value:', data.banner_image);
 
       if (hasFileUpload) {
         // Create FormData for file upload
         const formData = new FormData();
         
+        console.log('=== FRONTEND DEBUG: FormData Creation ===');
+        
         // Add all the form fields to FormData, but skip empty strings and undefined values
         Object.entries(data).forEach(([key, value]) => {
+          console.log(`Processing field: ${key} = ${value} (type: ${typeof value})`);
+          
+          // Skip user_role - it should not be editable
+          if (key === 'user_role') {
+            console.log(`Skipping user_role - not editable: ${value}`);
+            return;
+          }
+          
           if (value !== undefined && value !== null && value !== '') {
             if (value instanceof File) {
+              console.log(`Adding File: ${key} = ${value.name} (${value.size} bytes)`);
               formData.append(key, value);
             } else {
+              console.log(`Adding String: ${key} = ${String(value)}`);
               formData.append(key, String(value));
             }
+          } else {
+            console.log(`Skipping empty field: ${key} = ${value}`);
           }
         });
 
         // Debug: Log what's in FormData
-        console.log('FormData contents:');
+        console.log('=== FRONTEND DEBUG: Final FormData Contents ===');
         for (let [key, value] of formData.entries()) {
-          console.log(key, value);
+          console.log(`FormData: ${key} = ${value}`);
         }
 
-        console.log('Sending FormData for file upload');
+        console.log('=== FRONTEND DEBUG: Sending FormData Request ===');
         updatedProfile = await apiClient.uploadFile<UserProfile>('/api/accounts/profile/', formData);
       } else {
-        // Use regular JSON PATCH for non-file updates
-        console.log('Sending JSON PATCH for regular update');
-        updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', data);
+        console.log('=== FRONTEND DEBUG: JSON PATCH Creation ===');
+        
+        // Filter out empty strings and undefined values for JSON updates too
+        const filteredData: Partial<ProfileUpdateData> = {};
+        Object.entries(data).forEach(([key, value]) => {
+          console.log(`Processing JSON field: ${key} = ${value} (type: ${typeof value})`);
+          if (value !== undefined && value !== null && value !== '') {
+            // Special handling for banner_image: if it's a string URL, don't include it in JSON updates
+            // (it means it's already saved and we're not changing it)
+            if (key === 'banner_image' && typeof value === 'string') {
+              console.log(`Skipping banner_image URL in JSON update: ${value}`);
+              return;
+            }
+            // Skip user_role - it should not be editable
+            if (key === 'user_role') {
+              console.log(`Skipping user_role - not editable: ${value}`);
+              return;
+            }
+            console.log(`Adding to JSON: ${key} = ${value}`);
+            filteredData[key as keyof ProfileUpdateData] = value;
+          } else {
+            console.log(`Skipping empty JSON field: ${key} = ${value}`);
+          }
+        });
+        
+        console.log('=== FRONTEND DEBUG: Final JSON Data ===');
+        console.log('Filtered data for JSON PATCH:', JSON.stringify(filteredData, null, 2));
+        
+        console.log('=== FRONTEND DEBUG: Sending JSON PATCH Request ===');
+        updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', filteredData);
       }
+      
+      console.log('=== FRONTEND DEBUG: Profile Update Success ===');
+      console.log('Updated profile response:', updatedProfile);
       
       // Refresh the full enhanced profile to get updated projects and posts
       await refreshProfile();
       
+      console.log('=== FRONTEND DEBUG: Profile Update Complete ===');
       return updatedProfile;
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      console.error('=== FRONTEND DEBUG: Profile Update Error ===');
+      console.error('Error object:', error);
+      console.error('Error message:', (error as any)?.message);
+      console.error('Error response:', (error as any)?.response);
+      console.error('Error response data:', (error as any)?.response?.data);
+      console.error('Error response status:', (error as any)?.response?.status);
       throw error;
     }
   };

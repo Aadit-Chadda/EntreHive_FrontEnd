@@ -125,6 +125,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers,
+      credentials: 'include',
       body: formData,
     });
     return this.handleResponse<T>(response);
@@ -215,6 +216,10 @@ export const projectApi = {
   // Update a project
   updateProject: async (projectId: string, data: ProjectUpdateData) => {
     return apiClient.patch<ProjectData>(`/api/projects/${projectId}/`, data);
+  },
+
+  updateProjectBannerImage: async (projectId: string, formData: FormData) => {
+    return apiClient.uploadFile<ProjectData>(`/api/projects/${projectId}/`, formData);
   },
 
   // Delete a project
@@ -440,20 +445,23 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        id: string;
         content_type: string;
         content_id: string;
-        feed_type: string;
         score: number;
+        content: PostData | ProjectData;
+        user_interactions: string[];
         viewed: boolean;
         clicked: boolean;
-        created_at: string;
-        content: PostData | ProjectData;
+        liked: boolean;
       }>;
       count: number;
+      page: number;
+      page_size: number;
+      has_next: boolean;
+      has_previous: boolean;
       next: string | null;
       previous: string | null;
-    }>(`/api/feed/home/${query ? `?${query}` : ''}`);
+    }>(`/api/timeline/home/${query ? `?${query}` : ''}`);
   },
 
   // Get university feed
@@ -469,20 +477,23 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        id: string;
         content_type: string;
         content_id: string;
-        feed_type: string;
         score: number;
+        content: PostData | ProjectData;
+        user_interactions: string[];
         viewed: boolean;
         clicked: boolean;
-        created_at: string;
-        content: PostData | ProjectData;
+        liked: boolean;
       }>;
       count: number;
+      page: number;
+      page_size: number;
+      has_next: boolean;
+      has_previous: boolean;
       next: string | null;
       previous: string | null;
-    }>(`/api/feed/university/${query ? `?${query}` : ''}`);
+    }>(`/api/timeline/university/${query ? `?${query}` : ''}`);
   },
 
   // Get public feed
@@ -498,29 +509,34 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        id: string;
         content_type: string;
         content_id: string;
-        feed_type: string;
         score: number;
+        content: PostData | ProjectData;
+        user_interactions: string[];
         viewed: boolean;
         clicked: boolean;
-        created_at: string;
-        content: PostData | ProjectData;
+        liked: boolean;
       }>;
       count: number;
+      page: number;
+      page_size: number;
+      has_next: boolean;
+      has_previous: boolean;
       next: string | null;
       previous: string | null;
-    }>(`/api/feed/public/${query ? `?${query}` : ''}`);
+    }>(`/api/timeline/public/${query ? `?${query}` : ''}`);
   },
 
-  // Track feed interactions
+  // Track content interactions (updated for timeline system)
   trackInteraction: async (data: {
-    feed_item_id: string;
-    action: 'view' | 'click' | 'like' | 'share';
+    content_type: string;
+    content_id: string;
+    action: 'view' | 'click' | 'like' | 'share' | 'comment';
     view_time?: number;
+    feed_type?: string;
   }) => {
-    return apiClient.post(`/api/feed/track_interaction/`, data);
+    return apiClient.post(`/api/timeline/track_interaction/`, data);
   },
 
   // Get user's feed configuration

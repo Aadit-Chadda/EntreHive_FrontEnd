@@ -10,7 +10,6 @@ import {
   Edit3, 
   Trash2,
   Reply,
-  Heart,
   Loader2
 } from 'lucide-react';
 import Link from 'next/link';
@@ -19,6 +18,10 @@ import { useRouter } from 'next/navigation';
 import { PostData, PostComment, CommentCreateData } from '@/types';
 import { postsApi, commentsApi } from '@/lib/api';
 import PostCardNew from '@/app/components/PostCardNew';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import LeftNavigation from '../../components/LeftNavigation';
+import RightExplore from '../../components/RightExplore';
+import { ThemeProvider } from '../../components/ThemeProvider';
 
 interface PostDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -52,6 +55,8 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
   const [replyContent, setReplyContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showMobileNav, setShowMobileNav] = useState(false);
+  const [showRightPanel, setShowRightPanel] = useState(false);
   
   const router = useRouter();
 
@@ -224,148 +229,272 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
 
   if (loading || !resolvedParams) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <ProtectedRoute>
+        <ThemeProvider>
+          <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
+            <div className="flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
+              <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--primary)' }} />
+              <span>Loading post...</span>
+            </div>
           </div>
-        </div>
-      </div>
+        </ThemeProvider>
+      </ProtectedRoute>
     );
   }
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <div className="max-w-2xl mx-auto p-6">
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {error || 'Post not found'}
-            </h1>
-            <Link 
-              href="/"
-              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-            >
-              Return to home
-            </Link>
+      <ProtectedRoute>
+        <ThemeProvider>
+          <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
+            <div className="text-center space-y-4" style={{ color: 'var(--text-primary)' }}>
+              <h1 className="text-2xl font-bold">{error || 'Post not found'}</h1>
+              <Link
+                href="/"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-lg transition-colors"
+                style={{
+                  backgroundColor: 'var(--primary)',
+                  color: '#ffffff'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--primary)')}
+              >
+                Return to home
+              </Link>
+            </div>
           </div>
-        </div>
-      </div>
+        </ThemeProvider>
+      </ProtectedRoute>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-          <div className="flex items-center gap-4">
-            <button 
-              onClick={() => router.back()}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+    <ProtectedRoute>
+      <ThemeProvider>
+        <div className="min-h-screen transition-colors duration-200" style={{ backgroundColor: 'var(--background)' }}>
+          {/* Mobile Header */}
+          <div
+            className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
+            style={{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
+          >
+            <button
+              onClick={() => setShowMobileNav(true)}
+              className="p-2 rounded-lg transition-colors"
+              style={{ color: 'var(--text-primary)' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">Post</h1>
-          </div>
-        </div>
 
-        <div className="p-6 space-y-6">
-          {/* Post */}
-          <PostCardNew 
-            post={post} 
-            onPostUpdate={handlePostUpdate}
-            onPostDelete={handlePostDelete}
-            showComments={false}
-          />
-
-          {/* Comments Section */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Comments ({post.comments_count})
-              </h2>
+            <div className="flex items-center space-x-2">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ backgroundColor: 'var(--primary-orange)' }}
+              >
+                <span className="text-white font-bold text-sm">P</span>
+              </div>
+              <span
+                className="font-bold text-lg font-roca-two"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                Post
+              </span>
             </div>
 
-            {/* New Comment Form */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-              <div className="space-y-3">
-                <textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Write a comment..."
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                  rows={3}
-                  maxLength={1000}
-                />
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{newComment.length}/1000</span>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => handleCommentSubmit()}
-                    disabled={!newComment.trim() || submitting}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-all disabled:cursor-not-allowed"
+            <button
+              onClick={() => router.back()}
+              className="p-2 rounded-lg transition-colors"
+              style={{ color: 'var(--text-primary)' }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="flex min-h-screen">
+            <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
+
+            <div className="flex-1 min-h-screen pt-16 lg:pt-0 flex">
+              <div className="flex-1 min-w-0 max-w-none">
+                <div className="h-screen overflow-y-auto" style={{ backgroundColor: 'var(--background)' }}>
+                  {/* Header */}
+                  <div
+                    className="sticky top-0 z-10"
+                    style={{ backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)' }}
                   >
-                    {submitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                    Comment
-                  </motion.button>
+                    <div className="px-4 sm:px-6 lg:px-8">
+                      <div className="flex items-center justify-between h-16">
+                        <div className="flex items-center gap-4">
+                          <button
+                            onClick={() => router.back()}
+                            className="p-2 rounded-lg transition-colors"
+                            style={{ color: 'var(--text-primary)' }}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                          >
+                            <ArrowLeft className="w-5 h-5" />
+                          </button>
+                          <h1
+                            className="text-2xl font-bold font-roca-two"
+                            style={{ color: 'var(--text-primary)' }}
+                          >
+                            Post
+                          </h1>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="px-4 sm:px-6 lg:px-8 py-8">
+                    <div className="max-w-3xl mx-auto space-y-6">
+                      {/* Post */}
+                      <PostCardNew
+                        post={post}
+                        onPostUpdate={handlePostUpdate}
+                        onPostDelete={handlePostDelete}
+                        showComments={false}
+                      />
+
+                      {/* Comments Section */}
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-2">
+                          <MessageCircle className="w-5 h-5" style={{ color: 'var(--text-secondary)' }} />
+                          <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            Comments ({post.comments_count})
+                          </h2>
+                        </div>
+
+                        {/* New Comment Form */}
+                        <div
+                          className="rounded-xl border p-4"
+                          style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
+                        >
+                          <div className="space-y-3">
+                            <textarea
+                              value={newComment}
+                              onChange={(e) => setNewComment(e.target.value)}
+                              placeholder="Write a comment..."
+                              className="w-full p-3 rounded-lg resize-none border transition-colors focus:outline-none"
+                              style={{
+                                backgroundColor: 'var(--surface)',
+                                borderColor: 'var(--border)',
+                                color: 'var(--text-primary)',
+                                caretColor: 'var(--primary)'
+                              }}
+                              rows={3}
+                              maxLength={1000}
+                            />
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                                {newComment.length}/1000
+                              </span>
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => handleCommentSubmit()}
+                                disabled={!newComment.trim() || submitting}
+                                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all disabled:cursor-not-allowed"
+                                style={{
+                                  backgroundColor: newComment.trim() && !submitting ? 'var(--primary)' : 'var(--border)',
+                                  color: newComment.trim() && !submitting ? '#ffffff' : 'var(--text-secondary)'
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (!newComment.trim() || submitting) return;
+                                  e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (!newComment.trim() || submitting) return;
+                                  e.currentTarget.style.backgroundColor = 'var(--primary)';
+                                }}
+                              >
+                                {submitting ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Send className="w-4 h-4" />
+                                )}
+                                Comment
+                              </motion.button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Comments List */}
+                        <div>
+                          {commentsLoading ? (
+                            <div className="flex items-center justify-center py-8" style={{ color: 'var(--primary)' }}>
+                              <Loader2 className="w-6 h-6 animate-spin" />
+                            </div>
+                          ) : comments.length === 0 ? (
+                            <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>
+                              No comments yet. Be the first to comment!
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              <AnimatePresence>
+                                {comments.map((comment, index) => (
+                                  <motion.div
+                                    key={`comment-${comment.id}-${index}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    layout
+                                  >
+                                    <CommentCard
+                                      comment={comment}
+                                      postId={resolvedParams?.id || ''}
+                                      onEdit={handleCommentEdit}
+                                      onDelete={handleCommentDelete}
+                                      onReply={(commentId) => {
+                                        setReplyTo(replyTo === commentId ? null : commentId);
+                                        setReplyContent('');
+                                      }}
+                                      replyTo={replyTo}
+                                      replyContent={replyContent}
+                                      setReplyContent={setReplyContent}
+                                      onReplySubmit={() => handleCommentSubmit(replyTo!)}
+                                      submitting={submitting}
+                                    />
+                                  </motion.div>
+                                ))}
+                              </AnimatePresence>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Comments List */}
-            <div>
-              {commentsLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-                </div>
-              ) : comments.length === 0 ? (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  No comments yet. Be the first to comment!
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <AnimatePresence>
-                    {comments.map((comment, index) => (
-                      <motion.div
-                        key={`comment-${comment.id}-${index}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ delay: index * 0.1 }}
-                        layout
-                      >
-                        <CommentCard
-                          comment={comment}
-                          postId={resolvedParams?.id || ''}
-                          onEdit={handleCommentEdit}
-                          onDelete={handleCommentDelete}
-                          onReply={(commentId) => {
-                            setReplyTo(replyTo === commentId ? null : commentId);
-                            setReplyContent('');
-                          }}
-                          replyTo={replyTo}
-                          replyContent={replyContent}
-                          setReplyContent={setReplyContent}
-                          onReplySubmit={() => handleCommentSubmit(replyTo!)}
-                          submitting={submitting}
-                        />
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
+              <div className={`
+                fixed lg:static inset-y-0 right-0 z-40 w-80 lg:w-80 xl:w-80 transform transition-transform duration-300 ease-in-out
+                lg:transform-none xl:block lg:flex-shrink-0
+                ${showRightPanel ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+                hidden lg:block
+              `}>
+                <RightExplore showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel} />
+              </div>
             </div>
           </div>
+
+          {(showMobileNav || showRightPanel) && (
+            <div
+              className="fixed inset-0 z-30 lg:hidden"
+              style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+              onClick={() => {
+                setShowMobileNav(false);
+                setShowRightPanel(false);
+              }}
+            />
+          )}
         </div>
-      </div>
-    </div>
+      </ThemeProvider>
+    </ProtectedRoute>
   );
 }
 
@@ -430,19 +559,31 @@ function CommentCard({
   };
 
   return (
-    <div className={`${isReply ? 'ml-6' : ''}`}>
+    <div className={isReply ? 'ml-6' : ''}>
       {isReply && (
-        <div className="flex items-center mb-2">
-          <div className="w-6 h-px bg-gray-300 dark:bg-gray-600"></div>
-          <Reply className="w-3 h-3 text-gray-400 ml-1" />
+        <div className="flex items-center mb-2" style={{ color: 'var(--accent-pine)' }}>
+          <div className="w-6 h-px" style={{ backgroundColor: 'var(--border)' }}></div>
+          <Reply className="w-3 h-3 ml-1" />
         </div>
       )}
-      <div className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 ${isReply ? 'bg-gray-50 dark:bg-gray-750 border-l-2 border-l-blue-200 dark:border-l-blue-600' : ''}`}>
+      <div
+        className="rounded-lg border p-4"
+        style={{
+          backgroundColor: isReply ? 'rgba(33, 79, 56, 0.08)' : 'var(--surface)',
+          borderColor: isReply ? 'rgba(33, 79, 56, 0.26)' : 'var(--border)',
+          borderLeftColor: isReply ? 'var(--accent-pine)' : undefined,
+          borderLeftWidth: isReply ? '3px' : undefined,
+          borderLeftStyle: isReply ? 'solid' : undefined
+        }}
+      >
         {/* Comment Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
             <Link href={`/profiles/${comment.author?.username || ''}`}>
-              <div className={`relative ${isReply ? 'w-6 h-6' : 'w-8 h-8'} rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0`}>
+              <div
+                className={`relative ${isReply ? 'w-6 h-6' : 'w-8 h-8'} rounded-full overflow-hidden flex-shrink-0`}
+                style={{ backgroundColor: 'var(--border)' }}
+              >
                 {comment.author?.profile_picture ? (
                   <Image
                     src={comment.author.profile_picture}
@@ -451,21 +592,27 @@ function CommentCard({
                     className="object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500 text-sm font-medium">
+                  <div
+                    className="w-full h-full flex items-center justify-center text-sm font-medium"
+                    style={{ color: 'var(--text-secondary)' }}
+                  >
                     {comment.author?.full_name?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                 )}
               </div>
             </Link>
-            
+
             <div>
-              <Link 
+              <Link
                 href={`/profiles/${comment.author?.username || ''}`}
-                className={`font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${isReply ? 'text-xs' : 'text-sm'}`}
+                className={`font-medium transition-colors ${isReply ? 'text-xs' : 'text-sm'}`}
+                style={{ color: 'var(--text-primary)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--primary)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
               >
                 {comment.author?.full_name || 'Unknown User'}
               </Link>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
                 <span>@{comment.author?.username || 'unknown'}</span>
                 <span>·</span>
                 <span>{formatTimestamp(comment.created_at)}</span>
@@ -484,25 +631,32 @@ function CommentCard({
             <div className="relative">
               <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-1 rounded-full transition-colors"
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
               >
-                <MoreHorizontal className="w-4 h-4 text-gray-500" />
+                <MoreHorizontal className="w-4 h-4" />
               </button>
-              
+
               <AnimatePresence>
                 {showDropdown && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-1 w-32 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10"
+                    className="absolute right-0 top-full mt-1 w-32 rounded-lg border shadow-lg z-10"
+                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                   >
                     <button
                       onClick={() => {
                         setIsEditing(true);
                         setShowDropdown(false);
                       }}
-                      className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                      className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors"
+                      style={{ color: 'var(--text-primary)' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                     >
                       <Edit3 className="w-3 h-3" />
                       Edit
@@ -513,7 +667,10 @@ function CommentCard({
                           onDelete(comment.id, parentId);
                           setShowDropdown(false);
                         }}
-                        className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                        className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 transition-colors"
+                        style={{ color: 'var(--secondary-red)' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(119, 11, 11, 0.12)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                       >
                         <Trash2 className="w-3 h-3" />
                         Delete
@@ -533,26 +690,46 @@ function CommentCard({
               <textarea
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                className="w-full p-2 rounded-lg resize-none border text-sm focus:outline-none"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-primary)',
+                  caretColor: 'var(--primary)'
+                }}
                 rows={3}
                 maxLength={1000}
               />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">{editContent.length}/1000</span>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  {editContent.length}/1000
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => {
                       setIsEditing(false);
                       setEditContent(comment.content);
                     }}
-                    className="px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    className="px-2 py-1 text-xs transition-colors"
+                    style={{ color: 'var(--text-secondary)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleEdit}
                     disabled={editContent.trim().length === 0 || editContent.trim() === comment.content}
-                    className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2 py-1 text-xs rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: 'var(--primary)', color: '#ffffff' }}
+                    onMouseEnter={(e) => {
+                      if (e.currentTarget.hasAttribute('disabled')) return;
+                      e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (e.currentTarget.hasAttribute('disabled')) return;
+                      e.currentTarget.style.backgroundColor = 'var(--primary)';
+                    }}
                   >
                     Save
                   </button>
@@ -560,7 +737,10 @@ function CommentCard({
               </div>
             </div>
           ) : (
-            <p className={`text-gray-900 dark:text-white ${isReply ? 'text-xs' : 'text-sm'} leading-relaxed`}>
+            <p
+              className={`${isReply ? 'text-xs' : 'text-sm'} leading-relaxed`}
+              style={{ color: 'var(--text-primary)' }}
+            >
               {comment.content}
             </p>
           )}
@@ -571,13 +751,16 @@ function CommentCard({
           <div className="flex items-center gap-4">
             <button
               onClick={() => onReply(comment.id)}
-              className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="flex items-center gap-1 text-xs transition-colors"
+              style={{ color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--primary)')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
             >
               <Reply className="w-3 h-3" />
               Reply
             </button>
             {(comment.replies_count || 0) > 0 && (
-              <span className="text-xs text-gray-500">
+              <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
                 {comment.replies_count || 0} {(comment.replies_count || 0) === 1 ? 'reply' : 'replies'}
               </span>
             )}
@@ -598,23 +781,43 @@ function CommentCard({
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 placeholder={`Reply to ${comment.author?.full_name || 'this comment'}...`}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-sm"
+                className="w-full p-2 rounded-lg resize-none border text-sm focus:outline-none"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  borderColor: 'var(--border)',
+                  color: 'var(--text-primary)',
+                  caretColor: 'var(--primary)'
+                }}
                 rows={2}
                 maxLength={1000}
               />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500">{replyContent.length}/1000</span>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  {replyContent.length}/1000
+                </span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => onReply(comment.id)}
-                    className="px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+                    className="px-2 py-1 text-xs transition-colors"
+                    style={{ color: 'var(--text-secondary)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={onReplySubmit}
                     disabled={!replyContent.trim() || submitting}
-                    className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ backgroundColor: 'var(--accent-terracotta)', color: '#ffffff' }}
+                    onMouseEnter={(e) => {
+                      if (e.currentTarget.hasAttribute('disabled')) return;
+                      e.currentTarget.style.backgroundColor = 'var(--primary)';
+                    }}
+                    onMouseLeave={(e) => {
+                      if (e.currentTarget.hasAttribute('disabled')) return;
+                      e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                    }}
                   >
                     {submitting ? (
                       <Loader2 className="w-3 h-3 animate-spin" />

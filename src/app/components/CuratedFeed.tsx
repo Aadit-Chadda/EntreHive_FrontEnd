@@ -69,7 +69,8 @@ export default function CuratedFeed({
         setFeedItems(newItems);
       }
       
-      setHasMore(!!response.next);
+      // Use has_next if available (new timeline system), fallback to response.next (legacy)
+      setHasMore(response.has_next !== undefined ? response.has_next : !!response.next);
       setPage(pageNum);
       
     } catch (error) {
@@ -89,15 +90,14 @@ export default function CuratedFeed({
   const handlePostCreated = (newPost: PostData) => {
     // Add new post to the top of the feed
     const newFeedItem: FeedItem = {
-      id: `new-${Date.now()}`,
       content_type: 'post',
       content_id: newPost.id,
-      feed_type: feedType,
       score: 100, // New posts get high score
       viewed: false,
       clicked: false,
-      created_at: newPost.created_at,
-      content: newPost
+      liked: false,
+      content: newPost,
+      user_interactions: []
     };
     setFeedItems(prev => [newFeedItem, ...(prev || [])]);
   };
@@ -143,11 +143,13 @@ export default function CuratedFeed({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  const trackInteraction = async (feedItemId: string, action: 'view' | 'click') => {
+  const trackInteraction = async (item: FeedItem, action: 'view' | 'click' | 'like') => {
     try {
       await feedApi.trackInteraction({
-        feed_item_id: feedItemId,
-        action
+        content_type: item.content_type,
+        content_id: item.content_id,
+        action,
+        feed_type: feedType
       });
     } catch (error) {
       console.error('Failed to track interaction:', error);
@@ -354,12 +356,12 @@ export default function CuratedFeed({
           <div className="space-y-6">
             {feedItems.map((feedItem, index) => (
               <motion.div
-                key={feedItem.id}
+                key={`${feedItem.content_type}-${feedItem.content_id}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ delay: index * 0.1 }}
-                onClick={() => trackInteraction(feedItem.id, 'click')}
+                onClick={() => trackInteraction(feedItem, 'click')}
               >
                 {feedItem.content_type === 'post' ? (
                   <PostCardNew

@@ -11,6 +11,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
 import { ApiError } from '@/lib/api';
+import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
+import { Palette, Image as ImageIcon } from 'lucide-react';
 
 export default function ProfilePage() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
@@ -906,11 +908,60 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
     }
   };
 
+  const bannerImageUrl = project.banner_image ?? undefined;
+  const bannerGradient = getProjectBannerGradient(project.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
+  const bannerHasImage = project.banner_style === 'image' && Boolean(bannerImageUrl);
+
   return (
     <div 
       className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
       onClick={handleProjectClick}
     >
+      <div className="rounded-lg overflow-hidden mb-4">
+        <div className="relative h-28">
+          {bannerHasImage ? (
+            <>
+              <img
+                src={bannerImageUrl}
+                alt={`${project.title} banner`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            </>
+          ) : (
+            <div className="w-full h-full relative" style={{ background: bannerGradient.gradient }}>
+              <div className="absolute inset-0 opacity-16"
+                   style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}
+              ></div>
+            </div>
+          )}
+
+          <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+            <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-white/90 text-gray-800 shadow-sm`}>
+              {project.project_type.replace('_', ' ')}
+            </span>
+            <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-white/90 text-gray-800 shadow-sm`}>
+              {project.status}
+            </span>
+            <span
+              className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-white/90 text-gray-800 shadow-sm"
+            >
+              {bannerHasImage ? (
+                <>
+                  <ImageIcon className="w-3 h-3 mr-1" />
+                  Custom Banner
+                </>
+              ) : (
+                <>
+                  <Palette className="w-3 h-3 mr-1" />
+                  {bannerGradient.name}
+                </>
+              )}
+            </span>
+          </div>
+        </div>
+      </div>
+
       {/* Header with role badge */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
@@ -934,17 +985,6 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
           {role === 'owner' ? 'Owner' : 'Member'}
         </span>
       </div>
-
-      {/* Project preview image */}
-      {project.preview_image && (
-        <div className="mb-3">
-          <img 
-            src={project.preview_image} 
-            alt={project.title}
-            className="w-full h-32 object-cover rounded-lg"
-          />
-        </div>
-      )}
 
       {/* Footer */}
       <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">

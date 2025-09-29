@@ -163,6 +163,9 @@ export interface ProjectData {
   categories: string[];
   tags: string[];
   preview_image?: string;
+  banner_style: "gradient" | "image";
+  banner_gradient: string;
+  banner_image?: string | null;
   pitch_url?: string;
   repo_url?: string;
   visibility: "private" | "university" | "public";
@@ -182,6 +185,9 @@ export interface ProjectCreateData {
   categories?: string[];
   tags?: string[];
   preview_image?: string;
+  banner_style?: "gradient" | "image";
+  banner_gradient?: string;
+  banner_image?: File | null;
   pitch_url?: string;
   repo_url?: string;
   visibility?: "private" | "university" | "cross_university" | "public";
@@ -196,6 +202,9 @@ export interface ProjectUpdateData {
   categories?: string[];
   tags?: string[];
   preview_image?: string;
+  banner_style?: "gradient" | "image";
+  banner_gradient?: string;
+  banner_image?: File | null | string | undefined;
   pitch_url?: string;
   repo_url?: string;
   visibility?: "private" | "university" | "cross_university" | "public";
@@ -233,6 +242,9 @@ export const Project = z.object({
   categories: z.array(z.string()).default([]), // e.g., ["AI","EdTech"]
   tags: z.array(z.string()).default([]),
   previewImage: z.string().url().optional(),
+  bannerStyle: z.enum(["gradient", "image"]).default("gradient"),
+  bannerGradient: z.string().default("sunrise"),
+  bannerImage: z.string().url().nullable().optional(),
   pitchUrl: z.string().url().optional(),
   repoUrl: z.string().url().optional(),
   visibility: Visibility.default("private"),
@@ -405,6 +417,9 @@ export interface ProjectSummary {
   status: "concept" | "mvp" | "launched";
   visibility: "private" | "university" | "public";
   preview_image?: string;
+  banner_style: "gradient" | "image";
+  banner_gradient: string;
+  banner_image?: string | null;
   created_at: string;
   team_count: number;
 }
@@ -423,22 +438,51 @@ export interface EnhancedUserProfile extends UserProfile {
   projects_count: ProjectsCount;
 }
 
-// Feed Types
-export interface FeedItem {
-  id: string;
+// Timeline Feed Types (New Scalable System)
+export interface TimelineItem {
   content_type: 'post' | 'project';
   content_id: string;
-  feed_type: 'home' | 'university' | 'public' | 'trending';
+  score: number;
+  content: PostData | ProjectData;
+  user_interactions: string[];
+  viewed: boolean;
+  clicked: boolean;
+  liked: boolean;
+}
+
+export interface TimelineResponse {
+  results: TimelineItem[];
+  count: number;
+  page: number;
+  page_size: number;
+  has_next: boolean;
+  has_previous: boolean;
+  next: string | null;
+  previous: string | null;
+}
+
+// Legacy Feed Types (for backward compatibility)
+export interface FeedItem {
+  id?: string; // Optional for backward compatibility
+  content_type: 'post' | 'project';
+  content_id: string;
+  feed_type?: 'home' | 'university' | 'public' | 'trending'; // Optional
   score: number;
   viewed: boolean;
   clicked: boolean;
-  created_at: string;
+  liked?: boolean; // New field
+  created_at?: string; // Optional
   content: PostData | ProjectData;
+  user_interactions?: string[]; // New field
 }
 
 export interface FeedResponse {
   results: FeedItem[];
   count: number;
+  page?: number;
+  page_size?: number;
+  has_next?: boolean;
+  has_previous?: boolean;
   next: string | null;
   previous: string | null;
 }

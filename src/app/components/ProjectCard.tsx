@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProjectData, ProjectUser } from '@/types';
 import { projectApi } from '@/lib/api';
+import { Palette, Image as ImageIcon } from 'lucide-react';
+import { PROJECT_BANNER_GRADIENTS, getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -21,20 +23,20 @@ const PROJECT_TYPE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  concept: { 
-    bg: 'rgba(243, 172, 59, 0.1)', 
-    text: 'var(--primary-orange)', 
-    border: 'var(--primary-orange)' 
+  concept: {
+    bg: 'rgba(243, 172, 59, 0.1)',
+    text: 'var(--primary-orange)',
+    border: 'var(--primary-orange)'
   },
-  mvp: { 
-    bg: 'rgba(33, 79, 56, 0.1)', 
-    text: 'var(--accent-pine)', 
-    border: 'var(--accent-pine)' 
+  mvp: {
+    bg: 'rgba(54, 69, 79, 0.12)',
+    text: 'var(--secondary-charcoal)',
+    border: 'var(--secondary-charcoal)'
   },
-  launched: { 
-    bg: 'rgba(231, 159, 116, 0.1)', 
-    text: 'var(--accent-terracotta)', 
-    border: 'var(--accent-terracotta)' 
+  launched: {
+    bg: 'rgba(231, 159, 116, 0.1)',
+    text: 'var(--accent-terracotta)',
+    border: 'var(--accent-terracotta)'
   },
 };
 
@@ -49,10 +51,10 @@ const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: stri
     text: 'var(--secondary-red)', 
     border: 'var(--secondary-red)' 
   },
-  public: { 
-    bg: 'rgba(33, 79, 56, 0.1)', 
-    text: 'var(--accent-pine)', 
-    border: 'var(--accent-pine)' 
+  public: {
+    bg: 'rgba(0, 0, 128, 0.12)',
+    text: 'var(--accent-navy)',
+    border: 'var(--accent-navy)'
   },
 };
 
@@ -126,6 +128,10 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
     }
   };
 
+  const bannerImageUrl = project.banner_image ?? undefined;
+  const bannerGradient = getProjectBannerGradient(project.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
+  const bannerHasImage = project.banner_style === 'image' && Boolean(bannerImageUrl);
+
   return (
     <Link href={`/projects/${project.id}`} className="block group">
       <div className="rounded-2xl shadow-sm hover:shadow-lg overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] border-2" 
@@ -144,28 +150,23 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
            }}>
         {/* Header with Preview Image or Gradient */}
         <div className="relative h-48 overflow-hidden">
-          {project.preview_image ? (
+          {bannerHasImage ? (
             <>
               <img
-                src={project.preview_image}
-                alt={project.title}
+                src={bannerImageUrl}
+                alt={`${project.title} banner`}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             </>
           ) : (
-            <div className="w-full h-full relative" style={{background: 'linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-terracotta) 50%, var(--accent-pine) 100%)'}}>
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute inset-0" style={{ 
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` 
-                }}></div>
-              </div>
+            <div className="w-full h-full relative" style={{ background: bannerGradient.gradient }}>
+              <div className="absolute inset-0 opacity-14"
+                   style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.12'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }}
+              ></div>
             </div>
           )}
-          
+
           {/* Floating Badges */}
           <div className="absolute top-4 left-4 flex flex-wrap gap-2">
             <span className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
@@ -189,6 +190,32 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
                  project.visibility === 'university' ? 'University' :
                  'Public'}
               </span>
+            </span>
+            <span
+              className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
+              style={bannerHasImage
+                ? {
+                    backgroundColor: 'rgba(243, 172, 59, 0.2)',
+                    color: 'var(--primary)',
+                    borderColor: 'rgba(243, 172, 59, 0.32)'
+                  }
+                : {
+                    backgroundColor: 'rgba(0, 0, 128, 0.16)',
+                    color: 'var(--accent-navy)',
+                    borderColor: 'rgba(0, 0, 128, 0.28)'
+                  }}
+            >
+              {bannerHasImage ? (
+                <>
+                  <ImageIcon className="w-3 h-3 mr-1" />
+                  Custom Banner
+                </>
+              ) : (
+                <>
+                  <Palette className="w-3 h-3 mr-1" />
+                  {bannerGradient.name}
+                </>
+              )}
             </span>
           </div>
 
@@ -220,6 +247,22 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
 
         {/* Content Section */}
         <div className="p-6 space-y-4">
+          <div className="flex items-center text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--text-secondary)' }}>
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border" style={{ borderColor: 'var(--border)' }}>
+              {bannerHasImage ? (
+                <>
+                  <ImageIcon className="w-3 h-3" />
+                  Custom Banner
+                </>
+              ) : (
+                <>
+                  <Palette className="w-3 h-3" />
+                  {bannerGradient.name}
+                </>
+              )}
+            </span>
+          </div>
+
           {/* Summary */}
           {project.summary && (
             <p className="text-sm leading-relaxed line-clamp-3 font-canva-sans" style={{color: 'var(--text-secondary)'}}>

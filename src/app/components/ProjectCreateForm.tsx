@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { projectApi } from '@/lib/api';
 import { ProjectCreateData } from '@/types';
+import { PROJECT_BANNER_GRADIENTS, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
+import { Palette } from 'lucide-react';
 
 interface ProjectCreateFormProps {
   onSuccess?: (project: any) => void;
@@ -53,6 +55,8 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
     categories: [],
     tags: [],
     preview_image: '',
+    banner_style: 'gradient',
+    banner_gradient: DEFAULT_PROJECT_BANNER_GRADIENT,
     pitch_url: '',
     repo_url: '',
     visibility: 'private',
@@ -106,6 +110,14 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
     setFormData(prev => ({
       ...prev,
       tags: prev.tags?.filter(t => t !== tag) || []
+    }));
+  };
+
+  const handleBannerGradientSelect = (gradientId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      banner_style: 'gradient',
+      banner_gradient: gradientId,
     }));
   };
 
@@ -293,14 +305,54 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                       placeholder="Describe your project in detail - what problem does it solve? What makes it unique?"
                     />
                     <p className="mt-1 text-xs text-gray-600">
-                      {formData.summary?.length || 0}/5000 characters
+                {formData.summary?.length || 0}/5000 characters
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Banner Appearance */}
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6 mb-6">
+          <div className="flex items-start justify-between gap-4 flex-col lg:flex-row mb-5">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Palette className="w-5 h-5 text-amber-500" />
+                Banner Appearance
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Pick a branded gradient for your project banner. You can upload a custom image later from the project page.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {PROJECT_BANNER_GRADIENTS.map((option) => {
+              const isActive = option.id === (formData.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
+              return (
+                <button
+                  type="button"
+                  key={option.id}
+                  onClick={() => handleBannerGradientSelect(option.id)}
+                  className={`w-full text-left rounded-2xl border transition-transform ${isActive ? 'ring-2 ring-amber-500 scale-[1.01]' : ''}`}
+                  style={{ borderColor: isActive ? 'rgba(243, 172, 59, 0.6)' : 'var(--border)' }}
+                >
+                  <div className="h-24 rounded-t-2xl" style={{ background: option.gradient }}></div>
+                  <div className="p-4 space-y-1">
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {option.name}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {option.description}
                     </p>
                   </div>
-                </div>
-              </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-              {/* Project Needs */}
-              <div className="bg-red-50 rounded-lg p-6">
+        {/* Project Needs */}
+        <div className="bg-red-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <svg className="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />

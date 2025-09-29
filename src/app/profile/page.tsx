@@ -392,6 +392,16 @@ export default function ProfilePage() {
                              '💼 Investor'}
                           </span>
                         </div>
+                        
+                        {/* Follower/Following Stats */}
+                        <div className="flex items-center space-x-4 mt-3 text-sm text-gray-600 dark:text-gray-400">
+                          <span className="font-medium">
+                            <span className="font-bold text-gray-900 dark:text-white">{profile.followers_count || 0}</span> followers
+                          </span>
+                          <span className="font-medium">
+                            <span className="font-bold text-gray-900 dark:text-white">{profile.following_count || 0}</span> following
+                          </span>
+                        </div>
                       </div>
 
                       {/* Bio */}

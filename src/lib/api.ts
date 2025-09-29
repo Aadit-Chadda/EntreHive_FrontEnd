@@ -88,7 +88,7 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async post<T>(endpoint: string, data?: any): Promise<T> {
+  async post<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
@@ -97,7 +97,7 @@ export class ApiClient {
     return this.handleResponse<T>(response);
   }
 
-  async patch<T>(endpoint: string, data?: any): Promise<T> {
+  async patch<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers: this.getAuthHeaders(),
@@ -171,7 +171,8 @@ export const apiClient = new ApiClient();
 // Project API functions
 import { 
   ProjectData, ProjectCreateData, ProjectUpdateData, ProjectInvitation, ProjectInvitationCreate, AddTeamMemberData,
-  PostData, PostCreateData, PostUpdateData, PostComment, CommentCreateData, PostLike, PostsResponse 
+  PostData, PostCreateData, PostUpdateData, PostComment, CommentCreateData, PostLike, PostsResponse,
+  UserProfile
 } from '@/types';
 
 export const projectApi = {
@@ -304,7 +305,7 @@ export const postsApi = {
       return apiClient.postFormData<PostData>('/api/posts/', formData);
     } else {
       // Filter out empty arrays to avoid sending empty tagged_project_ids
-      const postPayload: any = {
+      const postPayload: Record<string, unknown> = {
         content: data.content,
         visibility: data.visibility,
       };
@@ -400,3 +401,29 @@ export const commentsApi = {
     return apiClient.delete(`/api/posts/${postId}/comments/${commentId}/`);
   },
 };
+
+// Follow API
+export const followApi = {
+  // Follow a user
+  followUser: async (username: string) => {
+    return apiClient.post<{ message: string; following: boolean }>(`/api/accounts/follow/${username}/`);
+  },
+
+  // Unfollow a user
+  unfollowUser: async (username: string) => {
+    return apiClient.delete<{ message: string; following: boolean }>(`/api/accounts/unfollow/${username}/`);
+  },
+
+  // Check follow status
+  getFollowStatus: async (username: string) => {
+    return apiClient.get<{ following: boolean }>(`/api/accounts/follow-status/${username}/`);
+  },
+
+  // Search users
+  searchUsers: async (query: string) => {
+    return apiClient.get<{ results: UserProfile[]; count: number }>(`/api/accounts/search/users/?q=${encodeURIComponent(query)}`);
+  },
+};
+
+// Export main API instance for direct use
+export const api = apiClient;

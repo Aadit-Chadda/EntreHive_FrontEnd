@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ConditionalLayout from "./components/ConditionalLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 // Official EntreHive Fonts
 const rocaTwo = Inter({
@@ -38,11 +39,13 @@ export default function RootLayout({
         className={`${rocaTwo.variable} ${canvaSans.variable} ${inter.variable} font-sans antialiased`}
         style={{backgroundColor: 'var(--background)'}}
       >
-        <AuthProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

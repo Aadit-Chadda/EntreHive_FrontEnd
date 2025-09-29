@@ -43,9 +43,13 @@ export interface UserProfile {
   github_url?: string;
   is_profile_public: boolean;
   show_email: boolean;
-  role_specific_info: Record<string, any>;
+  role_specific_info: Record<string, unknown>;
   created_at: string;
   updated_at: string;
+  followers_count: number;
+  following_count: number;
+  is_following: boolean;
+  is_followed_by: boolean;
 }
 
 export interface RegistrationData {

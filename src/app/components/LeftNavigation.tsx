@@ -38,6 +38,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
           <div className="absolute bottom-32 right-2 w-5 h-5 opacity-25 animate-hexagon-float" style={{backgroundColor: 'var(--accent-terracotta)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '4s'}}></div>
           <div className="absolute top-1/2 left-4 w-3 h-3 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--secondary-taupe)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '1s'}}></div>
           <div className="absolute bottom-20 left-8 w-4 h-4 opacity-30 animate-hexagon-float" style={{backgroundColor: 'var(--accent-navy)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '3s'}}></div>
+          
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 px-6 py-4 relative z-10" style={{borderBottom: '1px solid var(--border)'}}>
             <div className="flex items-center space-x-3">
@@ -58,39 +59,38 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2 relative z-10">
+          <nav className="flex-1 px-4 py-6 space-y-2 relative z-10 overflow-y-auto scrollbar-hide">
             {navItems.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}
                 onClick={() => setActiveItem(item.id)}
                 className={`
-                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-200 relative
+                  group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
                   ${activeItem === item.id 
-                    ? 'shadow-sm' 
-                    : 'hover:text-gray-900 dark:hover:text-white'
+                    ? 'shadow-lg transform scale-105' 
+                    : 'hover:text-gray-900 dark:hover:text-white hover:scale-102'
                   }
                 `}
                 style={{
                   backgroundColor: activeItem === item.id ? 'var(--active-bg)' : 'transparent',
                   color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-secondary)',
-                  '&:hover': {
-                    backgroundColor: 'var(--hover-bg)'
-                  }
                 }}
                 onMouseEnter={(e) => {
                   if (activeItem !== item.id) {
                     e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                    e.currentTarget.style.transform = 'scale(1.02)';
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (activeItem !== item.id) {
                     e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'scale(1)';
                   }
                 }}
               >
                 <svg
-                  className={`mr-3 h-5 w-5 transition-transform duration-200 group-hover:scale-110`}
+                  className={`mr-3 h-5 w-5 transition-all duration-300 group-hover:scale-110 ${activeItem === item.id ? 'animate-pulse' : ''}`}
                   style={{
                     color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-muted)'
                   }}
@@ -105,24 +105,33 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 </svg>
                 <span className="truncate">{item.label}</span>
                 {activeItem === item.id && (
-                  <div className="absolute right-2 w-1.5 h-1.5 rounded-full" style={{backgroundColor: 'var(--primary-orange)'}}></div>
+                  <div className="absolute right-2 w-2 h-2 rounded-full animate-ping" style={{backgroundColor: 'var(--primary-orange)'}}></div>
                 )}
               </Link>
             ))}
           </nav>
 
           {/* Theme Toggle & User Info */}
-          <div className="flex-shrink-0 p-4 space-y-4" style={{borderTop: '1px solid var(--border)'}}>
+          <div className="flex-shrink-0 p-4 space-y-4 relative z-10" style={{borderTop: '1px solid var(--border)'}}>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
               <ThemeToggle />
             </div>
             
-            <Link href="/profile" className="flex items-center space-x-3 p-3 rounded-lg transition-colors cursor-pointer" 
-                 style={{backgroundColor: 'var(--hover-bg)'}}
-                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
-                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}>
-              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
+            <Link 
+              href="/profile" 
+              className="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 cursor-pointer group hover:scale-105" 
+              style={{backgroundColor: 'var(--hover-bg)'}}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--active-bg)';
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
+            >
+              <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
                 {profile?.profile_picture ? (
                   <img
                     src={profile.profile_picture}
@@ -142,6 +151,11 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>
                   @{profile?.username || user?.username || 'username'}
                 </p>
+              </div>
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <svg className="w-4 h-4" style={{color: 'var(--text-muted)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </div>
             </Link>
           </div>

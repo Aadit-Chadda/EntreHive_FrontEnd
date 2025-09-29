@@ -180,15 +180,55 @@ export default function CuratedFeed({
 
   if (loading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         {showComposer && (
-          <div className="animate-pulse rounded-lg h-32" style={{ backgroundColor: 'var(--hover-bg)' }}></div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="rounded-2xl h-32 relative overflow-hidden shadow-lg" 
+            style={{ backgroundColor: 'var(--hover-bg)' }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+            <div className="absolute top-4 left-4 w-8 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-orange)', opacity: 0.3 }}></div>
+            <div className="absolute top-4 left-16 w-32 h-4 rounded" style={{ backgroundColor: 'var(--border)', opacity: 0.5 }}></div>
+          </motion.div>
         )}
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="animate-pulse rounded-lg h-64 relative overflow-hidden" style={{ backgroundColor: 'var(--hover-bg)' }}>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
-          </div>
-        ))}
+        
+        <div className="space-y-6">
+          {[...Array(3)].map((_, i) => (
+            <motion.div 
+              key={i} 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.2, duration: 0.6 }}
+              className="rounded-2xl h-64 relative overflow-hidden shadow-lg" 
+              style={{ backgroundColor: 'var(--hover-bg)' }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              
+              {/* Skeleton content */}
+              <div className="p-6">
+                <div className="flex items-center space-x-3 mb-4">
+                  <div className="w-10 h-10 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
+                  <div className="space-y-2">
+                    <div className="w-24 h-3 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
+                    <div className="w-16 h-2 rounded" style={{ backgroundColor: 'var(--border)', opacity: 0.7 }}></div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="w-full h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
+                  <div className="w-3/4 h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
+                  <div className="w-1/2 h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
+                </div>
+                <div className="flex items-center space-x-4 mt-6">
+                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
+                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
+                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -240,12 +280,14 @@ export default function CuratedFeed({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Post Composer */}
       {showComposer && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-8"
         >
           <PostComposerNew 
             onPostCreated={handlePostCreated}
@@ -353,15 +395,21 @@ export default function CuratedFeed({
             </div>
           </motion.div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {feedItems.map((feedItem, index) => (
               <motion.div
                 key={`${feedItem.content_type}-${feedItem.content_id}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.1 }}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -30, scale: 0.95 }}
+                transition={{ 
+                  delay: index * 0.1,
+                  duration: 0.5,
+                  ease: [0.25, 0.46, 0.45, 0.94]
+                }}
+                whileHover={{ y: -2 }}
                 onClick={() => trackInteraction(feedItem, 'click')}
+                className="transform transition-all duration-200"
               >
                 {feedItem.content_type === 'post' ? (
                   <PostCardNew
@@ -386,18 +434,89 @@ export default function CuratedFeed({
               </motion.div>
             ))}
             
-            {/* Load More */}
+            {/* Enhanced Loading Spinner */}
             {loadingMore && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-center py-8"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex flex-col items-center py-12"
               >
-                <div className="flex items-center gap-3">
-                  <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--primary-orange)' }} />
-                  <span className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
-                    Loading more content...
-                  </span>
+                <div className="relative">
+                  {/* Outer rotating ring */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="w-16 h-16 rounded-full border-4 border-transparent"
+                    style={{ 
+                      borderTopColor: 'var(--primary-orange)',
+                      borderRightColor: 'var(--accent-terracotta)'
+                    }}
+                  />
+                  
+                  {/* Inner pulsing circle */}
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-2 rounded-full"
+                    style={{ backgroundColor: 'var(--primary-orange)', opacity: 0.2 }}
+                  />
+                  
+                  {/* Center logo */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                      className="w-6 h-6 rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: 'var(--primary-orange)' }}
+                    >
+                      <TrendingUp className="w-4 h-4 text-white" />
+                    </motion.div>
+                  </div>
+                </div>
+                
+                {/* Loading text with animated dots */}
+                <motion.div
+                  initial={{ y: 10, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="mt-6 text-center"
+                >
+                  <h3 className="text-lg font-semibold font-roca-two mb-2" style={{ color: 'var(--text-primary)' }}>
+                    Discovering Amazing Content
+                  </h3>
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                      Loading fresh ideas
+                    </span>
+                    <motion.span
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
+                    >
+                      .
+                    </motion.span>
+                    <motion.span
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+                    >
+                      .
+                    </motion.span>
+                    <motion.span
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: 1 }}
+                    >
+                      .
+                    </motion.span>
+                  </div>
+                </motion.div>
+
+                {/* Decorative elements */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-20">
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-2 h-2 rounded-full mx-1"
+                    style={{ backgroundColor: 'var(--accent-terracotta)', opacity: 0.6 }}
+                  />
                 </div>
               </motion.div>
             )}

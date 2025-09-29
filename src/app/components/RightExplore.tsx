@@ -69,9 +69,9 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
   ];
 
   return (
-    <div className="h-screen overflow-y-auto" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+    <div className="h-full flex flex-col" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
       {/* Header */}
-      <div className="sticky top-0 p-4 lg:hidden" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
+      <div className="flex-shrink-0 p-4 lg:hidden" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Explore</h2>
           <button
@@ -85,7 +85,8 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
         </div>
       </div>
 
-      <div className="p-4 space-y-6">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-8 scrollbar-hide">
         {/* Search */}
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -118,17 +119,20 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
 
         {/* Browse Categories */}
         <div>
-          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>Browse Categories</h3>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
+          <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>Browse Categories</h3>
+          <div className="flex flex-wrap gap-3">
+            {categories.map((category, index) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium font-canva-sans transition-all duration-200 hover:scale-105`}
+                className={`px-4 py-2 rounded-full text-sm font-medium font-canva-sans transition-all duration-300 hover:scale-105 hover:shadow-md transform ${
+                  selectedCategory === category.id ? 'scale-105 shadow-lg' : ''
+                }`}
                 style={{
                   backgroundColor: category.color,
                   color: category.textColor,
-                  border: selectedCategory === category.id ? '2px solid var(--primary-orange)' : 'none'
+                  border: selectedCategory === category.id ? '2px solid var(--primary-orange)' : 'none',
+                  animationDelay: `${index * 100}ms`
                 }}
               >
                 #{category.name}
@@ -139,18 +143,27 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
 
         {/* Recent Posts */}
         <div>
-          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>Recent Posts</h3>
-          <div className="space-y-3">
-            {recentPosts.map((post) => (
-              <div key={post.id} className="p-3 rounded-lg transition-colors cursor-pointer"
-                   style={{backgroundColor: 'var(--hover-bg)'}}
-                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
-                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}>
+          <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>Recent Posts</h3>
+          <div className="space-y-4">
+            {recentPosts.map((post, index) => (
+              <div 
+                key={post.id} 
+                className="p-4 rounded-xl transition-all duration-300 cursor-pointer hover:scale-102 hover:shadow-md group"
+                style={{backgroundColor: 'var(--hover-bg)'}}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--active-bg)';
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-sm font-canva-sans" style={{color: 'var(--text-primary)'}}>@{post.author}</span>
-                  <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>{post.timestamp}</span>
+                  <span className="font-semibold text-sm font-canva-sans group-hover:text-orange-500 transition-colors" style={{color: 'var(--text-primary)'}}>@{post.author}</span>
+                  <span className="text-xs font-canva-sans px-2 py-1 rounded-full" style={{color: 'var(--text-secondary)', backgroundColor: 'var(--border)'}}>{post.timestamp}</span>
                 </div>
-                <p className="text-sm font-canva-sans line-clamp-2" style={{color: 'var(--text-muted)'}}>{post.content}</p>
+                <p className="text-sm font-canva-sans line-clamp-2 leading-relaxed" style={{color: 'var(--text-muted)'}}>{post.content}</p>
               </div>
             ))}
           </div>
@@ -158,29 +171,49 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
 
         {/* People to Follow */}
         <div>
-          <h3 className="text-lg font-semibold font-roca-two mb-3" style={{color: 'var(--text-primary)'}}>People to Follow</h3>
-          <div className="space-y-3">
-            {peopleToFollow.map((person) => (
-              <div key={person.id} className="flex items-center justify-between p-3 rounded-lg transition-colors"
-                   style={{backgroundColor: 'transparent'}}
-                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
-                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+          <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>People to Follow</h3>
+          <div className="space-y-4">
+            {peopleToFollow.map((person, index) => (
+              <div 
+                key={person.id} 
+                className="flex items-center justify-between p-4 rounded-xl transition-all duration-300 group hover:scale-102 hover:shadow-md"
+                style={{backgroundColor: 'transparent'}}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                  e.currentTarget.style.transform = 'scale(1.02)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
                 <div className="flex items-center space-x-3 flex-1 min-w-0">
-                  <img
-                    src={person.avatar}
-                    alt={person.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
+                  <div className="relative">
+                    <img
+                      src={person.avatar}
+                      alt={person.name}
+                      className="w-12 h-12 rounded-full object-cover shadow-md transition-all duration-300 group-hover:shadow-lg"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white" style={{backgroundColor: 'var(--accent-pine)'}}></div>
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>{person.name}</p>
+                    <p className="font-semibold text-sm font-canva-sans truncate group-hover:text-orange-500 transition-colors" style={{color: 'var(--text-primary)'}}>{person.name}</p>
                     <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>@{person.username}</p>
-                    <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-muted)'}}>{person.bio}</p>
+                    <p className="text-xs font-canva-sans truncate mt-1" style={{color: 'var(--text-muted)'}}>{person.bio}</p>
                   </div>
                 </div>
-                <button className="px-4 py-1.5 text-white text-xs font-medium font-canva-sans rounded-full transition-colors flex-shrink-0"
-                        style={{backgroundColor: 'var(--primary-orange)'}}
-                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-terracotta)'}
-                        onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--primary-orange)'}>
+                <button 
+                  className="px-4 py-2 text-white text-xs font-semibold font-canva-sans rounded-full transition-all duration-300 flex-shrink-0 hover:scale-105 hover:shadow-md"
+                  style={{backgroundColor: 'var(--primary-orange)'}}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = 'var(--accent-terracotta)';
+                    e.target.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'var(--primary-orange)';
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
                   Follow
                 </button>
               </div>
@@ -189,14 +222,26 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
         </div>
 
         {/* Footer Links */}
-        <div className="pt-4" style={{borderTop: '1px solid var(--border)'}}>
-          <div className="flex flex-wrap gap-3 text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>
-            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>About</a>
-            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Terms</a>
-            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Privacy</a>
-            <a href="#" className="transition-colors" style={{color: 'var(--text-secondary)'}} onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}>Help</a>
+        <div className="pt-6 border-t" style={{borderColor: 'var(--border)'}}>
+          <div className="flex flex-wrap gap-4 text-xs font-canva-sans mb-3">
+            {['About', 'Terms', 'Privacy', 'Help'].map((link) => (
+              <a 
+                key={link}
+                href="#" 
+                className="transition-all duration-300 hover:scale-105 hover:font-medium" 
+                style={{color: 'var(--text-secondary)'}} 
+                onMouseEnter={(e) => {
+                  e.target.style.color = 'var(--primary-orange)';
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = 'var(--text-secondary)';
+                }}
+              >
+                {link}
+              </a>
+            ))}
           </div>
-          <p className="text-xs font-canva-sans mt-2" style={{color: 'var(--text-muted)'}}>© 2024 EntreHive</p>
+          <p className="text-xs font-canva-sans text-center py-2" style={{color: 'var(--text-muted)'}}>© 2024 EntreHive</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Heart, 
@@ -30,6 +30,11 @@ export default function PostCard({
   onPostDelete,
   showComments = false 
 }: PostCardProps) {
+  // Debug render counter
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  console.log(`PostCard render #${renderCount.current} - Post ID: ${post.id}`);
+
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -38,6 +43,22 @@ export default function PostCard({
   const [isLiking, setIsLiking] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+
+  // Only sync state on initial mount or when post ID changes
+  useEffect(() => {
+    setIsLiked(post.is_liked);
+    setLikesCount(post.likes_count);
+  }, [post.id]);
+  
+  // Separate effect to sync content changes
+  useEffect(() => {
+    setEditContent(post.content);
+  }, [post.content]);
+
+  // Debug effect to track state changes
+  useEffect(() => {
+    console.log('State changed - isLiked:', isLiked, 'likesCount:', likesCount);
+  }, [isLiked, likesCount]);
 
   const formatTimestamp = useCallback((timestamp: string) => {
     const now = new Date();
@@ -59,11 +80,19 @@ export default function PostCard({
   const handleLike = async () => {
     if (isLiking) return;
     
+    console.log('Current state before like:', { isLiked, likesCount });
     setIsLiking(true);
+    
     try {
       const response = await postsApi.toggleLike(post.id);
+      console.log('Like response:', response); // Debug log
+      console.log('About to update state - liked:', response.liked, 'count:', response.likes_count);
+      
+      // Update with actual server response
       setIsLiked(response.liked);
       setLikesCount(response.likes_count);
+      
+      console.log('State updated - new values should be:', { liked: response.liked, count: response.likes_count });
     } catch (error) {
       console.error('Failed to toggle like:', error);
     } finally {
@@ -153,7 +182,7 @@ export default function PostCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Link href={`/profile/${post.author.username}`}>
+          <Link href={`/profiles/${post.author.username}`}>
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0">
               {post.author.profile_picture ? (
                 <Image
@@ -172,7 +201,7 @@ export default function PostCard({
           
           <div className="flex-1 min-w-0">
             <Link 
-              href={`/profile/${post.author.username}`}
+              href={`/profiles/${post.author.username}`}
               className="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               {post.author.full_name}
@@ -182,6 +211,12 @@ export default function PostCard({
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getRoleColor(post.author.user_role)}`}>
                 {post.author.user_role}
               </span>
+              {post.author.university_name && (
+                <>
+                  <span className="text-gray-400 text-sm">·</span>
+                  <span className="text-gray-500 text-sm">{post.author.university_name}</span>
+                </>
+              )}
               <span className="text-gray-400 text-sm">·</span>
               <span className="text-gray-500 text-sm">{formatTimestamp(post.created_at)}</span>
               {post.is_edited && (
@@ -337,6 +372,10 @@ export default function PostCard({
           >
             <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
             <span className="text-sm font-medium">{likesCount}</span>
+            {/* Debug info */}
+            <span className="text-xs text-gray-500" title={`Debug: isLiked=${isLiked}, count=${likesCount}`}>
+              {console.log('JSX render - isLiked:', isLiked, 'likesCount:', likesCount) || ''}
+            </span>
           </motion.button>
 
           <Link

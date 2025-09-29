@@ -183,7 +183,6 @@ export default function EditProjectPage() {
   const VISIBILITY_OPTIONS = [
     { value: 'private', label: 'Private', description: 'Only you and team members can see this project' },
     { value: 'university', label: 'University', description: 'Only people from your university can see this project' },
-    { value: 'cross_university', label: 'Cross University', description: 'All verified students can see this project' },
     { value: 'public', label: 'Public', description: 'Anyone can see this project' },
   ];
 

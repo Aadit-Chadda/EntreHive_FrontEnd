@@ -425,5 +425,152 @@ export const followApi = {
   },
 };
 
+// Feed API
+export const feedApi = {
+  // Get curated home feed
+  getHomeFeed: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<{
+      results: Array<{
+        id: string;
+        content_type: string;
+        content_id: string;
+        feed_type: string;
+        score: number;
+        viewed: boolean;
+        clicked: boolean;
+        created_at: string;
+        content: PostData | ProjectData;
+      }>;
+      count: number;
+      next: string | null;
+      previous: string | null;
+    }>(`/api/feed/home/${query ? `?${query}` : ''}`);
+  },
+
+  // Get university feed
+  getUniversityFeed: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<{
+      results: Array<{
+        id: string;
+        content_type: string;
+        content_id: string;
+        feed_type: string;
+        score: number;
+        viewed: boolean;
+        clicked: boolean;
+        created_at: string;
+        content: PostData | ProjectData;
+      }>;
+      count: number;
+      next: string | null;
+      previous: string | null;
+    }>(`/api/feed/university/${query ? `?${query}` : ''}`);
+  },
+
+  // Get public feed
+  getPublicFeed: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<{
+      results: Array<{
+        id: string;
+        content_type: string;
+        content_id: string;
+        feed_type: string;
+        score: number;
+        viewed: boolean;
+        clicked: boolean;
+        created_at: string;
+        content: PostData | ProjectData;
+      }>;
+      count: number;
+      next: string | null;
+      previous: string | null;
+    }>(`/api/feed/public/${query ? `?${query}` : ''}`);
+  },
+
+  // Track feed interactions
+  trackInteraction: async (data: {
+    feed_item_id: string;
+    action: 'view' | 'click' | 'like' | 'share';
+    view_time?: number;
+  }) => {
+    return apiClient.post(`/api/feed/track_interaction/`, data);
+  },
+
+  // Get user's feed configuration
+  getFeedConfig: async () => {
+    return apiClient.get<{
+      show_university_posts: boolean;
+      show_public_posts: boolean;
+      show_project_updates: boolean;
+      preferred_post_types: string[];
+      recency_weight: number;
+      relevance_weight: number;
+      engagement_weight: number;
+      university_weight: number;
+    }>('/api/feed-config/');
+  },
+
+  // Update feed configuration
+  updateFeedConfig: async (data: {
+    show_university_posts?: boolean;
+    show_public_posts?: boolean;
+    show_project_updates?: boolean;
+    preferred_post_types?: string[];
+    recency_weight?: number;
+    relevance_weight?: number;
+    engagement_weight?: number;
+    university_weight?: number;
+  }) => {
+    return apiClient.patch('/api/feed-config/', data);
+  },
+
+  // Get trending topics
+  getTrendingTopics: async (params?: { university?: string }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<Array<{
+      topic: string;
+      mention_count: number;
+      universities: string[];
+      created_at: string;
+      updated_at: string;
+    }>>(`/api/trending/${query ? `?${query}` : ''}`);
+  },
+};
+
 // Export main API instance for direct use
 export const api = apiClient;

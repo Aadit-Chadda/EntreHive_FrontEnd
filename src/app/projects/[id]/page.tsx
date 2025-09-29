@@ -102,11 +102,6 @@ export default function ProjectDetailsPage() {
       text: 'var(--secondary-red)', 
       border: 'var(--secondary-red)' 
     },
-    cross_university: { 
-      bg: 'rgba(0, 0, 128, 0.1)', 
-      text: 'var(--accent-navy)', 
-      border: 'var(--accent-navy)' 
-    },
     public: { 
       bg: 'rgba(33, 79, 56, 0.1)', 
       text: 'var(--accent-pine)', 
@@ -117,7 +112,6 @@ export default function ProjectDetailsPage() {
   const VISIBILITY_ICONS: Record<string, string> = {
     private: 'M12 1l3.09 6.26L22 9l-5.45 5.32L18.18 21 12 17.77 5.82 21l1.64-6.68L2 9l6.91-1.74L12 1z',
     university: 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z',
-    cross_university: 'M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z',
     public: 'M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
   };
 
@@ -280,7 +274,7 @@ export default function ProjectDetailsPage() {
                                       </svg>
                                       {project.visibility === 'private' ? 'Private' : 
                                        project.visibility === 'university' ? 'University' :
-                                       project.visibility === 'cross_university' ? 'Cross University' : 'Public'}
+                                       'Public'}
                                     </span>
                                   </div>
                                 </div>
@@ -297,7 +291,15 @@ export default function ProjectDetailsPage() {
                                       <p className="text-white font-medium">
                                         Created by {project.owner.full_name || project.owner.username}
                                       </p>
-                                      <p className="text-blue-100 text-sm">@{project.owner.username}</p>
+                                      <div className="flex items-center gap-2 text-blue-100 text-sm">
+                                        <span>@{project.owner.username}</span>
+                                        {project.owner.profile?.university && (
+                                          <>
+                                            <span>·</span>
+                                            <span>{project.owner.profile.university.name}</span>
+                                          </>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                   

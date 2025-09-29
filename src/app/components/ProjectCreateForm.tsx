@@ -27,7 +27,6 @@ const PROJECT_STATUS = [
 const VISIBILITY_OPTIONS = [
   { value: 'private', label: 'Private (Only you and team members)' },
   { value: 'university', label: 'University Only' },
-  { value: 'cross_university', label: 'Cross University' },
   { value: 'public', label: 'Public' },
 ];
 

@@ -49,11 +49,6 @@ const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: stri
     text: 'var(--secondary-red)', 
     border: 'var(--secondary-red)' 
   },
-  cross_university: { 
-    bg: 'rgba(0, 0, 128, 0.1)', 
-    text: 'var(--accent-navy)', 
-    border: 'var(--accent-navy)' 
-  },
   public: { 
     bg: 'rgba(33, 79, 56, 0.1)', 
     text: 'var(--accent-pine)', 
@@ -68,11 +63,6 @@ const VISIBILITY_ICONS: Record<string, React.ReactElement> = {
     </svg>
   ),
   university: (
-    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
-    </svg>
-  ),
-  cross_university: (
     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
     </svg>
@@ -197,7 +187,7 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
               <span className="ml-1">
                 {project.visibility === 'private' ? 'Private' : 
                  project.visibility === 'university' ? 'University' :
-                 project.visibility === 'cross_university' ? 'Cross-Uni' : 'Public'}
+                 'Public'}
               </span>
             </span>
           </div>

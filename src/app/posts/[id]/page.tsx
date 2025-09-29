@@ -441,7 +441,7 @@ function CommentCard({
         {/* Comment Header */}
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center gap-3">
-            <Link href={`/profile/${comment.author?.username || ''}`}>
+            <Link href={`/profiles/${comment.author?.username || ''}`}>
               <div className={`relative ${isReply ? 'w-6 h-6' : 'w-8 h-8'} rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex-shrink-0`}>
                 {comment.author?.profile_picture ? (
                   <Image
@@ -460,7 +460,7 @@ function CommentCard({
             
             <div>
               <Link 
-                href={`/profile/${comment.author?.username || ''}`}
+                href={`/profiles/${comment.author?.username || ''}`}
                 className={`font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors ${isReply ? 'text-xs' : 'text-sm'}`}
               >
                 {comment.author?.full_name || 'Unknown User'}

@@ -103,7 +103,7 @@ export const ProjectType = z.enum(["startup", "side_project", "research", "hacka
 
 export const ProjectStatus = z.enum(["concept", "mvp", "launched"]);
 
-export const Visibility = z.enum(["private", "university", "cross_university", "public"]);
+export const Visibility = z.enum(["private", "university", "public"]);
 
 export interface User {
   id: string;
@@ -142,7 +142,11 @@ export interface ProjectUser {
     full_name: string;
     profile_picture: string | null;
     user_role: string;
-    university: string | null;
+    university: {
+      id: string;
+      name: string;
+      short_name: string;
+    } | null;
     bio: string | null;
   } | null;
 }
@@ -161,7 +165,7 @@ export interface ProjectData {
   preview_image?: string;
   pitch_url?: string;
   repo_url?: string;
-  visibility: "private" | "university" | "cross_university" | "public";
+  visibility: "private" | "university" | "public";
   created_at: string;
   updated_at: string;
   team_count: number;
@@ -259,7 +263,7 @@ export interface Post {
   cta?: CTAType;
   isLiked?: boolean;
   isSaved?: boolean;
-  visibility: "university" | "cross_university";
+  visibility: "university" | "public";
   commitment?: string;
   lookingFor?: string[];
   isVetted?: boolean;
@@ -308,6 +312,8 @@ export interface PostAuthor {
   full_name: string;
   profile_picture?: string;
   user_role: UserRole;
+  university_name?: string;
+  university_id?: string;
 }
 
 export interface PostProject {
@@ -397,7 +403,7 @@ export interface ProjectSummary {
   title: string;
   project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
   status: "concept" | "mvp" | "launched";
-  visibility: "private" | "university" | "cross_university" | "public";
+  visibility: "private" | "university" | "public";
   preview_image?: string;
   created_at: string;
   team_count: number;
@@ -415,4 +421,43 @@ export interface EnhancedUserProfile extends UserProfile {
   member_projects: ProjectSummary[];
   posts_count: number;
   projects_count: ProjectsCount;
+}
+
+// Feed Types
+export interface FeedItem {
+  id: string;
+  content_type: 'post' | 'project';
+  content_id: string;
+  feed_type: 'home' | 'university' | 'public' | 'trending';
+  score: number;
+  viewed: boolean;
+  clicked: boolean;
+  created_at: string;
+  content: PostData | ProjectData;
+}
+
+export interface FeedResponse {
+  results: FeedItem[];
+  count: number;
+  next: string | null;
+  previous: string | null;
+}
+
+export interface FeedConfig {
+  show_university_posts: boolean;
+  show_public_posts: boolean;
+  show_project_updates: boolean;
+  preferred_post_types: string[];
+  recency_weight: number;
+  relevance_weight: number;
+  engagement_weight: number;
+  university_weight: number;
+}
+
+export interface TrendingTopic {
+  topic: string;
+  mention_count: number;
+  universities: string[];
+  created_at: string;
+  updated_at: string;
 }

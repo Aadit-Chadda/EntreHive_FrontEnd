@@ -43,7 +43,6 @@ export default function ProjectComposer({ onProjectCreate, onClose }: ProjectCom
 
   const visibilityOptions = [
     { value: 'university', label: 'University Only' },
-    { value: 'cross_university', label: 'Cross University' },
     { value: 'public', label: 'Public' },
   ];
 

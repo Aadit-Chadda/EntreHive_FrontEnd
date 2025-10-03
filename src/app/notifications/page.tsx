@@ -4,7 +4,6 @@ import { useState } from 'react';
 import LeftNavigation from '../components/LeftNavigation';
 import RightExplore from '../components/RightExplore';
 import ProjectInvitations from '../components/ProjectInvitations';
-import { ThemeProvider } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
 export default function NotificationsPage() {
@@ -13,13 +12,19 @@ export default function NotificationsPage() {
 
   return (
     <ProtectedRoute>
-      <ThemeProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div className="min-h-screen transition-colors duration-200" style={{backgroundColor: 'var(--background)'}}>
           {/* Mobile Header */}
-          <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
+          <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between transition-colors duration-200" 
+               style={{
+                 backgroundColor: 'var(--surface)', 
+                 borderBottom: '1px solid var(--border)'
+               }}>
             <button
               onClick={() => setShowMobileNav(true)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg transition-colors duration-200"
+              style={{color: 'var(--text-primary)'}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -27,10 +32,10 @@ export default function NotificationsPage() {
             </button>
             
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{backgroundColor: 'var(--primary-orange)'}}>
                 <span className="text-white font-bold text-sm">E</span>
               </div>
-              <span className="font-bold text-lg">Notifications</span>
+              <span className="font-bold text-lg" style={{color: 'var(--text-primary)'}}>Notifications</span>
             </div>
 
             <div className="w-10"></div> {/* Spacer for balance */}
@@ -115,7 +120,6 @@ export default function NotificationsPage() {
             />
           )}
         </div>
-      </ThemeProvider>
     </ProtectedRoute>
   );
 }

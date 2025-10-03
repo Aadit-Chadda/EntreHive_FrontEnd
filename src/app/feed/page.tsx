@@ -10,7 +10,7 @@ import LeftNavigation from '../components/LeftNavigation';
 import FeedTabs from '../components/FeedTabs';
 import RightExplore from '../components/RightExplore';
 import FloatingComposer from '../components/FloatingComposer';
-import { ThemeProvider } from '../components/ThemeProvider';
+import { ThemeProvider, ThemeToggle } from '../components/ThemeProvider';
 
 export default function Feed() {
   const [showRightPanel, setShowRightPanel] = useState(false);
@@ -145,7 +145,7 @@ export default function Feed() {
                       group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
                       ${item.id === 'home'
                         ? 'shadow-lg transform scale-105' 
-                        : 'hover:text-gray-900 dark:hover:text-white hover:scale-102'
+                        : 'hover:scale-102'
                       }
                     `}
                     style={{
@@ -191,9 +191,7 @@ export default function Feed() {
               <div className="flex-shrink-0 p-4 space-y-4 relative z-10" style={{borderTop: '1px solid var(--border)'}}>
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
-                  <div className="w-10 h-6 bg-gray-300 rounded-full relative">
-                    <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
-                  </div>
+                  <ThemeToggle />
                 </div>
                 
                 <Link 
@@ -322,7 +320,10 @@ export default function Feed() {
               </div>
               <button
                 onClick={() => setShowMobileNav(false)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-lg transition-colors"
+                style={{color: 'var(--text-primary)'}}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

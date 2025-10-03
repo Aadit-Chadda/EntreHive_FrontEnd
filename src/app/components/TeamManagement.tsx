@@ -78,16 +78,18 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
+      <div className="rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden" style={{backgroundColor: 'var(--surface)'}}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4 flex justify-between items-center">
+        <div className="px-6 py-4 flex justify-between items-center" style={{background: 'linear-gradient(135deg, var(--primary-orange), var(--accent-terracotta))'}}>
           <div>
             <h2 className="text-xl font-bold text-white">Manage Team</h2>
-            <p className="text-blue-100 text-sm">{project.title}</p>
+            <p className="text-white/80 text-sm">{project.title}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-white hover:text-gray-200 transition-colors p-2 rounded-full hover:bg-white hover:bg-opacity-20"
+            className="text-white transition-colors p-2 rounded-full"
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -98,44 +100,44 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-88px)]">
           {/* Messages */}
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border-l-4 border-red-400 rounded-md">
+            <div className="mb-4 p-4 rounded-md" style={{backgroundColor: 'var(--secondary-red)/10', borderLeft: '4px solid var(--secondary-red)'}}>
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style={{color: 'var(--secondary-red)'}}>
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-red-700">{error}</p>
+                  <p className="text-sm" style={{color: 'var(--secondary-red)'}}>{error}</p>
                 </div>
               </div>
             </div>
           )}
 
           {successMessage && (
-            <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-400 rounded-md">
+            <div className="mb-4 p-4 rounded-md" style={{backgroundColor: 'var(--accent-pine)/10', borderLeft: '4px solid var(--accent-pine)'}}>
               <div className="flex">
                 <div className="flex-shrink-0">
-                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style={{color: 'var(--accent-pine)'}}>
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm text-green-700">{successMessage}</p>
+                  <p className="text-sm" style={{color: 'var(--accent-pine)'}}>{successMessage}</p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Add Team Member Section */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <svg className="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="rounded-lg p-6 mb-6" style={{backgroundColor: 'var(--neutral-light-orange)'}}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center" style={{color: 'var(--text-primary)'}}>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               Add Team Member
             </h3>
-            <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+            <p className="text-sm mb-4" style={{color: 'var(--text-secondary)'}}>
               Enter the username of the person you want to add to your project team
             </p>
             
@@ -146,14 +148,43 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
                   value={searchUsername}
                   onChange={(e) => setSearchUsername(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleAddTeamMember()}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                  style={{
+                    border: '1px solid var(--border)',
+                    backgroundColor: 'var(--surface)',
+                    color: 'var(--text-primary)',
+                    '--placeholder-color': 'var(--text-muted)'
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                    e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = 'var(--border)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                   placeholder="Enter username (e.g. @johndoe)"
                 />
               </div>
               <button
                 onClick={handleAddTeamMember}
                 disabled={isLoading || !searchUsername.trim()}
-                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all transform hover:scale-105"
+                className="px-6 py-3 text-white font-medium rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none transition-all transform hover:scale-105"
+                style={{backgroundColor: 'var(--primary-orange)'}}
+                onMouseEnter={(e) => {
+                  if (!isLoading && searchUsername.trim()) {
+                    e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
               >
                 {isLoading ? (
                   <div className="flex items-center">
@@ -171,9 +202,9 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           </div>
 
           {/* Current Team Section */}
-          <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <svg className="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="rounded-lg p-6" style={{backgroundColor: 'var(--hover-bg)'}}>
+            <h3 className="text-lg font-semibold mb-4 flex items-center" style={{color: 'var(--text-primary)'}}>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--text-secondary)'}}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               Current Team Members ({project.team_count})
@@ -181,25 +212,25 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
 
             <div className="space-y-3">
               {/* Project Owner */}
-              <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+              <div className="flex items-center justify-between p-4 rounded-lg" style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}>
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, var(--primary-orange), var(--accent-terracotta)'}}>
                     <span className="text-white font-bold text-sm">
                       {(project.owner.full_name || project.owner.username).charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
+                    <p className="font-medium" style={{color: 'var(--text-primary)'}}>
                       {project.owner.full_name || project.owner.username}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">@{project.owner.username}</p>
+                    <p className="text-sm" style={{color: 'var(--text-secondary)'}}>@{project.owner.username}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 text-xs font-medium rounded-full" style={{backgroundColor: 'var(--primary-orange)/20', color: 'var(--primary-orange)'}}>
                     Owner
                   </span>
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -207,31 +238,40 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
 
               {/* Team Members */}
               {project.team_members.map(member => (
-                <div key={member.id} className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div key={member.id} className="flex items-center justify-between p-4 rounded-lg" style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}>
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{background: 'linear-gradient(135deg, var(--accent-pine), var(--accent-terracotta)'}}>
                       <span className="text-white font-bold text-sm">
                         {(member.full_name || member.username).charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium" style={{color: 'var(--text-primary)'}}>
                         {member.full_name || member.username}
                       </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">@{member.username}</p>
+                      <p className="text-sm" style={{color: 'var(--text-secondary)'}}>@{member.username}</p>
                       {member.email && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500">{member.email}</p>
+                        <p className="text-xs" style={{color: 'var(--text-muted)'}}>{member.email}</p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                    <span className="px-3 py-1 text-xs font-medium rounded-full" style={{backgroundColor: 'var(--accent-pine)/20', color: 'var(--accent-pine)'}}>
                       Member
                     </span>
                     {project.can_edit && (
                       <button
                         onClick={() => handleRemoveTeamMember(member)}
-                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-full transition-colors"
+                        className="p-2 rounded-full transition-colors"
+                        style={{color: 'var(--secondary-red)'}}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--secondary-red)';
+                          e.currentTarget.style.backgroundColor = 'var(--secondary-red)/10';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = 'var(--secondary-red)';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
                         title="Remove team member"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,8 +284,8 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
               ))}
 
               {project.team_members.length === 0 && (
-                <div className="text-center py-8 text-gray-500">
-                  <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="text-center py-8" style={{color: 'var(--text-secondary)'}}>
+                  <svg className="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{color: 'var(--text-muted)'}}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                   <p>No team members yet</p>
@@ -256,18 +296,18 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           </div>
 
           {/* Help Text */}
-          <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="mt-6 p-4 rounded-lg" style={{backgroundColor: 'var(--neutral-light-orange)', border: '1px solid var(--primary-orange)/30'}}>
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style={{color: 'var(--primary-orange)'}}>
                   <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                 </svg>
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-yellow-800">
+                <h3 className="text-sm font-medium" style={{color: 'var(--primary-orange)'}}>
                   Team Management Tips
                 </h3>
-                <div className="mt-2 text-sm text-yellow-700">
+                <div className="mt-2 text-sm" style={{color: 'var(--text-primary)'}}>
                   <ul className="list-disc list-inside space-y-1">
                     <li>Only project owners can add or remove team members</li>
                     <li>Team members can collaborate and help manage the project</li>
@@ -283,7 +323,12 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           <div className="flex justify-end mt-6">
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-gray-600 text-white font-medium rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+              className="px-6 py-3 text-white font-medium rounded-lg focus:outline-none transition-colors"
+              style={{backgroundColor: 'var(--secondary-charcoal)'}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-taupe)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-charcoal)'}
+              onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px var(--secondary-charcoal)/20'}
+              onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
             >
               Close
             </button>

@@ -25,7 +25,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex lg:w-64 xl:w-72 lg:flex-shrink-0">
+      <div className="hidden lg:flex lg:w-64 xl:w-72 lg:flex-shrink-0 lg:sticky lg:top-0 lg:h-screen">
         <div className="flex flex-col w-full relative overflow-hidden" style={{backgroundColor: 'var(--surface)', borderRight: '1px solid var(--border)'}}>
           {/* Hexagon decorative background */}
           <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -69,7 +69,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                   group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
                   ${activeItem === item.id 
                     ? 'shadow-lg transform scale-105' 
-                    : 'hover:text-gray-900 dark:hover:text-white hover:scale-102'
+                    : 'hover:scale-102'
                   }
                 `}
                 style={{
@@ -193,7 +193,10 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
             </div>
             <button
               onClick={() => setShowMobileNav(false)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg transition-colors"
+              style={{color: 'var(--text-primary)'}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import LeftNavigation from '../../components/LeftNavigation';
 import RightExplore from '../../components/RightExplore';
 import TeamManagement from '../../components/TeamManagement';
@@ -294,7 +295,13 @@ export default function ProjectDetailsPage() {
   return (
     <ProtectedRoute>
       <ThemeProvider>
-        <div className="min-h-screen transition-colors duration-200" style={{ backgroundColor: 'var(--background)' }}>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="min-h-screen transition-colors duration-200" 
+          style={{ backgroundColor: 'var(--background)' }}
+        >
           {/* Mobile Header */}
           <div
             className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between"
@@ -425,7 +432,10 @@ export default function ProjectDetailsPage() {
                   <div className="px-4 sm:px-6 lg:px-8 py-8">
                     <div className="max-w-6xl mx-auto space-y-8">
                       {/* Project Header Card */}
-                      <div
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
                         className="rounded-2xl shadow-sm border overflow-hidden"
                         style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                       >
@@ -635,10 +645,15 @@ export default function ProjectDetailsPage() {
                             </div>
                           </div>
                         )}
-                      </div>
+                      </motion.div>
 
                       {/* Content Grid */}
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+                      >
                         {/* Main Content */}
                         <div className="lg:col-span-2 space-y-8">
                           {/* About Project */}
@@ -1055,7 +1070,7 @@ export default function ProjectDetailsPage() {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     </div>
                   </div>
                 </div>
@@ -1212,7 +1227,7 @@ export default function ProjectDetailsPage() {
               }}
             />
           )}
-        </div>
+        </motion.div>
       </ThemeProvider>
     </ProtectedRoute>
   );

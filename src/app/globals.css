@@ -152,6 +152,24 @@ html {
   }
 }
 
+/* Light Theme Override */
+.light {
+  /* Light Theme Variables */
+  --primary: var(--primary-orange);
+  --primary-dark: var(--secondary-charcoal);
+  --secondary: var(--accent-pine);
+  --accent: var(--accent-terracotta);
+  --background: var(--neutral-off-white);
+  --surface: var(--primary-white);
+  --text-primary: var(--primary-black);
+  --text-secondary: var(--secondary-taupe);
+  --text-muted: var(--secondary-charcoal);
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --hover-bg: rgba(243, 172, 59, 0.1);
+  --active-bg: var(--neutral-light-orange);
+}
+
 body {
   background: var(--background);
   color: var(--text-primary);

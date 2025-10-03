@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import LeftNavigation from '../../components/LeftNavigation';
 // We'll create inline components for PostSummary and ProjectSummary display
@@ -12,15 +13,15 @@ import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib
 
 // Simple post display component for PostSummary
 const PostSummaryCard = ({ post, router }: { post: PostSummary; router: any }) => (
-  <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+  <div className="p-4 rounded-lg transition-colors cursor-pointer group" style={{border: '1px solid var(--border)'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
     <div onClick={() => router.push(`/posts/${post.id}`)}>
-      <p className="text-gray-900 dark:text-white mb-3 line-clamp-3 group-hover:text-[#F3AC3B] transition-colors">{post.content}</p>
+      <p className="mb-3 line-clamp-3 group-hover:text-[var(--primary-orange)] transition-colors" style={{color: 'var(--text-primary)'}}>{post.content}</p>
       {post.image_url && (
         <div className="mb-3">
           <img src={post.image_url} alt="Post image" className="w-full h-48 object-cover rounded-lg" />
         </div>
       )}
-      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between text-sm" style={{color: 'var(--text-secondary)'}}>
         <div className="flex items-center space-x-4">
           <span className="flex items-center gap-1">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,10 +44,10 @@ const PostSummaryCard = ({ post, router }: { post: PostSummary; router: any }) =
 
 // Simple project display component for ProjectSummary
 const ProjectSummaryCard = ({ project, router }: { project: ProjectSummary; router: any }) => (
-  <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer group">
+  <div className="p-4 rounded-lg transition-colors cursor-pointer group" style={{border: '1px solid var(--border)'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
     <div onClick={() => router.push(`/projects/${project.id}`)}>
       <div className="flex items-start justify-between mb-3">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white group-hover:text-[#F3AC3B] transition-colors">{project.title}</h3>
+        <h3 className="text-lg font-medium group-hover:text-[var(--primary-orange)] transition-colors" style={{color: 'var(--text-primary)'}}>{project.title}</h3>
         <span className={`px-2 py-1 text-xs rounded-full ${
           project.status === 'launched' 
             ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -57,7 +58,7 @@ const ProjectSummaryCard = ({ project, router }: { project: ProjectSummary; rout
           {project.status}
         </span>
       </div>
-      <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center space-x-4 text-sm" style={{color: 'var(--text-secondary)'}}>
         <span className="capitalize">{project.project_type}</span>
         <span className="flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,12 +134,12 @@ export default function PublicProfilePage() {
   if (loading) {
     return (
       <ThemeProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+        <div className="min-h-screen flex" style={{backgroundColor: 'var(--background)'}}>
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
-          <div className="flex-1 lg:ml-0 pt-16 lg:pt-0">
+          <div className="flex-1 min-w-0 pt-16 lg:pt-0">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F3AC3B]"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{borderColor: 'var(--primary-orange)'}}></div>
               </div>
             </div>
           </div>
@@ -150,20 +151,20 @@ export default function PublicProfilePage() {
   if (error || !profile) {
     return (
       <ThemeProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+        <div className="min-h-screen flex" style={{backgroundColor: 'var(--background)'}}>
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
-          <div className="flex-1 lg:ml-0 pt-16 lg:pt-0">
+          <div className="flex-1 min-w-0 pt-16 lg:pt-0">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               <div className="text-center py-20">
-                <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                  <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center" style={{backgroundColor: 'var(--hover-bg)'}}>
+                  <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--text-muted)'}}>
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                <h2 className="text-2xl font-bold mb-3" style={{color: 'var(--text-primary)'}}>
                   Profile Not Found
                 </h2>
-                <p className="text-lg text-gray-600 dark:text-gray-400">
+                <p className="text-lg" style={{color: 'var(--text-secondary)'}}>
                   {error || 'The user profile you are looking for does not exist or is private.'}
                 </p>
               </div>
@@ -184,39 +185,74 @@ export default function PublicProfilePage() {
 
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <button
+        <motion.div 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between backdrop-blur-lg" 
+          style={{backgroundColor: 'rgba(255, 255, 255, 0.9)', borderBottom: '1px solid var(--border)'}}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setShowMobileNav(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-lg transition-all duration-200"
+            style={{color: 'var(--text-primary)'}}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-          </button>
-          <h1 className="text-lg font-semibold">Profile</h1>
+          </motion.button>
+          <motion.h1 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-lg font-semibold" 
+            style={{color: 'var(--text-primary)'}}
+          >
+            Profile
+          </motion.h1>
           <div className="w-10"></div>
-        </div>
+        </motion.div>
 
         {/* Mobile Nav Overlay */}
-        {showMobileNav && (
-          <div 
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setShowMobileNav(false)}
-          />
-        )}
+        <AnimatePresence>
+          {showMobileNav && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+              onClick={() => setShowMobileNav(false)}
+            />
+          )}
+        </AnimatePresence>
 
         <div className="flex">
           {/* Left Navigation */}
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
           
           {/* Main Content */}
-          <div className="flex-1 lg:ml-0 pt-16 lg:pt-0">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-1 min-w-0 pt-16 lg:pt-0"
+          >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               
               {/* Profile Header */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="rounded-xl overflow-hidden mb-8" 
+                style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
+              >
                 {/* Profile Banner */}
                 <div className="h-48 relative">
                   {profile?.banner_style === 'image' && profile?.banner_image ? (
@@ -249,7 +285,7 @@ export default function PublicProfilePage() {
                   <div className="flex items-end justify-between mb-6">
                     {/* Profile Picture */}
                     <div className="relative">
-                      <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 overflow-hidden">
+                      <div className="w-32 h-32 rounded-full border-4 overflow-hidden" style={{borderColor: 'var(--surface)', backgroundColor: 'var(--surface)'}}>
                         {profile.profile_picture ? (
                           <img
                             src={profile.profile_picture}
@@ -257,12 +293,12 @@ export default function PublicProfilePage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl font-bold bg-gray-100 dark:bg-gray-700">
+                          <div className="w-full h-full flex items-center justify-center text-4xl font-bold" style={{color: 'var(--text-muted)', backgroundColor: 'var(--hover-bg)'}}>
                             {profile.full_name?.[0]?.toUpperCase() || profile.username?.[0]?.toUpperCase()}
                           </div>
                         )}
                       </div>
-                      <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                      <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-2 rounded-full" style={{borderColor: 'var(--surface)'}}></div>
                     </div>
 
                     {/* Action Buttons */}
@@ -273,9 +309,12 @@ export default function PublicProfilePage() {
                           href={profile.linkedin_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{backgroundColor: 'var(--hover-bg)'}}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
                         >
-                          <svg className="w-5 h-5 text-[#F3AC3B]" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                             <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                           </svg>
                         </a>
@@ -285,9 +324,12 @@ export default function PublicProfilePage() {
                           href={profile.github_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{backgroundColor: 'var(--hover-bg)'}}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
                         >
-                          <svg className="w-5 h-5 text-[#F3AC3B]" fill="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                           </svg>
                         </a>
@@ -297,9 +339,12 @@ export default function PublicProfilePage() {
                           href={profile.website_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          className="p-2 rounded-lg transition-colors"
+                          style={{backgroundColor: 'var(--hover-bg)'}}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
                         >
-                          <svg className="w-5 h-5 text-[#F3AC3B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
                         </a>
@@ -307,36 +352,50 @@ export default function PublicProfilePage() {
                       
                       {/* Follow/Edit Button */}
                       {user && !isOwnProfile && (
-                        <button
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={handleFollowToggle}
                           disabled={followLoading}
-                          className={`px-6 py-2 rounded-lg font-medium transition-all duration-200 ${
-                            profile.is_following
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
-                              : 'bg-[#F3AC3B] text-white hover:bg-[#E79F74]'
-                          }`}
+                          className="px-6 py-2 rounded-lg font-medium transition-all duration-200"
+                          style={{
+                            backgroundColor: profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)',
+                            color: profile.is_following ? 'var(--text-primary)' : 'white',
+                            border: profile.is_following ? '1px solid var(--border)' : 'none'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--active-bg)' : 'var(--accent-terracotta)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)';
+                          }}
                         >
                           {followLoading ? 'Loading...' : (profile.is_following ? 'Following' : 'Follow')}
-                        </button>
+                        </motion.button>
                       )}
                       
                       {isOwnProfile && (
-                        <button
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => router.push('/profile')}
-                          className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          className="px-6 py-2 rounded-lg font-medium transition-colors"
+                          style={{backgroundColor: 'var(--hover-bg)', color: 'var(--text-primary)', border: '1px solid var(--border)'}}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
                         >
                           Edit Profile
-                        </button>
+                        </motion.button>
                       )}
                     </div>
                   </div>
                   
                   {/* Name and Username */}
                   <div className="mb-4">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    <h1 className="text-2xl font-bold mb-1" style={{color: 'var(--text-primary)'}}>
                       {profile.full_name || profile.username}
                     </h1>
-                    <p className="text-gray-600 dark:text-gray-400">@{profile.username}</p>
+                    <p style={{color: 'var(--text-secondary)'}}>@{profile.username}</p>
                   </div>
 
                   {/* Role Badge */}
@@ -357,12 +416,12 @@ export default function PublicProfilePage() {
                   {/* Bio */}
                   {profile.bio && (
                     <div className="mb-4">
-                      <p className="text-gray-700 dark:text-gray-300">{profile.bio}</p>
+                      <p style={{color: 'var(--text-primary)'}}>{profile.bio}</p>
                     </div>
                   )}
 
                   {/* Additional Info */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex flex-wrap gap-4 text-sm" style={{color: 'var(--text-secondary)'}}>
                     {profile.location && (
                       <span className="flex items-center gap-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -394,85 +453,197 @@ export default function PublicProfilePage() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Content Tabs */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="rounded-xl" 
+                style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
+              >
                 {/* Tab Navigation */}
-                <div className="border-b border-gray-200 dark:border-gray-700">
+                <div style={{borderBottom: '1px solid var(--border)'}}>
                   <nav className="flex space-x-8 px-6">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab('posts')}
-                      className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+                      className={`py-4 text-sm font-medium border-b-2 transition-all duration-300 ${
                         activeTab === 'posts'
-                          ? 'border-[#F3AC3B] text-[#F3AC3B]'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                          ? 'border-[var(--primary-orange)]'
+                          : 'border-transparent'
                       }`}
+                      style={{
+                        color: activeTab === 'posts' ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (activeTab !== 'posts') e.currentTarget.style.color = 'var(--text-primary)';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (activeTab !== 'posts') e.currentTarget.style.color = 'var(--text-secondary)';
+                      }}
                     >
                       Posts ({profile.posts_count || 0})
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab('projects')}
-                      className={`py-4 text-sm font-medium border-b-2 transition-colors ${
+                      className={`py-4 text-sm font-medium border-b-2 transition-all duration-300 ${
                         activeTab === 'projects'
-                          ? 'border-[#F3AC3B] text-[#F3AC3B]'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                          ? 'border-[var(--primary-orange)]'
+                          : 'border-transparent'
                       }`}
+                      style={{
+                        color: activeTab === 'projects' ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (activeTab !== 'projects') e.currentTarget.style.color = 'var(--text-primary)';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (activeTab !== 'projects') e.currentTarget.style.color = 'var(--text-secondary)';
+                      }}
                     >
                       Projects ({typeof profile.projects_count === 'object' ? profile.projects_count.total : profile.projects_count || 0})
-                    </button>
+                    </motion.button>
                   </nav>
                 </div>
 
                 {/* Tab Content */}
                 <div className="p-6">
-                  {activeTab === 'posts' && (
-                    <div className="space-y-4">
-                      {profile.user_posts && profile.user_posts.length > 0 ? (
-                        profile.user_posts.map((post) => (
-                          <PostSummaryCard key={post.id} post={post} router={router} />
-                        ))
-                      ) : (
-                        <div className="text-center py-12">
-                          <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                          </svg>
-                          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No posts yet</h3>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            {isOwnProfile 
-                              ? "You haven't created any posts yet." 
-                              : `${profile.full_name || profile.username} hasn't shared any posts yet.`}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'posts' && (
+                      <motion.div 
+                        key="posts"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                      >
+                        {profile.user_posts && profile.user_posts.length > 0 ? (
+                          profile.user_posts.map((post, index) => (
+                            <motion.div
+                              key={post.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                            >
+                              <PostSummaryCard post={post} router={router} />
+                            </motion.div>
+                          ))
+                        ) : (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-center py-12"
+                          >
+                            <motion.svg 
+                              initial={{ scale: 0.8 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.5, delay: 0.1 }}
+                              className="w-16 h-16 mx-auto mb-4" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24" 
+                              style={{color: 'var(--text-muted)'}}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                            </motion.svg>
+                            <motion.h3 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.2 }}
+                              className="text-lg font-medium mb-2" 
+                              style={{color: 'var(--text-primary)'}}
+                            >
+                              No posts yet
+                            </motion.h3>
+                            <motion.p 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.3 }}
+                              style={{color: 'var(--text-secondary)'}}
+                            >
+                              {isOwnProfile 
+                                ? "You haven't created any posts yet." 
+                                : `${profile.full_name || profile.username} hasn't shared any posts yet.`}
+                            </motion.p>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    )}
 
-                  {activeTab === 'projects' && (
-                    <div className="space-y-4">
-                      {allUserProjects.length > 0 ? (
-                        allUserProjects.map((project) => (
-                          <ProjectSummaryCard key={project.id} project={project} />
-                        ))
-                      ) : (
-                        <div className="text-center py-12">
-                          <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                          </svg>
-                          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No projects yet</h3>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            {isOwnProfile 
-                              ? "You haven't created any projects yet." 
-                              : `${profile.full_name || profile.username} hasn't shared any projects yet.`}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    {activeTab === 'projects' && (
+                      <motion.div 
+                        key="projects"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-4"
+                      >
+                        {allUserProjects.length > 0 ? (
+                          allUserProjects.map((project, index) => (
+                            <motion.div
+                              key={project.id}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                            >
+                              <ProjectSummaryCard project={project} router={router} />
+                            </motion.div>
+                          ))
+                        ) : (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-center py-12"
+                          >
+                            <motion.svg 
+                              initial={{ scale: 0.8 }}
+                              animate={{ scale: 1 }}
+                              transition={{ duration: 0.5, delay: 0.1 }}
+                              className="w-16 h-16 mx-auto mb-4" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24" 
+                              style={{color: 'var(--text-muted)'}}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </motion.svg>
+                            <motion.h3 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.2 }}
+                              className="text-lg font-medium mb-2" 
+                              style={{color: 'var(--text-primary)'}}
+                            >
+                              No projects yet
+                            </motion.h3>
+                            <motion.p 
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.3 }}
+                              style={{color: 'var(--text-secondary)'}}
+                            >
+                              {isOwnProfile 
+                                ? "You haven't created any projects yet." 
+                                : `${profile.full_name || profile.username} hasn't shared any projects yet.`}
+                            </motion.p>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </ThemeProvider>

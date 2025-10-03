@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import LeftNavigation from '../components/LeftNavigation';
 import RightExplore from '../components/RightExplore';
@@ -137,12 +138,20 @@ export default function ProjectsPage() {
   return (
     <ProtectedRoute>
       <ThemeProvider>
-      <div className="min-h-screen transition-colors duration-200" style={{backgroundColor: 'var(--background)'}}>
+      <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
-          <button
+        <motion.div 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between backdrop-blur-lg" 
+          style={{backgroundColor: 'rgba(255, 255, 255, 0.9)', borderBottom: '1px solid var(--border)'}}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setShowMobileNav(true)}
-            className="p-2 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-all duration-200"
             style={{color: 'var(--text-primary)'}}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -150,9 +159,14 @@ export default function ProjectsPage() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-          </button>
+          </motion.button>
           
-          <div className="flex items-center space-x-2">
+          <motion.div 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="flex items-center space-x-2"
+          >
             <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
               <Image
                 src="/logo_w_name.png"
@@ -163,11 +177,13 @@ export default function ProjectsPage() {
               />
             </div>
             <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</span>
-          </div>
+          </motion.div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05, rotate: 180 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setShowCreateForm(true)}
-            className="p-2 text-white rounded-lg transition-colors"
+            className="p-2 text-white rounded-lg transition-all duration-200"
             style={{backgroundColor: 'var(--primary-orange)'}}
             onMouseEnter={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--accent-terracotta)'}
             onMouseLeave={(e) => (e.target as HTMLButtonElement).style.backgroundColor = 'var(--primary-orange)'}
@@ -175,8 +191,8 @@ export default function ProjectsPage() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Main Layout */}
         <div className="flex min-h-screen">
@@ -329,7 +345,7 @@ export default function ProjectsPage() {
                     </div>
                   ) : sortedProjects.length > 0 ? (
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                      {sortedProjects.map(project => {
+                      {sortedProjects.map((project, index) => {
                         // Additional safety check to ensure project has required fields
                         if (!project || !project.id) {
                           console.warn('Invalid project data:', project);
@@ -337,27 +353,68 @@ export default function ProjectsPage() {
                         }
                         
                         return (
-                          <ProjectCard
+                          <motion.div
                             key={project.id}
-                            project={project}
-                            onUpdate={handleProjectUpdate}
-                            onDelete={handleProjectDelete}
-                          />
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                          >
+                            <ProjectCard
+                              project={project}
+                              onUpdate={handleProjectUpdate}
+                              onDelete={handleProjectDelete}
+                            />
+                          </motion.div>
                         );
                       })}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <svg className="mx-auto h-12 w-12" style={{color: 'var(--text-muted)'}} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="text-center py-12"
+                    >
+                      <motion.svg 
+                        initial={{ scale: 0.8 }}
+                        animate={{ scale: 1 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
+                        className="mx-auto h-12 w-12" 
+                        style={{color: 'var(--text-muted)'}} 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                      <h3 className="mt-2 text-sm font-medium font-roca-two" style={{color: 'var(--text-primary)'}}>No projects found</h3>
-                      <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
+                      </motion.svg>
+                      <motion.h3 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.2 }}
+                        className="mt-2 text-sm font-medium font-roca-two" 
+                        style={{color: 'var(--text-primary)'}}
+                      >
+                        No projects found
+                      </motion.h3>
+                      <motion.p 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: 0.3 }}
+                        className="mt-1 text-sm font-canva-sans" 
+                        style={{color: 'var(--text-secondary)'}}
+                      >
                         {searchQuery ? 'Try adjusting your search or filters.' : 'Get started by creating your first project.'}
-                      </p>
+                      </motion.p>
                       {!searchQuery && (
-                        <div className="mt-6">
-                          <button
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: 0.4 }}
+                          className="mt-6"
+                        >
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setShowCreateForm(true)}
                             className="inline-flex items-center px-4 py-2 shadow-sm text-sm font-medium font-canva-sans rounded-md text-white transition-all duration-300"
                             style={{backgroundColor: 'var(--primary-orange)'}}
@@ -368,10 +425,10 @@ export default function ProjectsPage() {
                               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
                             </svg>
                             New Project
-                          </button>
-                        </div>
+                          </motion.button>
+                        </motion.div>
                       )}
-                    </div>
+                    </motion.div>
                   )}
                 </div>
               </div>

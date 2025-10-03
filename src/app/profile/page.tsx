@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import PostCardNew from '../components/PostCardNew';
 import ProjectCard from '../components/ProjectCard';
 import LeftNavigation from '../components/LeftNavigation';
@@ -304,43 +305,87 @@ export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <ThemeProvider>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <button
+        <motion.div 
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="lg:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between backdrop-blur-lg" 
+          style={{backgroundColor: 'rgba(255, 255, 255, 0.9)', borderBottom: '1px solid var(--border)'}}
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => setShowMobileNav(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            className="p-2 rounded-lg transition-all duration-200"
+            style={{color: 'var(--text-primary)'}}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-          </button>
-          <h1 className="text-lg font-semibold">Profile</h1>
+          </motion.button>
+          <motion.h1 
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-lg font-semibold" 
+            style={{color: 'var(--text-primary)'}}
+          >
+            Profile
+          </motion.h1>
           <div className="w-10"></div>
-        </div>
+        </motion.div>
 
         <div className="flex">
           {/* Left Navigation */}
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
           
           {/* Main Content */}
-          <div className="flex-1 lg:ml-0 pt-16 lg:pt-0">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex-1 min-w-0 pt-16 lg:pt-0"
+          >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* Status Messages */}
-              {error && (
-                <div className="mb-6 p-4 bg-[var(--secondary-red)]/10 border border-[var(--secondary-red)]/20 rounded-lg">
-                  <p className="text-[var(--secondary-red)]">{error}</p>
-                </div>
-              )}
-              
-              {success && (
-                <div className="mb-6 p-4 bg-[var(--accent-pine)]/10 border border-[var(--accent-pine)]/20 rounded-lg">
-                  <p className="text-[var(--accent-pine)]">{success}</p>
-                </div>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-6 p-4 bg-[var(--secondary-red)]/10 border border-[var(--secondary-red)]/20 rounded-lg"
+                  >
+                    <p className="text-[var(--secondary-red)]">{error}</p>
+                  </motion.div>
+                )}
+                
+                {success && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="mb-6 p-4 bg-[var(--accent-pine)]/10 border border-[var(--accent-pine)]/20 rounded-lg"
+                  >
+                    <p className="text-[var(--accent-pine)]">{success}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Profile Header */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="rounded-xl overflow-hidden mb-8" 
+                style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
+              >
                 {/* Profile Banner */}
                 <div className="h-48 relative">
                   {profile?.banner_style === 'image' && profile?.banner_image ? (
@@ -368,15 +413,22 @@ export default function ProfilePage() {
                   )}
                   
                   {/* Banner Edit Button - Only visible in edit mode */}
-                  {isEditing && (
-                    <button
-                      onClick={() => setIsBannerModalOpen(true)}
-                      className="absolute top-4 right-4 flex items-center space-x-2 px-3 py-2 bg-white/90 text-gray-800 rounded-lg hover:bg-white transition-colors shadow-sm"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      <span className="text-sm font-medium">Edit Banner</span>
-                    </button>
-                  )}
+                  <AnimatePresence>
+                    {isEditing && (
+                      <motion.button
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setIsBannerModalOpen(true)}
+                        className="absolute top-4 right-4 flex items-center space-x-2 px-3 py-2 bg-white/90 text-gray-800 rounded-lg hover:bg-white transition-colors shadow-sm"
+                      >
+                        <Edit3 className="w-4 h-4" />
+                        <span className="text-sm font-medium">Edit Banner</span>
+                      </motion.button>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Profile Info */}
@@ -384,7 +436,7 @@ export default function ProfilePage() {
                   {/* Avatar */}
                   <div className="flex items-end justify-between -mt-16 mb-4">
                     <div className="relative">
-                      <div className="w-32 h-32 rounded-full border-4 border-white dark:border-gray-800 bg-white dark:bg-gray-800 overflow-hidden">
+                      <div className="w-32 h-32 rounded-full border-4 overflow-hidden" style={{borderColor: 'var(--surface)', backgroundColor: 'var(--surface)'}}>
                         {profile.profile_picture ? (
                           <img
                             src={profile.profile_picture}
@@ -392,7 +444,7 @@ export default function ProfilePage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-4xl font-bold bg-gray-100 dark:bg-gray-700">
+                          <div className="w-full h-full flex items-center justify-center text-4xl font-bold" style={{color: 'var(--text-muted)', backgroundColor: 'var(--hover-bg)'}}>
                             {profile.first_name?.[0]?.toUpperCase() || profile.username?.[0]?.toUpperCase()}
                           </div>
                         )}
@@ -405,50 +457,68 @@ export default function ProfilePage() {
                           </svg>
                         </div>
                       )}
-                      <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+                      <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 border-2 rounded-full" style={{borderColor: 'var(--surface)'}}></div>
                     </div>
 
                     {/* Edit Button */}
                     <div className="flex space-x-2">
-                      {!isEditing && (
-                        <button
-                          onClick={handleEditProfile}
-                          className="flex items-center space-x-2 px-4 py-2 border border-[var(--primary-orange)] text-[var(--primary-orange)] rounded-lg hover:bg-[var(--neutral-light-orange)] transition-colors"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                          <span>Edit Profile</span>
-                        </button>
-                      )}
-                      
-                      {isEditing && (
-                        <>
-                          <button
-                            onClick={() => fileInputRef.current?.click()}
-                            disabled={uploadingImage}
-                            className="px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50"
+                      <AnimatePresence>
+                        {!isEditing && (
+                          <motion.button
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleEditProfile}
+                            className="flex items-center space-x-2 px-4 py-2 border border-[var(--primary-orange)] text-[var(--primary-orange)] rounded-lg hover:bg-[var(--neutral-light-orange)] transition-colors"
                           >
-                            Change Photo
-                          </button>
-                          {profile.profile_picture && (
-                            <button
-                              onClick={handleDeleteImage}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            <span>Edit Profile</span>
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+                      
+                      <AnimatePresence>
+                        {isEditing && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="flex space-x-2"
+                          >
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              onClick={() => fileInputRef.current?.click()}
                               disabled={uploadingImage}
-                              className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                              className="px-3 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 transition-all duration-200"
                             >
-                              Delete Photo
-                            </button>
-                          )}
-                          <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                          />
-                        </>
-                      )}
+                              Change Photo
+                            </motion.button>
+                            {profile.profile_picture && (
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={handleDeleteImage}
+                                disabled={uploadingImage}
+                                className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-all duration-200"
+                              >
+                                Delete Photo
+                              </motion.button>
+                            )}
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="hidden"
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
 
@@ -457,10 +527,10 @@ export default function ProfilePage() {
                     <div className="space-y-4">
                       {/* Name and Handle */}
                       <div>
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <h1 className="text-2xl font-bold" style={{color: 'var(--text-primary)'}}>
                           {profile.full_name || profile.username}
                         </h1>
-                        <p className="text-lg text-gray-600 dark:text-gray-400">@{profile.username}</p>
+                        <p className="text-lg" style={{color: 'var(--text-secondary)'}}>@{profile.username}</p>
                         <div className="mt-1">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             profile.user_role === 'student' ? 'bg-[var(--neutral-light-orange)] text-[var(--primary-orange)] border border-[var(--primary-orange)]/20' :
@@ -474,23 +544,23 @@ export default function ProfilePage() {
                         </div>
                         
                         {/* Follower/Following Stats */}
-                        <div className="flex items-center space-x-4 mt-3 text-sm text-gray-600 dark:text-gray-400">
+                        <div className="flex items-center space-x-4 mt-3 text-sm" style={{color: 'var(--text-secondary)'}}>
                           <span className="font-medium">
-                            <span className="font-bold text-gray-900 dark:text-white">{profile.followers_count || 0}</span> followers
+                            <span className="font-bold" style={{color: 'var(--text-primary)'}}>{profile.followers_count || 0}</span> followers
                           </span>
                           <span className="font-medium">
-                            <span className="font-bold text-gray-900 dark:text-white">{profile.following_count || 0}</span> following
+                            <span className="font-bold" style={{color: 'var(--text-primary)'}}>{profile.following_count || 0}</span> following
                           </span>
                         </div>
                       </div>
 
                       {/* Bio */}
                       {profile.bio && (
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{profile.bio}</p>
+                        <p className="leading-relaxed" style={{color: 'var(--text-primary)'}}>{profile.bio}</p>
                       )}
 
                       {/* Education & Location */}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex flex-wrap gap-4 text-sm" style={{color: 'var(--text-secondary)'}}>
                         {profile.university_name && (
                           <div className="flex items-center space-x-1">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -573,70 +643,123 @@ export default function ProfilePage() {
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name</label>
+                          <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>First Name</label>
                           <input
                             type="text"
                             name="first_name"
                             value={formData.first_name}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name</label>
+                          <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Last Name</label>
                           <input
                             type="text"
                             name="last_name"
                             value={formData.last_name}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                            className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                           />
                         </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Role</label>
-                          <div className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 text-gray-600 dark:text-gray-400">
+                          <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Role</label>
+                          <div className="w-full px-3 py-2 rounded-lg" style={{border: '1px solid var(--border)', backgroundColor: 'var(--hover-bg)', color: 'var(--text-secondary)'}}>
                             <span className="capitalize">{formData.user_role}</span>
-                            <span className="text-xs ml-2 text-gray-500">(Contact support to change)</span>
+                            <span className="text-xs ml-2" style={{color: 'var(--text-muted)'}}>(Contact support to change)</span>
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">University</label>
+                          <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>University</label>
                           <input
                             type="text"
                             name="university"
                             value={profile?.university_name || 'No university set'}
                             disabled
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 cursor-not-allowed"
+                            className="w-full px-3 py-2 rounded-lg cursor-not-allowed"
+                            style={{border: '1px solid var(--border)', backgroundColor: 'var(--hover-bg)', color: 'var(--text-muted)'}}
                           />
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          <p className="text-xs mt-1" style={{color: 'var(--text-muted)'}}>
                             University changes require verification. Contact support if needed.
                           </p>
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Location</label>
+                        <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Location</label>
                         <input
                           type="text"
                           name="location"
                           value={formData.location || ''}
                           onChange={handleChange}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                          style={{
+                            border: '1px solid var(--border)',
+                            backgroundColor: 'var(--surface)',
+                            color: 'var(--text-primary)'
+                          }}
+                          onFocus={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                            e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                          }}
+                          onBlur={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--border)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
                           placeholder="City, Country"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Bio</label>
+                        <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Bio</label>
                         <textarea
                           name="bio"
                           value={formData.bio || ''}
                           onChange={handleChange}
                           rows={3}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                          style={{
+                            border: '1px solid var(--border)',
+                            backgroundColor: 'var(--surface)',
+                            color: 'var(--text-primary)'
+                          }}
+                          onFocus={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                            e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                          }}
+                          onBlur={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--border)';
+                            e.currentTarget.style.boxShadow = 'none';
+                          }}
                           placeholder="Tell us about yourself..."
                         />
                       </div>
@@ -645,24 +768,50 @@ export default function ProfilePage() {
                       {formData.user_role === 'student' && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Major</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Major</label>
                             <input
                               type="text"
                               name="major"
                               value={formData.major || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="e.g., Computer Science"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Graduation Year</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Graduation Year</label>
                             <input
                               type="number"
                               name="graduation_year"
                               value={formData.graduation_year || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="e.g., 2025"
                               min="1950"
                               max="2030"
@@ -674,24 +823,50 @@ export default function ProfilePage() {
                       {formData.user_role === 'professor' && (
                         <>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Department</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Department</label>
                             <input
                               type="text"
                               name="department"
                               value={formData.department || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="e.g., Computer Science Department"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Research Interests</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Research Interests</label>
                             <textarea
                               name="research_interests"
                               value={formData.research_interests || ''}
                               onChange={handleChange}
                               rows={2}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="Describe your research interests..."
                             />
                           </div>
@@ -701,24 +876,50 @@ export default function ProfilePage() {
                       {formData.user_role === 'investor' && (
                         <>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company/Fund</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Company/Fund</label>
                             <input
                               type="text"
                               name="company"
                               value={formData.company || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="e.g., Venture Capital Fund"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Investment Focus</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Investment Focus</label>
                             <textarea
                               name="investment_focus"
                               value={formData.investment_focus || ''}
                               onChange={handleChange}
                               rows={2}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="Describe your investment focus..."
                             />
                           </div>
@@ -727,38 +928,77 @@ export default function ProfilePage() {
 
                       {/* Social Links */}
                       <div className="border-t pt-4">
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">Social Links</h4>
+                        <h4 className="text-sm font-medium mb-4" style={{color: 'var(--text-primary)'}}>Social Links</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">LinkedIn</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>LinkedIn</label>
                             <input
                               type="url"
                               name="linkedin_url"
                               value={formData.linkedin_url || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="https://linkedin.com/in/yourname"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Website</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Website</label>
                             <input
                               type="url"
                               name="website_url"
                               value={formData.website_url || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="https://yourwebsite.com"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GitHub</label>
+                            <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>GitHub</label>
                             <input
                               type="url"
                               name="github_url"
                               value={formData.github_url || ''}
                               onChange={handleChange}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                              className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
+                            style={{
+                              border: '1px solid var(--border)',
+                              backgroundColor: 'var(--surface)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onFocus={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--primary-orange)';
+                              e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = 'var(--border)';
+                              e.currentTarget.style.boxShadow = 'none';
+                            }}
                               placeholder="https://github.com/yourusername"
                             />
                           </div>
@@ -786,42 +1026,66 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Content Tabs */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <motion.div 
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="rounded-xl overflow-hidden" 
+                style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
+              >
                 {/* Tab Headers */}
-                <div className="border-b border-gray-200 dark:border-gray-700">
+                <div style={{borderBottom: '1px solid var(--border)'}}>
                   <nav className="flex">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab('posts')}
-                      className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
+                      className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 ${
                         activeTab === 'posts'
-                          ? 'border-[var(--primary-orange)] text-[var(--primary-orange)]'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-[var(--primary-orange)] hover:border-[var(--primary-orange)]/30'
+                          ? 'border-[var(--primary-orange)]'
+                          : 'border-transparent hover:border-[var(--primary-orange)]/30'
                       }`}
+                      style={{
+                        color: activeTab === 'posts' ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                      }}
                     >
                       Posts ({profile?.user_posts?.length || 0})
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveTab('projects')}
-                      className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${
+                      className={`flex-1 py-4 px-6 text-sm font-medium border-b-2 transition-all duration-300 ${
                         activeTab === 'projects'
-                          ? 'border-[var(--primary-orange)] text-[var(--primary-orange)]'
-                          : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-[var(--primary-orange)] hover:border-[var(--primary-orange)]/30'
+                          ? 'border-[var(--primary-orange)]'
+                          : 'border-transparent hover:border-[var(--primary-orange)]/30'
                       }`}
+                      style={{
+                        color: activeTab === 'projects' ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                      }}
                     >
                       Projects ({allUserProjects.length})
-                    </button>
+                    </motion.button>
                   </nav>
                 </div>
 
                 {/* Tab Content */}
                 <div className="p-6">
-                  {activeTab === 'posts' && (
-                    <div className="space-y-6">
-                      {profile?.user_posts && profile.user_posts.length > 0 ? (
-                        profile.user_posts.map(postSummary => {
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'posts' && (
+                      <motion.div 
+                        key="posts"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
+                        {profile?.user_posts && profile.user_posts.length > 0 ? (
+                          profile.user_posts.map((postSummary, index) => {
                           // Convert PostSummary to PostData format for PostCardNew
                           const postData: PostData = {
                             id: postSummary.id,
@@ -847,7 +1111,13 @@ export default function ProfilePage() {
                           };
 
                           return (
-                            <div key={postSummary.id} className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                            <motion.div 
+                              key={postSummary.id} 
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                              className="rounded-lg overflow-hidden"
+                            >
                               <PostCardNew
                                 post={postData}
                                 onPostUpdate={(updatedPost) => {
@@ -859,89 +1129,189 @@ export default function ProfilePage() {
                                   refreshProfile();
                                 }}
                               />
-                            </div>
+                            </motion.div>
                           );
                         })
                       ) : (
-                        <div className="text-center py-12">
-                          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5 }}
+                          className="text-center py-12"
+                        >
+                          <motion.svg 
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="mx-auto h-12 w-12" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor" 
+                            style={{color: 'var(--text-muted)'}}
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                          </svg>
-                          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No posts yet</h3>
-                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          </motion.svg>
+                          <motion.h3 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.2 }}
+                            className="mt-2 text-sm font-medium" 
+                            style={{color: 'var(--text-primary)'}}
+                          >
+                            No posts yet
+                          </motion.h3>
+                          <motion.p 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            className="mt-1 text-sm" 
+                            style={{color: 'var(--text-secondary)'}}
+                          >
                             Start sharing your thoughts and ideas with the community.
-                          </p>
-                        </div>
+                          </motion.p>
+                        </motion.div>
                       )}
-                    </div>
-                  )}
+                      </motion.div>
+                    )}
 
-                  {activeTab === 'projects' && (
-                    <div className="space-y-6">
+                    {activeTab === 'projects' && (
+                      <motion.div 
+                        key="projects"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.3 }}
+                        className="space-y-6"
+                      >
                       {/* Owned Projects Section */}
                       {profile?.owned_projects && profile.owned_projects.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.1 }}
+                        >
+                          <motion.h3 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.2 }}
+                            className="text-lg font-semibold mb-4" 
+                            style={{color: 'var(--text-primary)'}}
+                          >
                             Owned Projects ({profile.owned_projects.length})
-                          </h3>
+                          </motion.h3>
                           <div className="grid gap-6 md:grid-cols-2">
-                            {profile.owned_projects.map(project => (
-                              <ProjectSummaryCard
+                            {profile.owned_projects.map((project, index) => (
+                              <motion.div
                                 key={project.id}
-                                project={project}
-                                role="owner"
-                              />
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3, delay: 0.3 + (index * 0.1) }}
+                              >
+                                <ProjectSummaryCard
+                                  project={project}
+                                  role="owner"
+                                />
+                              </motion.div>
                             ))}
                           </div>
-                        </div>
+                        </motion.div>
                       )}
                       
                       {/* Member Projects Section */}
                       {profile?.member_projects && profile.member_projects.length > 0 && (
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                        >
+                          <motion.h3 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            className="text-lg font-semibold mb-4" 
+                            style={{color: 'var(--text-primary)'}}
+                          >
                             Member Projects ({profile.member_projects.length})
-                          </h3>
+                          </motion.h3>
                           <div className="grid gap-6 md:grid-cols-2">
-                            {profile.member_projects.map(project => (
-                              <ProjectSummaryCard
+                            {profile.member_projects.map((project, index) => (
+                              <motion.div
                                 key={project.id}
-                                project={project}
-                                role="member"
-                              />
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.3, delay: 0.4 + (index * 0.1) }}
+                              >
+                                <ProjectSummaryCard
+                                  project={project}
+                                  role="member"
+                                />
+                              </motion.div>
                             ))}
                           </div>
-                        </div>
+                        </motion.div>
                       )}
                       
                       {/* No Projects State */}
                       {allUserProjects.length === 0 && (
-                        <div className="text-center py-12">
-                          <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ duration: 0.5 }}
+                          className="text-center py-12"
+                        >
+                          <motion.svg 
+                            initial={{ scale: 0.8 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="mx-auto h-12 w-12" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor" 
+                            style={{color: 'var(--text-muted)'}}
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                          </svg>
-                          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">No projects yet</h3>
-                          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                          </motion.svg>
+                          <motion.h3 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.2 }}
+                            className="mt-2 text-sm font-medium" 
+                            style={{color: 'var(--text-primary)'}}
+                          >
+                            No projects yet
+                          </motion.h3>
+                          <motion.p 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3, delay: 0.3 }}
+                            className="mt-1 text-sm" 
+                            style={{color: 'var(--text-secondary)'}}
+                          >
                             Create your first project to showcase your work.
-                          </p>
-                        </div>
+                          </motion.p>
+                        </motion.div>
                       )}
-                    </div>
-                  )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Mobile overlay */}
-        {showMobileNav && (
-          <div 
-            className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
-            onClick={() => setShowMobileNav(false)}
-          />
-        )}
-        </div>
+        <AnimatePresence>
+          {showMobileNav && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-50 transition-opacity"
+              onClick={() => setShowMobileNav(false)}
+            />
+          )}
+        </AnimatePresence>
 
         {/* Profile Banner Editor Modal */}
         {isBannerModalOpen && (
@@ -955,6 +1325,7 @@ export default function ProfilePage() {
             currentImage={profile?.banner_image}
           />
         )}
+        </div>
       </ThemeProvider>
     </ProtectedRoute>
   );
@@ -999,7 +1370,8 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
 
   return (
     <div 
-      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      className="rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer"
+      style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
       onClick={handleProjectClick}
     >
       <div className="rounded-lg overflow-hidden mb-4">
@@ -1028,21 +1400,6 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
             <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-white/90 text-gray-800 shadow-sm`}>
               {project.status}
             </span>
-            <span
-              className="inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full bg-white/90 text-gray-800 shadow-sm"
-            >
-              {bannerHasImage ? (
-                <>
-                  <ImageIcon className="w-3 h-3 mr-1" />
-                  Custom Banner
-                </>
-              ) : (
-                <>
-                  <Palette className="w-3 h-3 mr-1" />
-                  {bannerGradient.name}
-                </>
-              )}
-            </span>
           </div>
         </div>
       </div>
@@ -1050,7 +1407,7 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
       {/* Header with role badge */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 dark:text-white text-lg mb-2">
+          <h4 className="font-semibold text-lg mb-2" style={{color: 'var(--text-primary)'}}>
             {project.title}
           </h4>
           <div className="flex items-center gap-2 mb-2">
@@ -1072,7 +1429,7 @@ function ProjectSummaryCard({ project, role }: ProjectSummaryCardProps) {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between text-sm" style={{color: 'var(--text-secondary)'}}>
         <div className="flex items-center gap-4">
           <span>{project.team_count} {project.team_count === 1 ? 'member' : 'members'}</span>
           <span className="capitalize">{project.visibility}</span>
@@ -1145,15 +1502,18 @@ function ProfileBannerEditor({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" style={{backgroundColor: 'var(--surface)'}}>
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-semibold" style={{color: 'var(--text-primary)'}}>
               Customize Profile Banner
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              className="transition-colors"
+              style={{color: 'var(--text-muted)'}}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

@@ -191,32 +191,6 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
                  'Public'}
               </span>
             </span>
-            <span
-              className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
-              style={bannerHasImage
-                ? {
-                    backgroundColor: 'rgba(243, 172, 59, 0.2)',
-                    color: 'var(--primary)',
-                    borderColor: 'rgba(243, 172, 59, 0.32)'
-                  }
-                : {
-                    backgroundColor: 'rgba(0, 0, 128, 0.16)',
-                    color: 'var(--accent-navy)',
-                    borderColor: 'rgba(0, 0, 128, 0.28)'
-                  }}
-            >
-              {bannerHasImage ? (
-                <>
-                  <ImageIcon className="w-3 h-3 mr-1" />
-                  Custom Banner
-                </>
-              ) : (
-                <>
-                  <Palette className="w-3 h-3 mr-1" />
-                  {bannerGradient.name}
-                </>
-              )}
-            </span>
           </div>
 
           {/* Project Type Badge */}
@@ -247,21 +221,6 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
 
         {/* Content Section */}
         <div className="p-6 space-y-4">
-          <div className="flex items-center text-xs uppercase tracking-widest font-semibold" style={{ color: 'var(--text-secondary)' }}>
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full border" style={{ borderColor: 'var(--border)' }}>
-              {bannerHasImage ? (
-                <>
-                  <ImageIcon className="w-3 h-3" />
-                  Custom Banner
-                </>
-              ) : (
-                <>
-                  <Palette className="w-3 h-3" />
-                  {bannerGradient.name}
-                </>
-              )}
-            </span>
-          </div>
 
           {/* Summary */}
           {project.summary && (

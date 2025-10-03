@@ -46,7 +46,10 @@ export default function PostCard({ post, onLike, onFollow }: PostCardProps) {
   };
 
   return (
-    <article className="bg-white dark:bg-gray-800 p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200">
+    <article className="p-6 transition-colors duration-200" 
+             style={{backgroundColor: 'var(--surface)'}}
+             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--surface)'}>
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
@@ -164,7 +167,7 @@ export default function PostCard({ post, onLike, onFollow }: PostCardProps) {
 
       {/* Comments Section */}
       {showComments && (
-        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="mt-4 pt-4" style={{borderTop: '1px solid var(--border)'}}>
           <div className="space-y-3">
             {/* Comment Input */}
             <div className="flex space-x-3">
@@ -175,7 +178,12 @@ export default function PostCard({ post, onLike, onFollow }: PostCardProps) {
                 <input
                   type="text"
                   placeholder="Write a comment..."
-                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 text-sm transition-colors"
+                  style={{
+                    backgroundColor: 'var(--surface)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)'
+                  }}
                 />
               </div>
             </div>

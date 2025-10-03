@@ -10,7 +10,7 @@ import LeftNavigation from '../components/LeftNavigation';
 import FeedTabs from '../components/FeedTabs';
 import RightSidebar from '../components/RightSidebar';
 import FloatingComposer from '../components/FloatingComposer';
-import { ThemeProvider, ThemeToggle } from '../components/ThemeProvider';
+import { ThemeToggle } from '../components/ThemeProvider';
 
 export default function Feed() {
   const [showMobileNav, setShowMobileNav] = useState(false);
@@ -36,7 +36,6 @@ export default function Feed() {
 
   return (
     <ProtectedRoute>
-      <ThemeProvider>
       <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
         <motion.div 
@@ -374,7 +373,6 @@ export default function Feed() {
           )}
         </AnimatePresence>
       </div>
-    </ThemeProvider>
     </ProtectedRoute>
   );
 }

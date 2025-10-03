@@ -8,7 +8,7 @@ import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, Mess
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RightSidebar from '../components/RightSidebar';
-import { ThemeProvider } from '../components/ThemeProvider';
+import { ThemeToggle } from '../components/ThemeProvider';
 import { api } from '@/lib/api';
 
 interface User {
@@ -184,7 +184,6 @@ export default function ExplorePage() {
 
   return (
     <ProtectedRoute>
-      <ThemeProvider>
         <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
           {/* Mobile Header */}
           <motion.div 
@@ -318,9 +317,7 @@ export default function ExplorePage() {
                 <div className="flex-shrink-0 p-4 space-y-4 relative z-10" style={{borderTop: '1px solid var(--border)'}}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
-                    <div className="w-10 h-6 bg-gray-300 rounded-full relative">
-                      <div className="w-4 h-4 bg-white rounded-full absolute top-1 left-1 transition-transform"></div>
-                    </div>
+                    <ThemeToggle />
                   </div>
                   
                   <Link 
@@ -1043,7 +1040,6 @@ export default function ExplorePage() {
             )}
           </AnimatePresence>
       </div>
-      </ThemeProvider>
     </ProtectedRoute>
   );
 }

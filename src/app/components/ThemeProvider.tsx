@@ -13,10 +13,12 @@ type ThemeContextType = {
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
   const [theme, setTheme] = useState<Theme>('system');
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
+    setMounted(true);
     // Load theme from localStorage
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme) {
@@ -25,6 +27,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const updateResolvedTheme = () => {
       let resolved: 'light' | 'dark';
       
@@ -53,7 +57,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     mediaQuery.addEventListener('change', updateResolvedTheme);
 
     return () => mediaQuery.removeEventListener('change', updateResolvedTheme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const handleSetTheme = (newTheme: Theme) => {
     setTheme(newTheme);

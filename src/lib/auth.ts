@@ -120,6 +120,18 @@ export class AuthService {
   }> {
     return apiClient.get('/api/accounts/profiles/stats/');
   }
+
+  static async followUser(username: string): Promise<{ message: string; following: boolean }> {
+    return apiClient.post(`/api/accounts/follow/${username}/`, {});
+  }
+
+  static async unfollowUser(username: string): Promise<{ message: string; following: boolean }> {
+    return apiClient.delete(`/api/accounts/unfollow/${username}/`);
+  }
+
+  static async getFollowStatus(username: string): Promise<{ following: boolean }> {
+    return apiClient.get(`/api/accounts/follow-status/${username}/`);
+  }
 }
 
 // Utility functions for form validation

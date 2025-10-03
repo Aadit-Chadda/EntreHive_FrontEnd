@@ -8,12 +8,11 @@ import { ArrowUp } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '../components/LeftNavigation';
 import FeedTabs from '../components/FeedTabs';
-import RightExplore from '../components/RightExplore';
+import RightSidebar from '../components/RightSidebar';
 import FloatingComposer from '../components/FloatingComposer';
 import { ThemeProvider, ThemeToggle } from '../components/ThemeProvider';
 
 export default function Feed() {
-  const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -233,7 +232,7 @@ export default function Feed() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-h-screen pt-16 lg:pt-0 flex"
+            className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80"
           >
             {/* Main Feed with Improved Spacing */}
             <div className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
@@ -241,35 +240,12 @@ export default function Feed() {
                 <FeedTabs />
               </div>
             </div>
-
-            {/* Right Explore Panel - Scrollable */}
-            <div className={`
-              fixed lg:static inset-y-0 right-0 z-40 w-80 lg:w-80 xl:w-96 transform transition-all duration-300 ease-in-out
-              lg:transform-none xl:block lg:flex-shrink-0 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto
-              ${showRightPanel ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-              hidden lg:block
-            `}>
-              <RightExplore 
-                showRightPanel={showRightPanel}
-                setShowRightPanel={setShowRightPanel}
-              />
-            </div>
-
-            {/* Toggle button for right panel on lg screens */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setShowRightPanel(!showRightPanel)}
-              className="hidden lg:block xl:hidden fixed bottom-6 right-6 z-50 w-12 h-12 text-white rounded-full shadow-xl transition-all duration-200"
-              style={{backgroundColor: 'var(--primary-orange)'}}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-terracotta)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--primary-orange)'}
-            >
-              <svg className="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </motion.button>
           </motion.div>
+
+          {/* Right Sidebar - Fixed on desktop */}
+          <div className="hidden lg:block fixed right-0 top-0 h-screen" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+            <RightSidebar />
+          </div>
         </div>
 
         {/* Scroll to Top Button */}
@@ -384,7 +360,7 @@ export default function Feed() {
 
         {/* Overlay for mobile panels */}
         <AnimatePresence>
-          {(showMobileNav || showRightPanel) && (
+          {showMobileNav && (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -393,7 +369,6 @@ export default function Feed() {
               style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
               onClick={() => {
                 setShowMobileNav(false);
-                setShowRightPanel(false);
               }}
             />
           )}

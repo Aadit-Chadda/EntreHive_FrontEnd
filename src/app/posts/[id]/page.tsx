@@ -20,7 +20,7 @@ import { postsApi, commentsApi } from '@/lib/api';
 import PostCardNew from '@/app/components/PostCardNew';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '../../components/LeftNavigation';
-import RightExplore from '../../components/RightExplore';
+import RightSidebar from '../../components/RightSidebar';
 import { ThemeProvider } from '../../components/ThemeProvider';
 
 interface PostDetailsPageProps {
@@ -56,7 +56,6 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showMobileNav, setShowMobileNav] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(false);
   
   const router = useRouter();
 
@@ -318,7 +317,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
           <div className="flex min-h-screen">
             <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
 
-            <div className="flex-1 min-h-screen pt-16 lg:pt-0 flex">
+            <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex">
               <div className="flex-1 min-w-0 max-w-none">
                 <div className="h-screen overflow-y-auto" style={{ backgroundColor: 'var(--background)' }}>
                   {/* Header */}
@@ -472,17 +471,14 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
               </div>
 
               <div className={`
-                fixed lg:static inset-y-0 right-0 z-40 w-80 lg:w-80 xl:w-80 transform transition-transform duration-300 ease-in-out
-                lg:transform-none xl:block lg:flex-shrink-0
-                ${showRightPanel ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                hidden lg:block
-              `}>
-                <RightExplore showRightPanel={showRightPanel} setShowRightPanel={setShowRightPanel} />
+                hidden lg:block fixed right-0 top-0 h-screen
+              `} style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+                <RightSidebar />
               </div>
             </div>
           </div>
 
-          {(showMobileNav || showRightPanel) && (
+          {showMobileNav && (
             <div
               className="fixed inset-0 z-30 lg:hidden"
               style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import RightExplore from '../components/RightExplore';
+import RightSidebar from '../components/RightSidebar';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { api } from '@/lib/api';
 
@@ -89,7 +89,6 @@ export default function ExplorePage() {
   });
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('recent');
@@ -219,17 +218,7 @@ export default function ExplorePage() {
               <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>Explore</span>
             </motion.div>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowRightPanel(!showRightPanel)}
-              className="p-2 text-white rounded-lg transition-all duration-200 shadow-md"
-              style={{backgroundColor: 'var(--primary-orange)'}}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-terracotta)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--primary-orange)'}
-            >
-              <Search className="w-6 h-6" />
-            </motion.button>
+            <div className="w-10"></div>
           </motion.div>
 
           {/* Main Layout */}
@@ -375,7 +364,7 @@ export default function ExplorePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="flex-1 min-h-screen pt-16 lg:pt-0 flex"
+              className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex"
             >
               {/* Main Explore Content */}
               <div className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
@@ -929,17 +918,10 @@ export default function ExplorePage() {
               </div>
 
               {/* Right Sidebar - Scrollable */}
-              <div className={`
-                fixed lg:static inset-y-0 right-0 z-40 w-80 lg:w-80 xl:w-96 transform transition-all duration-300 ease-in-out
-                lg:transform-none xl:block lg:flex-shrink-0 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto
-                ${showRightPanel ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                hidden lg:block
-              `}>
-                <RightExplore 
-                  showRightPanel={showRightPanel}
-                  setShowRightPanel={setShowRightPanel}
-                />
-            </div>
+              {/* Right Sidebar - Fixed on desktop */}
+              <div className="hidden lg:block fixed right-0 top-0 h-screen" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+                <RightSidebar />
+              </div>
             </motion.div>
           </div>
 
@@ -1046,7 +1028,7 @@ export default function ExplorePage() {
 
           {/* Overlay for mobile panels */}
           <AnimatePresence>
-            {(showMobileNav || showRightPanel) && (
+            {showMobileNav && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

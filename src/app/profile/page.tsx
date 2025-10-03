@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PostCardNew from '../components/PostCardNew';
 import ProjectCard from '../components/ProjectCard';
 import LeftNavigation from '../components/LeftNavigation';
+import RightSidebar from '../components/RightSidebar';
 import { ThemeProvider } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
@@ -348,7 +349,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-w-0 pt-16 lg:pt-0"
+            className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-80"
           >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* Status Messages */}
@@ -1298,6 +1299,11 @@ export default function ProfilePage() {
               </motion.div>
             </div>
           </motion.div>
+
+          {/* Right Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block fixed right-0 top-0 h-screen" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+            <RightSidebar />
+          </div>
         </div>
 
         {/* Mobile overlay */}

@@ -4,7 +4,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import LeftNavigation from '../../components/LeftNavigation';
-import RightExplore from '../../components/RightExplore';
+import RightSidebar from '../../components/RightSidebar';
 import TeamManagement from '../../components/TeamManagement';
 import ProjectInvitations from '../../components/ProjectInvitations';
 import { ThemeProvider } from '../../components/ThemeProvider';
@@ -25,7 +25,6 @@ export default function ProjectDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [showTeamManagement, setShowTeamManagement] = useState(false);
   const [showInvitations, setShowInvitations] = useState(false);
-  const [showRightPanel, setShowRightPanel] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -356,7 +355,7 @@ export default function ProjectDetailsPage() {
             />
 
             {/* Main Content Area */}
-            <div className="flex-1 min-h-screen pt-16 lg:pt-0 flex">
+            <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex">
               <div className="flex-1 min-w-0 max-w-none">
                 <div className="h-screen overflow-y-auto" style={{ backgroundColor: 'var(--background)' }}>
                   {/* Header */}
@@ -1078,15 +1077,9 @@ export default function ProjectDetailsPage() {
 
               {/* Right Explore Panel */}
               <div className={`
-                fixed lg:static inset-y-0 right-0 z-40 w-80 lg:w-80 xl:w-80 transform transition-transform duration-300 ease-in-out
-                lg:transform-none xl:block lg:flex-shrink-0
-                ${showRightPanel ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-                hidden lg:block
-              `}>
-                <RightExplore 
-                  showRightPanel={showRightPanel}
-                  setShowRightPanel={setShowRightPanel}
-                />
+                hidden lg:block fixed right-0 top-0 h-screen
+              `} style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
+                <RightSidebar />
               </div>
             </div>
           </div>
@@ -1218,12 +1211,11 @@ export default function ProjectDetailsPage() {
           )}
 
           {/* Overlay for mobile panels */}
-          {(showMobileNav || showRightPanel) && (
+          {showMobileNav && (
             <div 
               className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
               onClick={() => {
                 setShowMobileNav(false);
-                setShowRightPanel(false);
               }}
             />
           )}

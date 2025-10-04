@@ -875,9 +875,9 @@ Examples:
         <div className="text-center">
           <p className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
             By creating an account, you agree to our{' '}
-            <a href="#" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Terms of Service</a>
+            <a href="/terms" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Terms of Service</a>
             {' '}and{' '}
-            <a href="#" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Privacy Policy</a>
+            <a href="/privacy" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Privacy Policy</a>
           </p>
         </div>
       </div>

@@ -141,7 +141,7 @@ export default function About() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-12 hexagon-pattern" style={{backgroundColor: 'var(--neutral-off-white)'}}>
+      <section id="mission" className="py-12 hexagon-pattern" style={{backgroundColor: 'var(--neutral-off-white)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <LazyLoad animationType="fade-up">
             <div className="lg:text-center">
@@ -226,7 +226,7 @@ export default function About() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-white py-16">
+      <section id="how-it-works" className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <LazyLoad animationType="fade-up">
             <div className="text-center mb-12">

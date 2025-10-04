@@ -224,24 +224,60 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
         {/* Footer Links */}
         <div className="pt-6 border-t" style={{borderColor: 'var(--border)'}}>
           <div className="flex flex-wrap gap-4 text-xs font-canva-sans mb-3">
-            {['About', 'Terms', 'Privacy', 'Help'].map((link) => (
-              <a 
-                key={link}
-                href="#" 
-                className="transition-all duration-300 hover:scale-105 hover:font-medium" 
-                style={{color: 'var(--text-secondary)'}} 
-                onMouseEnter={(e) => {
-                  e.target.style.color = 'var(--primary-orange)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.color = 'var(--text-secondary)';
-                }}
-              >
-                {link}
-              </a>
-            ))}
+            <a 
+              href="/about"
+              className="transition-all duration-300 hover:scale-105 hover:font-medium" 
+              style={{color: 'var(--text-secondary)'}} 
+              onMouseEnter={(e) => {
+                e.target.style.color = 'var(--primary-orange)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = 'var(--text-secondary)';
+              }}
+            >
+              About
+            </a>
+            <a 
+              href="/terms"
+              className="transition-all duration-300 hover:scale-105 hover:font-medium" 
+              style={{color: 'var(--text-secondary)'}} 
+              onMouseEnter={(e) => {
+                e.target.style.color = 'var(--primary-orange)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = 'var(--text-secondary)';
+              }}
+            >
+              Terms
+            </a>
+            <a 
+              href="/privacy"
+              className="transition-all duration-300 hover:scale-105 hover:font-medium" 
+              style={{color: 'var(--text-secondary)'}} 
+              onMouseEnter={(e) => {
+                e.target.style.color = 'var(--primary-orange)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = 'var(--text-secondary)';
+              }}
+            >
+              Privacy
+            </a>
+            <a 
+              href="/contact"
+              className="transition-all duration-300 hover:scale-105 hover:font-medium" 
+              style={{color: 'var(--text-secondary)'}} 
+              onMouseEnter={(e) => {
+                e.target.style.color = 'var(--primary-orange)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.color = 'var(--text-secondary)';
+              }}
+            >
+              Help
+            </a>
           </div>
-          <p className="text-xs font-canva-sans text-center py-2" style={{color: 'var(--text-muted)'}}>© 2024 EntreHive</p>
+          <p className="text-xs font-canva-sans text-center py-2" style={{color: 'var(--text-muted)'}}>© 2025 EntreHive</p>
         </div>
       </div>
     </div>

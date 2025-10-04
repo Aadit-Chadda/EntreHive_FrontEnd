@@ -45,24 +45,19 @@ export default function Footer() {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <Link href="/about" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/about#mission" className="text-base text-gray-300 hover:text-white">
                       About
                     </Link>
                   </li>
                   <li>
-                    <Link href="/services" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/services#services" className="text-base text-gray-300 hover:text-white">
                       Services
                     </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/about#how-it-works" className="text-base text-gray-300 hover:text-white">
                       How it Works
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
-                      Success Stories
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -87,9 +82,9 @@ export default function Footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/contact" className="text-base text-gray-300 hover:text-white">
                       Contact Us
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -112,11 +107,6 @@ export default function Footer() {
                   </li>
                   <li>
                     <a href="#" className="text-base text-gray-300 hover:text-white">
-                      Press
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
                       Partners
                     </a>
                   </li>
@@ -128,24 +118,14 @@ export default function Footer() {
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/privacy" className="text-base text-gray-300 hover:text-white">
                       Privacy Policy
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
+                    <Link href="/terms" className="text-base text-gray-300 hover:text-white">
                       Terms of Service
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
-                      Cookie Policy
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="text-base text-gray-300 hover:text-white">
-                      GDPR
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>

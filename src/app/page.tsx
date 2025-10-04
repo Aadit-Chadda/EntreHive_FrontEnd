@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LazyLoad from './components/LazyLoad';
+import CookieConsent from './components/CookieConsent';
 
 export default function Home() {
   return (
@@ -112,11 +113,10 @@ export default function Home() {
                      style={{borderColor: 'var(--primary-orange)'}}>
                   <div className="text-center">
                     <img 
-                      src="/logo_official.jpeg" 
+                      src="/Logoblacktransparent.png" 
                       alt="EntreHive Logo" 
-                      className="w-16 h-16 rounded-full object-cover animate-bee-hover"
+                      className="w-20 h-20 object-contain animate-bee-hover"
                     />
-                    <div className="text-xs font-bold font-roca-two mt-2" style={{color: 'var(--primary-orange)'}}>EntreHive</div>
                   </div>
                 </div>
                 
@@ -136,7 +136,7 @@ export default function Home() {
       </section>
 
       {/* Who We Are Section */}
-      <section className="py-12 hexagon-pattern" style={{backgroundColor: 'var(--neutral-off-white)'}}>
+      <section className="py-16 md:py-20 hexagon-pattern" style={{backgroundColor: 'var(--neutral-off-white)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <LazyLoad animationType="fade-up">
             <div className="lg:text-center">
@@ -166,17 +166,17 @@ export default function Home() {
             </div>
           </LazyLoad>
 
-          <div className="mt-10">
-            <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          <div className="mt-20">
+            <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16 md:gap-y-16 lg:gap-x-20 lg:gap-y-20">
               <LazyLoad animationType="fade-left" delay={100}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300 hexagon">
+                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300" style={{backgroundColor: 'var(--primary-orange)'}}>
                       <span className="text-2xl">🎯</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Real-World Skill Building</p>
+                    <p className="text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Real-World Skill Building</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Craft real pitch decks, run marketing campaigns, and get feedback from industry professionals. 
                     Learn by doing, not just reading - the hive way.
                   </dd>
@@ -184,15 +184,15 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-right" delay={200}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--accent-pine)'}}>
                       <span className="text-2xl">🤝</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Peer-to-Peer Collaboration</p>
+                    <p className="text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Peer-to-Peer Collaboration</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Join plug-and-play teams, connect across disciplines, and build lasting partnerships 
                     with like-minded innovators in the entrepreneurial ecosystem.
                   </dd>
@@ -200,15 +200,15 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-left" delay={300}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--accent-terracotta)'}}>
                       <span className="text-2xl">💼</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Alternative to Internships</p>
+                    <p className="text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Alternative to Internships</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Skip the competitive internship hunt. Gain hands-on experience with early-stage startups 
                     and real business challenges in our collaborative hive.
                   </dd>
@@ -216,15 +216,15 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-right" delay={400}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--secondary-red)'}}>
                       <span className="text-2xl">🌟</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>No Hierarchy, Pure Collaboration</p>
+                    <p className="text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>No Hierarchy, Pure Collaboration</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Whether you're a student or professor, entrepreneur or investor - your ideas matter. 
                     In our hive, expertise trumps titles every time.
                   </dd>
@@ -608,6 +608,9 @@ export default function Home() {
           </LazyLoad>
         </div>
       </section>
+
+      {/* Cookie Consent Popup */}
+      <CookieConsent />
     </div>
   );
 }

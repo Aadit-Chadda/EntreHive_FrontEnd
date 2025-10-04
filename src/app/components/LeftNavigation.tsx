@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ThemeToggle } from './ThemeProvider';
+import { ThemeToggle, useTheme } from './ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface LeftNavigationProps {
@@ -14,6 +14,7 @@ interface LeftNavigationProps {
 export default function LeftNavigation({ showMobileNav, setShowMobileNav }: LeftNavigationProps) {
   const [activeItem, setActiveItem] = useState('home');
   const { user, profile } = useAuth();
+  const { resolvedTheme } = useTheme();
 
   const navItems = [
     { id: 'home', label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', href: '/feed' },
@@ -44,7 +45,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                 <Image
-                  src="/logo_w_name.png"
+                  src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                   alt="EntreHive Logo"
                   width={48}
                   height={48}
@@ -182,7 +183,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                 <Image
-                  src="/logo_w_name.png"
+                  src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                   alt="EntreHive Logo"
                   width={40}
                   height={40}

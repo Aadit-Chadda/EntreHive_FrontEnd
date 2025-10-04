@@ -235,7 +235,7 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-orange-400 transition-colors font-canva-sans ${errors.name ? 'border-red-500' : ''}`}
-                      style={{borderColor: errors.name ? '#dc3545' : 'var(--border)'}}
+                      style={{borderColor: errors.name ? '#dc3545' : 'var(--border)', color: '#000000', backgroundColor: 'white'}}
                       placeholder="John Doe"
                     />
                     {errors.name && (
@@ -258,7 +258,7 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-orange-400 transition-colors font-canva-sans ${errors.email ? 'border-red-500' : ''}`}
-                      style={{borderColor: errors.email ? '#dc3545' : 'var(--border)'}}
+                      style={{borderColor: errors.email ? '#dc3545' : 'var(--border)', color: '#000000', backgroundColor: 'white'}}
                       placeholder="john@university.edu"
                     />
                     {errors.email && (
@@ -280,7 +280,7 @@ export default function Contact() {
                       value={formData.inquiryType}
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-orange-400 transition-colors font-canva-sans"
-                      style={{borderColor: 'var(--border)'}}
+                      style={{borderColor: 'var(--border)', color: '#000000', backgroundColor: 'white'}}
                     >
                       <option value="general">General Inquiry</option>
                       <option value="partnership">Partnership Opportunity</option>
@@ -307,7 +307,7 @@ export default function Contact() {
                       value={formData.subject}
                       onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-orange-400 transition-colors font-canva-sans ${errors.subject ? 'border-red-500' : ''}`}
-                      style={{borderColor: errors.subject ? '#dc3545' : 'var(--border)'}}
+                      style={{borderColor: errors.subject ? '#dc3545' : 'var(--border)', color: '#000000', backgroundColor: 'white'}}
                       placeholder="Brief description of your inquiry (at least 5 characters)"
                     />
                     {errors.subject && (
@@ -331,7 +331,7 @@ export default function Contact() {
                       onChange={handleChange}
                       rows={6}
                       className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-orange-400 transition-colors font-canva-sans resize-none ${errors.message ? 'border-red-500' : ''}`}
-                      style={{borderColor: errors.message ? '#dc3545' : 'var(--border)'}}
+                      style={{borderColor: errors.message ? '#dc3545' : 'var(--border)', color: '#000000', backgroundColor: 'white'}}
                       placeholder="Please provide details about your inquiry (at least 10 characters)..."
                     />
                     {errors.message && (

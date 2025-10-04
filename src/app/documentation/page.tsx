@@ -121,22 +121,25 @@ export default function DocumentationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-off-white">
+    <div className="min-h-screen" style={{backgroundColor: 'var(--background)'}}>
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+      <div className="sticky top-0 z-50 shadow-sm" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 rounded-lg transition-colors"
+                style={{color: 'var(--text-secondary)'}}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
-                <ArrowLeftIcon className="h-5 w-5 text-gray-600" />
+                <ArrowLeftIcon className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               </button>
               <div className="flex items-center space-x-3">
                 <BookOpenIcon className="h-8 w-8 text-primary-orange" />
                 <div>
-                  <h1 className="text-2xl font-bold text-primary-black">
+                  <h1 className="text-2xl font-bold" style={{color: 'var(--text-primary)'}}>
                     EntreHive Documentation
                   </h1>
                   <p className="text-sm text-secondary-charcoal">
@@ -187,9 +190,19 @@ export default function DocumentationPage() {
                           className={`w-full text-left px-3 py-2 text-sm rounded-lg transition-colors ${
                             activeSection === subsection.id
                               ? 'text-white font-medium'
-                              : 'text-gray-600 hover:bg-gray-100'
+                              : ''
                           }`}
-                          style={activeSection === subsection.id ? { backgroundColor: '#F3AC3B' } : {}}
+                          style={activeSection === subsection.id ? { backgroundColor: 'var(--primary-orange)' } : { color: 'var(--text-secondary)' }}
+                          onMouseEnter={(e) => {
+                            if (activeSection !== subsection.id) {
+                              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeSection !== subsection.id) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
                         >
                           {subsection.title}
                         </button>
@@ -203,7 +216,7 @@ export default function DocumentationPage() {
 
           {/* Content Area */}
           <main className="flex-1 min-w-0">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="rounded-xl shadow-sm p-8" style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}>
               <DocumentationContent section={activeSection} />
             </div>
           </main>

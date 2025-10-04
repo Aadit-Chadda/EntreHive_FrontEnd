@@ -8,7 +8,7 @@ import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, Mess
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RightSidebar from '../components/RightSidebar';
-import { ThemeToggle } from '../components/ThemeProvider';
+import { ThemeToggle, useTheme } from '../components/ThemeProvider';
 import { api } from '@/lib/api';
 
 interface User {
@@ -79,6 +79,7 @@ type SearchType = 'all' | 'users' | 'posts' | 'projects' | 'hashtags';
 
 export default function ExplorePage() {
   const { user } = useAuth();
+  const { resolvedTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<SearchType>('all');
   const [searchResults, setSearchResults] = useState<SearchResults>({
@@ -242,7 +243,7 @@ export default function ExplorePage() {
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                       <Image
-                        src="/logo_w_name.png"
+                        src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                         alt="EntreHive Logo"
                         width={48}
                         height={48}
@@ -953,7 +954,7 @@ export default function ExplorePage() {
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                     <Image
-                      src="/logo_w_name.png"
+                      src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                       alt="EntreHive Logo"
                       width={40}
                       height={40}

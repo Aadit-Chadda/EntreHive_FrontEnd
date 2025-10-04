@@ -11,12 +11,13 @@ import LeftNavigation from '../components/LeftNavigation';
 import FeedTabs from '../components/FeedTabs';
 import RightSidebar from '../components/RightSidebar';
 import FloatingComposer from '../components/FloatingComposer';
-import { ThemeToggle } from '../components/ThemeProvider';
+import { ThemeToggle, useTheme } from '../components/ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Feed() {
   const { user } = useAuth();
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -125,7 +126,7 @@ export default function Feed() {
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                     <Image
-                      src="/logo_w_name.png"
+                      src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                       alt="EntreHive Logo"
                       width={48}
                       height={48}

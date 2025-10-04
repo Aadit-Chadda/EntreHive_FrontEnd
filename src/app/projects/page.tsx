@@ -8,13 +8,14 @@ import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import ProjectCard from '../components/ProjectCard';
 import ProjectCreateForm from '../components/ProjectCreateForm';
-import { ThemeProvider } from '../components/ThemeProvider';
+import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ProjectData } from '@/types';
 import { projectApi } from '@/lib/api';
 
 export default function ProjectsPage() {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -168,7 +169,7 @@ export default function ProjectsPage() {
           >
             <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
               <Image
-                src="/logo_w_name.png"
+                src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
                 alt="EntreHive Logo"
                 width={32}
                 height={32}

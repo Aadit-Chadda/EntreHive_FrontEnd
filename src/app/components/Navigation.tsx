@@ -19,14 +19,12 @@ const Navigation = () => {
             <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative">
                 <img 
-                  src="/logo_w_name.png" 
+                  src="/Logoblacktransparent.png" 
                   alt="EntreHive Logo" 
-                  className="w-10 h-10 rounded-lg object-cover"
+                  className="w-10 h-10 object-contain"
                 />
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/10 rounded-lg"></div>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="text-2xl font-bold font-roca-two" style={{color: 'var(--primary-orange)'}}>EH</span>
                 <span className="text-xl font-bold font-roca-two text-gray-800 group-hover:scale-105 transition-transform duration-300">EntreHive</span>
               </div>
             </Link>

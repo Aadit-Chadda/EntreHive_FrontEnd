@@ -54,6 +54,8 @@ export interface UserProfile {
   following_count: number;
   is_following: boolean;
   is_followed_by: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
 }
 
 export interface RegistrationData {

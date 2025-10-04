@@ -374,6 +374,13 @@ export default function InvestorFeed() {
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                             View Profile
                           </Link>
+                          <Link href="/documentation" 
+                                className="block px-4 py-2 text-sm font-canva-sans transition-colors"
+                                style={{ color: 'var(--text-primary)' }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                            📚 Documentation
+                          </Link>
                           <Link href="/settings" 
                                 className="block px-4 py-2 text-sm font-canva-sans transition-colors"
                                 style={{ color: 'var(--text-primary)' }}
@@ -381,6 +388,7 @@ export default function InvestorFeed() {
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                             Settings
                           </Link>
+                          <div className="border-t my-2" style={{ borderColor: 'var(--border)' }}></div>
                           <button 
                             onClick={() => {
                               localStorage.clear();

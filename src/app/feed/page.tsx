@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -11,11 +12,21 @@ import FeedTabs from '../components/FeedTabs';
 import RightSidebar from '../components/RightSidebar';
 import FloatingComposer from '../components/FloatingComposer';
 import { ThemeToggle } from '../components/ThemeProvider';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Feed() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+
+  // Redirect investors to their dedicated feed
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push('/investors');
+    }
+  }, [user, router]);
 
   // Handle scroll to top visibility
   useEffect(() => {

@@ -33,6 +33,13 @@ export default function ProfilePage() {
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
 
+  // Redirect investors to their dedicated profile page
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push('/investors/profile');
+    }
+  }, [user, router]);
+
   // Form state for editing
   const [formData, setFormData] = useState<ProfileUpdateData>({
     first_name: '',

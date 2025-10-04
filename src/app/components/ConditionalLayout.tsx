@@ -18,7 +18,9 @@ export default function ConditionalLayout({
                    pathname?.startsWith('/explore') || 
                    pathname?.startsWith('/profile') ||
                    pathname?.startsWith('/bookmarks') ||
-                   pathname?.startsWith('/settings');
+                   pathname?.startsWith('/settings') ||
+                   pathname?.startsWith('/investors') ||
+                   pathname?.startsWith('/notifications');
 
   if (isAppPage) {
     // App pages (feed, posts, etc.) - no top navigation or footer

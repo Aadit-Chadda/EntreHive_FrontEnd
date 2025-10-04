@@ -1,13 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import ProjectInvitations from '../components/ProjectInvitations';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function NotificationsPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [showMobileNav, setShowMobileNav] = useState(false);
+
+  // Redirect investors to their dedicated notifications page
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push('/investors/notifications');
+    }
+  }, [user, router]);
 
   return (
     <ProtectedRoute>

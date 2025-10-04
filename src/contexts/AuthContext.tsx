@@ -61,6 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email: profileData.email,
         first_name: profileData.first_name,
         last_name: profileData.last_name,
+        user_role: profileData.user_role,
       };
       setUser(authUser);
     } catch (error) {
@@ -89,13 +90,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.user);
 
       // Get full profile data
-      await refreshProfile();
+      const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
+      setProfile(profileData);
+      
+      // Update user with role from profile
+      const updatedUser: AuthUser = {
+        ...response.user,
+        user_role: profileData.user_role,
+      };
+      setUser(updatedUser);
 
-      // Redirect to dashboard/feed
-      router.push('/feed');
+      // Redirect based on user role
+      if (profileData.user_role === 'investor') {
+        router.push('/investors');
+      } else {
+        router.push('/feed');
+      }
     } catch (error) {
       setIsLoading(false);
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -125,6 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: profileData.email,
           first_name: profileData.first_name,
           last_name: profileData.last_name,
+          user_role: profileData.user_role,
         };
         setUser(updatedUser);
       }

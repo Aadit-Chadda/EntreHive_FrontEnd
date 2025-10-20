@@ -8,11 +8,47 @@ import { TrendingUp, Bell, ChevronDown, MapPin, Briefcase, Target, ExternalLink,
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ThemeToggle } from '../../components/ThemeProvider';
+import VerificationWarningBanner from '../../components/VerificationWarningBanner';
 
 export default function InvestorProfile() {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
+
+  const handleResendVerification = async () => {
+    setIsResendingVerification(true);
+
+    try {
+      const token = localStorage.getItem('access_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(
+        `${apiUrl}/api/accounts/resend-verification/`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || 'Failed to send verification email');
+        return;
+      }
+
+      const data = await response.json();
+      alert('Verification email sent! Please check your inbox.');
+      await refreshProfile(); // Refresh to update verification_sent_at
+    } catch (err) {
+      alert('An error occurred while sending verification email');
+      console.error('Resend verification error:', err);
+    } finally {
+      setIsResendingVerification(false);
+    }
+  };
 
   // Check if user is investor
   useEffect(() => {
@@ -79,6 +115,15 @@ export default function InvestorProfile() {
 
         {/* Main Content */}
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Email Verification Warning */}
+          {profile && profile.should_show_verification_warning && (
+            <VerificationWarningBanner
+              daysUntilDisabled={profile.days_until_disabled}
+              onResendEmail={handleResendVerification}
+              isResending={isResendingVerification}
+            />
+          )}
+
           {/* Profile Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

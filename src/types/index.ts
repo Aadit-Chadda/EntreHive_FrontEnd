@@ -47,6 +47,10 @@ export interface UserProfile {
   banner_image?: string | null;
   is_profile_public: boolean;
   show_email: boolean;
+  email_verified: boolean;
+  verification_sent_at?: string | null;
+  days_until_disabled: number | null;
+  should_show_verification_warning: boolean;
   role_specific_info: Record<string, unknown>;
   created_at: string;
   updated_at: string;

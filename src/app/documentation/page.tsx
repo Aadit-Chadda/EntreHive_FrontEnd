@@ -14,7 +14,8 @@ import {
   CommandLineIcon,
   CubeIcon,
   ShieldCheckIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  EnvelopeIcon
 } from '@heroicons/react/24/outline';
 import { 
   FrontendAuth, 
@@ -32,6 +33,12 @@ import {
   AdminFeatures, 
   AdminContact 
 } from './admin-sections';
+import {
+  EmailSystem,
+  EmailVerification,
+  EmailTemplates,
+  EmailConfiguration
+} from './email-sections';
 
 interface Section {
   id: string;
@@ -91,6 +98,17 @@ export default function DocumentationPage() {
         { id: 'api-overview', title: 'API Overview' },
         { id: 'api-docs', title: 'API Documentation' },
         { id: 'feed-system', title: 'Feed System' },
+      ]
+    },
+    {
+      id: 'email',
+      title: 'Email System',
+      icon: EnvelopeIcon,
+      subsections: [
+        { id: 'email-system', title: 'Email Overview' },
+        { id: 'email-verification', title: 'Email Verification' },
+        { id: 'email-templates', title: 'Template Details' },
+        { id: 'email-configuration', title: 'Configuration & Setup' },
       ]
     },
     {
@@ -247,6 +265,14 @@ function DocumentationContent({ section }: { section: string }) {
         return <APIDocs />;
       case 'feed-system':
         return <FeedSystem />;
+      case 'email-system':
+        return <EmailSystem />;
+      case 'email-verification':
+        return <EmailVerification />;
+      case 'email-templates':
+        return <EmailTemplates />;
+      case 'email-configuration':
+        return <EmailConfiguration />;
       case 'admin-overview':
         return <AdminOverview />;
       case 'admin-features':

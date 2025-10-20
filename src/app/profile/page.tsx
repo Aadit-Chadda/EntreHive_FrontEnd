@@ -17,6 +17,7 @@ import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT, PROFILE_BANNER_GRADIENTS } from '@/lib/profileBranding';
 import type { ProfileBannerStyle } from '@/lib/profileBranding';
 import { Palette, Image as ImageIcon, Edit3 } from 'lucide-react';
+import VerificationWarningBanner from '../components/VerificationWarningBanner';
 
 export default function ProfilePage() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
@@ -32,6 +33,7 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState('');
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
 
   // Redirect investors to their dedicated profile page
   useEffect(() => {
@@ -206,6 +208,42 @@ export default function ProfilePage() {
       setError(apiError.message || 'Failed to delete image');
     } finally {
       setUploadingImage(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setIsResendingVerification(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const token = localStorage.getItem('access_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(
+        `${apiUrl}/api/accounts/resend-verification/`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || 'Failed to send verification email');
+        return;
+      }
+
+      const data = await response.json();
+      setSuccess('Verification email sent! Please check your inbox.');
+      await refreshProfile(); // Refresh to update verification_sent_at
+    } catch (err) {
+      setError('An error occurred while sending verification email');
+      console.error('Resend verification error:', err);
+    } finally {
+      setIsResendingVerification(false);
     }
   };
 
@@ -385,6 +423,15 @@ export default function ProfilePage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* Email Verification Warning */}
+              {profile && profile.should_show_verification_warning && (
+                <VerificationWarningBanner
+                  daysUntilDisabled={profile.days_until_disabled}
+                  onResendEmail={handleResendVerification}
+                  isResending={isResendingVerification}
+                />
+              )}
 
               {/* Profile Header */}
               <motion.div 

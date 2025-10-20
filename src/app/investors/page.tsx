@@ -189,27 +189,41 @@ export default function InvestorFeed() {
   const fetchTopics = async () => {
     try {
       const response = await api.get('/api/feed/investor/topics/');
-      setTopics(response.data.topics);
+      if (response && response.data) {
+        setTopics(response.data.topics || response.data || []);
+      }
     } catch (error) {
       console.error('Failed to fetch topics:', error);
+      setTopics([]);
     }
   };
 
   const fetchUniversities = async () => {
     try {
       const response = await api.get('/api/universities/');
-      setUniversities(response.data);
+      if (response && response.data) {
+        setUniversities(response.data || []);
+      }
     } catch (error) {
       console.error('Failed to fetch universities:', error);
+      setUniversities([]);
     }
   };
 
   const fetchStats = async () => {
     try {
       const response = await api.get('/api/feed/investor/stats/');
-      setStats(response.data);
+      if (response && response.data) {
+        setStats(response.data);
+      }
     } catch (error) {
       console.error('Failed to fetch stats:', error);
+      setStats({
+        total_posts: 0,
+        total_projects: 0,
+        active_users: 0,
+        universities: 0
+      });
     }
   };
 
@@ -250,16 +264,22 @@ export default function InvestorFeed() {
       
       const response = await api.get(`/api/feed/investor/?${params.toString()}`);
       
-      if (reset) {
-        setFeed(response.data.results);
-      } else {
-        setFeed(prev => [...prev, ...response.data.results]);
+      if (response && response.data) {
+        if (reset) {
+          setFeed(response.data.results || []);
+        } else {
+          setFeed(prev => [...prev, ...(response.data.results || [])]);
+        }
+        
+        setNextCursor(response.data.next_cursor || null);
+        setHasMore(response.data.has_more || false);
       }
-      
-      setNextCursor(response.data.next_cursor);
-      setHasMore(response.data.has_more);
     } catch (error) {
       console.error('Failed to fetch feed:', error);
+      if (reset) {
+        setFeed([]);
+      }
+      setHasMore(false);
     } finally {
       setLoading(false);
       setLoadingMore(false);

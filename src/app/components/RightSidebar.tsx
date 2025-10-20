@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { NotificationService, Notification, FollowSuggestion } from '@/lib/notifications';
 import { AuthService } from '@/lib/auth';
-import { Bell, Users, LogOut, Clock, Calendar, X, Check } from 'lucide-react';
+import { Bell, Users, LogOut, Clock, Calendar, X, Check, User, KeyRound, ChevronDown } from 'lucide-react';
 
 interface RightSidebarProps {
   className?: string;
@@ -22,6 +22,8 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [followingUsers, setFollowingUsers] = useState<Set<string>>(new Set());
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Update time every minute
   useEffect(() => {
@@ -71,9 +73,32 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
     }
   }, [user]);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleLogout = async () => {
+    setIsDropdownOpen(false);
     await logout();
     router.push('/login');
+  };
+
+  const handleProfileClick = () => {
+    setIsDropdownOpen(false);
+    router.push('/profile');
+  };
+
+  const handleResetPasswordClick = () => {
+    setIsDropdownOpen(false);
+    router.push('/settings#security');
   };
 
   const handleNotificationClick = async (notification: Notification) => {
@@ -171,22 +196,87 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
 
   return (
     <div className={`w-80 h-screen sticky top-0 flex flex-col ${className}`}>
-      {/* Header with Time, Date, and Logout */}
+      {/* Header with Time, Date, and User Menu */}
       <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
-        {/* Logout Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleLogout}
-          className="w-full mb-4 px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
-          style={{
-            backgroundColor: 'var(--secondary-red)',
-            color: 'white'
-          }}
-        >
-          <LogOut className="w-4 h-4" />
-          <span className="font-medium">Logout</span>
-        </motion.button>
+        {/* User Menu Dropdown */}
+        <div className="relative mb-4" ref={dropdownRef}>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="w-full px-4 py-2.5 rounded-lg flex items-center justify-between transition-colors"
+            style={{
+              backgroundColor: 'var(--primary-orange)',
+              color: 'white'
+            }}
+          >
+            <div className="flex items-center space-x-2">
+              <User className="w-4 h-4" />
+              <span className="font-medium">Account</span>
+            </div>
+            <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+          </motion.button>
+
+          <AnimatePresence>
+            {isDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-full left-0 right-0 mt-2 rounded-lg shadow-lg overflow-hidden z-50"
+                style={{
+                  backgroundColor: 'var(--surface)',
+                  border: '1px solid var(--border)'
+                }}
+              >
+                <button
+                  onClick={handleProfileClick}
+                  className="w-full px-4 py-3 flex items-center space-x-3 transition-colors hover:bg-opacity-80"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'var(--text-primary)'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <User className="w-4 h-4" style={{ color: 'var(--primary-orange)' }} />
+                  <span className="font-medium">Profile</span>
+                </button>
+
+                <button
+                  onClick={handleResetPasswordClick}
+                  className="w-full px-4 py-3 flex items-center space-x-3 transition-colors hover:bg-opacity-80"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'var(--text-primary)'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <KeyRound className="w-4 h-4" style={{ color: 'var(--primary-orange)' }} />
+                  <span className="font-medium">Change Password</span>
+                </button>
+
+                <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full px-4 py-3 flex items-center space-x-3 transition-colors hover:bg-opacity-80"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'var(--secondary-red)'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="font-medium">Logout</span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Time and Date */}
         <div className="space-y-2">

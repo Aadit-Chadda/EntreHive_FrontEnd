@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   static async confirmPasswordReset(data: PasswordResetConfirmData): Promise<{ detail: string }> {
-    return apiClient.post('/api/auth/password/reset/confirm/', data);
+    return apiClient.post('/api/accounts/password-reset-confirm/', data);
   }
 
   static async changePassword(data: ChangePasswordData): Promise<{ detail: string }> {

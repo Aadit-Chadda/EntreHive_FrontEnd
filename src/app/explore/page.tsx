@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -80,6 +81,7 @@ type SearchType = 'all' | 'users' | 'posts' | 'projects' | 'hashtags';
 export default function ExplorePage() {
   const { user } = useAuth();
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchType, setSearchType] = useState<SearchType>('all');
   const [searchResults, setSearchResults] = useState<SearchResults>({
@@ -93,6 +95,13 @@ export default function ExplorePage() {
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('recent');
+
+  // Redirect investors to their dedicated dashboard
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push('/investors');
+    }
+  }, [user, router]);
 
   // Handle scroll to top visibility
   useEffect(() => {

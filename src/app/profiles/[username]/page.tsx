@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import LeftNavigation from '../../components/LeftNavigation';
 // We'll create inline components for PostSummary and ProjectSummary display
 import { ThemeProvider } from '../../components/ThemeProvider';
-import { api } from '@/lib/api';
+import { api, messagingApi } from '@/lib/api';
 import { EnhancedUserProfile, PostSummary, ProjectSummary } from '@/types';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib/profileBranding';
 
@@ -82,7 +82,18 @@ export default function PublicProfilePage() {
   const [followLoading, setFollowLoading] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [activeTab, setActiveTab] = useState<'posts' | 'projects'>('posts');
+  const [showProjectRequestModal, setShowProjectRequestModal] = useState(false);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageText, setMessageText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
   const router = useRouter();
+
+  // Redirect investors to investor-specific profile page
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push(`/investors/profiles/${username}`);
+    }
+  }, [user, username, router]);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -128,6 +139,43 @@ export default function PublicProfilePage() {
       console.error('Follow/unfollow error:', error);
     } finally {
       setFollowLoading(false);
+    }
+  };
+
+  const handleStartChat = async () => {
+    const currentUserRole = user?.profile?.user_role;
+    const targetUserRole = profile?.user_role;
+
+    // If current user is student and target is professor/investor, they need to send a project request
+    if (currentUserRole === 'student' && (targetUserRole === 'professor' || targetUserRole === 'investor')) {
+      // For now, just inform them - they need to send project request from project page
+      alert('To message professors or investors, please send them a project view request from one of your projects.');
+      return;
+    }
+    
+    // For all other cases (professor/investor -> student, or same roles), show message modal
+    setShowMessageModal(true);
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !profile || !user) return;
+
+    try {
+      setSendingMessage(true);
+      
+      // Create conversation with initial message
+      const conversation = await messagingApi.createConversation({
+        recipient_id: profile.id,
+        message: messageText.trim()
+      });
+
+      // Navigate to the conversation
+      router.push(`/inbox/${conversation.id}`);
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      alert(error.message || 'Failed to send message. You may need to send a project request first if you are a student.');
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -350,28 +398,51 @@ export default function PublicProfilePage() {
                         </a>
                       )}
                       
-                      {/* Follow/Edit Button */}
+                      {/* Message and Follow Buttons */}
                       {user && !isOwnProfile && (
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={handleFollowToggle}
-                          disabled={followLoading}
-                          className="px-6 py-2 rounded-lg font-medium transition-all duration-200"
-                          style={{
-                            backgroundColor: profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)',
-                            color: profile.is_following ? 'var(--text-primary)' : 'white',
-                            border: profile.is_following ? '1px solid var(--border)' : 'none'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--active-bg)' : 'var(--accent-terracotta)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)';
-                          }}
-                        >
-                          {followLoading ? 'Loading...' : (profile.is_following ? 'Following' : 'Follow')}
-                        </motion.button>
+                        <>
+                          {/* Message Button */}
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleStartChat}
+                            className="px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2"
+                            style={{
+                              backgroundColor: 'var(--hover-bg)',
+                              color: 'var(--text-primary)',
+                              border: '1px solid var(--border)'
+                            }}
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--active-bg)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                            Message
+                          </motion.button>
+
+                          {/* Follow Button */}
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleFollowToggle}
+                            disabled={followLoading}
+                            className="px-6 py-2 rounded-lg font-medium transition-all duration-200"
+                            style={{
+                              backgroundColor: profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)',
+                              color: profile.is_following ? 'var(--text-primary)' : 'white',
+                              border: profile.is_following ? '1px solid var(--border)' : 'none'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--active-bg)' : 'var(--accent-terracotta)';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = profile.is_following ? 'var(--hover-bg)' : 'var(--primary-orange)';
+                            }}
+                          >
+                            {followLoading ? 'Loading...' : (profile.is_following ? 'Following' : 'Follow')}
+                          </motion.button>
+                        </>
                       )}
                       
                       {isOwnProfile && (
@@ -646,6 +717,77 @@ export default function PublicProfilePage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="rounded-lg shadow-xl max-w-lg w-full"
+            style={{ background: 'var(--surface)' }}
+          >
+            <div className="border-b px-6 py-4" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold font-roca-two" style={{ color: 'var(--text-primary)' }}>
+                  Send Message to {profile?.full_name || profile?.username}
+                </h3>
+                <button
+                  onClick={() => setShowMessageModal(false)}
+                  className="transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <textarea
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message here..."
+                rows={5}
+                className="w-full px-4 py-2 border rounded-lg font-canva-sans resize-none focus:outline-none focus:ring-2 transition-all"
+                style={{
+                  borderColor: 'var(--border)',
+                  background: 'var(--background)',
+                  color: 'var(--text-primary)',
+                }}
+                onFocus={(e) => e.currentTarget.style.borderColor = 'var(--primary-orange)'}
+                onBlur={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
+              />
+
+              <div className="mt-4 flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowMessageModal(false)}
+                  className="px-4 py-2 rounded-lg font-canva-sans transition-colors"
+                  style={{ color: 'var(--text-primary)', background: 'var(--hover-bg)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--active-bg)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'var(--hover-bg)'}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageText.trim() || sendingMessage}
+                  className="px-6 py-2 rounded-lg font-canva-sans text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--primary-orange)' }}
+                  onMouseEnter={(e) => !sendingMessage && (e.currentTarget.style.background = 'var(--accent-terracotta)')}
+                  onMouseLeave={(e) => !sendingMessage && (e.currentTarget.style.background = 'var(--primary-orange)')}
+                >
+                  {sendingMessage ? 'Sending...' : 'Send Message'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </ThemeProvider>
   );
 }

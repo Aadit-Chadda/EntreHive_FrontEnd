@@ -588,5 +588,176 @@ export const feedApi = {
   },
 };
 
+// Messaging API
+export const messagingApi = {
+  // Search users with role filter
+  searchUsers: async (params: { q: string; role?: string }) => {
+    const queryParams = new URLSearchParams();
+    queryParams.append('q', params.q);
+    if (params.role) {
+      queryParams.append('role', params.role);
+    }
+    return apiClient.get<{ results: any[]; count: number }>(`/api/accounts/search/users/?${queryParams.toString()}`);
+  },
+
+  // Get all conversations (inbox)
+  getConversations: async (params?: { status?: 'active' | 'archived' }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<Array<{
+      id: string;
+      participant_1: any;
+      participant_2: any;
+      other_participant: any;
+      initiated_by: number;
+      related_project: any;
+      status: string;
+      created_at: string;
+      updated_at: string;
+      last_message_at: string;
+      last_message: any;
+      unread_count: number;
+    }>>(`/api/messaging/conversations/${query ? `?${query}` : ''}`);
+  },
+
+  // Get conversation detail with messages
+  getConversation: async (conversationId: string) => {
+    return apiClient.get<{
+      id: string;
+      participant_1: any;
+      participant_2: any;
+      other_participant: any;
+      initiated_by: number;
+      related_project: any;
+      status: string;
+      messages: Array<{
+        id: string;
+        conversation: string;
+        sender: any;
+        content: string;
+        read: boolean;
+        read_at: string | null;
+        attachment: string | null;
+        created_at: string;
+        updated_at: string;
+      }>;
+      created_at: string;
+      updated_at: string;
+      last_message_at: string;
+      can_send_message: boolean;
+    }>(`/api/messaging/conversations/${conversationId}/`);
+  },
+
+  // Create new conversation
+  createConversation: async (data: {
+    recipient_id: number;
+    message: string;
+    project_id?: string;
+  }) => {
+    return apiClient.post(`/api/messaging/conversations/create/`, data);
+  },
+
+  // Archive conversation
+  archiveConversation: async (conversationId: string) => {
+    return apiClient.post(`/api/messaging/conversations/${conversationId}/archive/`, {});
+  },
+
+  // Unarchive conversation
+  unarchiveConversation: async (conversationId: string) => {
+    return apiClient.post(`/api/messaging/conversations/${conversationId}/unarchive/`, {});
+  },
+
+  // Get messages in conversation
+  getMessages: async (conversationId: string) => {
+    return apiClient.get<Array<{
+      id: string;
+      conversation: string;
+      sender: any;
+      content: string;
+      read: boolean;
+      read_at: string | null;
+      attachment: string | null;
+      created_at: string;
+      updated_at: string;
+    }>>(`/api/messaging/conversations/${conversationId}/messages/`);
+  },
+
+  // Send message in conversation
+  sendMessage: async (conversationId: string, data: {
+    content: string;
+    attachment?: File;
+  }) => {
+    return apiClient.post(`/api/messaging/conversations/${conversationId}/messages/`, data);
+  },
+
+  // Mark message as read
+  markMessageRead: async (messageId: string) => {
+    return apiClient.post(`/api/messaging/messages/${messageId}/read/`, {});
+  },
+
+  // Get project view requests
+  getProjectViewRequests: async (params?: { filter?: 'sent' | 'received'; status?: string }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<Array<{
+      id: string;
+      project: any;
+      requester: any;
+      recipient: any;
+      message: string;
+      status: 'pending' | 'accepted' | 'declined' | 'cancelled';
+      conversation: any;
+      created_at: string;
+      updated_at: string;
+      responded_at: string | null;
+    }>>(`/api/messaging/project-requests/${query ? `?${query}` : ''}`);
+  },
+
+  // Create project view request
+  createProjectViewRequest: async (data: {
+    project_id: string;
+    recipient_id: number;
+    message: string;
+  }) => {
+    return apiClient.post(`/api/messaging/project-requests/`, data);
+  },
+
+  // Respond to project view request
+  respondToProjectRequest: async (requestId: string, action: 'accept' | 'decline') => {
+    return apiClient.post(`/api/messaging/project-requests/${requestId}/respond/`, { action });
+  },
+
+  // Cancel project view request
+  cancelProjectRequest: async (requestId: string) => {
+    return apiClient.post(`/api/messaging/project-requests/${requestId}/cancel/`, {});
+  },
+
+  // Get inbox statistics
+  getInboxStats: async () => {
+    return apiClient.get<{
+      unread_messages: number;
+      pending_requests: number;
+      active_conversations: number;
+    }>('/api/messaging/stats/');
+  },
+};
+
+// Re-export for backwards compatibility
+export const apiService = messagingApi;
+
 // Export main API instance for direct use
 export const api = apiClient;

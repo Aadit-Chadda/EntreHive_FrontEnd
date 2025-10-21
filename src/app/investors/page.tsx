@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, TrendingUp, Rocket, Users, Sparkles, ChevronDown, Bookmark, MessageCircle, Menu, Bell } from 'lucide-react';
+import { Search, Filter, X, TrendingUp, Rocket, Users, Sparkles, ChevronDown, Bookmark, MessageCircle, Menu, Bell, Inbox } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ThemeToggle } from '../components/ThemeProvider';
@@ -338,6 +338,15 @@ export default function InvestorFeed() {
                 {/* Theme Toggle */}
                 <ThemeToggle />
 
+                {/* Inbox */}
+                <Link href="/inbox" 
+                      className="relative p-2 rounded-lg transition-colors duration-200"
+                      style={{ color: 'var(--text-primary)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                  <Inbox className="w-5 h-5" />
+                </Link>
+
                 {/* Notifications */}
                 <Link href="/investors/notifications" 
                       className="relative p-2 rounded-lg transition-colors duration-200"
@@ -395,13 +404,6 @@ export default function InvestorFeed() {
                                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
                                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                             View Profile
-                          </Link>
-                          <Link href="/documentation" 
-                                className="block px-4 py-2 text-sm font-canva-sans transition-colors"
-                                style={{ color: 'var(--text-primary)' }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                            📚 Documentation
                           </Link>
                           <Link href="/settings" 
                                 className="block px-4 py-2 text-sm font-canva-sans transition-colors"
@@ -713,7 +715,7 @@ export default function InvestorFeed() {
             </div>
           ) : (
             <>
-              <div className="space-y-4">
+              <div>
                 {feed.map((item) => (
                   item.item_type === 'project' ? (
                     <ProjectCard key={item.id} project={item as Project} />
@@ -765,7 +767,7 @@ function ProjectCard({ project }: { project: Project }) {
   };
 
   return (
-    <Link href={`/projects/${project.id}`}>
+    <Link href={`/investors/projects/${project.id}`} className="block mb-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -856,7 +858,7 @@ function ProjectCard({ project }: { project: Project }) {
 // Post Card Component
 function PostCard({ post }: { post: Post }) {
   return (
-    <Link href={`/posts/${post.id}`}>
+    <Link href={`/posts/${post.id}`} className="block mb-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

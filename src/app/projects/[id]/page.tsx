@@ -14,8 +14,10 @@ import { projectApi } from '@/lib/api';
 import { Palette, Image as ImageIcon, UploadCloud } from 'lucide-react';
 import { PROJECT_BANNER_GRADIENTS, getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 import type { ProjectBannerStyle } from '@/lib/projectBranding';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProjectDetailsPage() {
+  const { user } = useAuth();
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
@@ -30,6 +32,13 @@ export default function ProjectDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
+
+  // Redirect investors to investor-specific project page
+  useEffect(() => {
+    if (user && user.user_role === 'investor') {
+      router.push(`/investors/projects/${projectId}`);
+    }
+  }, [user, projectId, router]);
 
   useEffect(() => {
     if (projectId) {

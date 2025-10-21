@@ -27,15 +27,15 @@ interface Project {
   id: string;
   title: string;
   summary: string;
-  categories: string[];
-  needs: string[];
+  categories?: string[];
+  needs?: string[];
   status: string;
-  team_size: number;
-  university: {
+  team_size?: number;
+  university?: {
     id: string;
     name: string;
   };
-  owner: {
+  owner?: {
     username: string;
     profile_picture?: string;
   };
@@ -188,9 +188,9 @@ export default function InvestorFeed() {
 
   const fetchTopics = async () => {
     try {
-      const response = await api.get('/api/feed/investor/topics/');
-      if (response && response.data) {
-        setTopics(response.data.topics || response.data || []);
+      const response: any = await api.get('/api/feed/investor/topics/');
+      if (response) {
+        setTopics(response.topics || response || []);
       }
     } catch (error) {
       console.error('Failed to fetch topics:', error);
@@ -200,9 +200,9 @@ export default function InvestorFeed() {
 
   const fetchUniversities = async () => {
     try {
-      const response = await api.get('/api/universities/');
-      if (response && response.data) {
-        setUniversities(response.data || []);
+      const response: any = await api.get('/api/universities/');
+      if (response) {
+        setUniversities(response || []);
       }
     } catch (error) {
       console.error('Failed to fetch universities:', error);
@@ -212,9 +212,9 @@ export default function InvestorFeed() {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/api/feed/investor/stats/');
-      if (response && response.data) {
-        setStats(response.data);
+      const response: any = await api.get('/api/feed/investor/stats/');
+      if (response) {
+        setStats(response);
       }
     } catch (error) {
       console.error('Failed to fetch stats:', error);
@@ -262,17 +262,19 @@ export default function InvestorFeed() {
         params.append('cursor', nextCursor);
       }
       
-      const response = await api.get(`/api/feed/investor/?${params.toString()}`);
+      const response: any = await api.get(`/api/feed/investor/?${params.toString()}`);
       
-      if (response && response.data) {
+      if (response) {
+        const results = response.results || [];
+        
         if (reset) {
-          setFeed(response.data.results || []);
+          setFeed(results);
         } else {
-          setFeed(prev => [...prev, ...(response.data.results || [])]);
+          setFeed(prev => [...prev, ...results]);
         }
         
-        setNextCursor(response.data.next_cursor || null);
-        setHasMore(response.data.has_more || false);
+        setNextCursor(response.next_cursor || null);
+        setHasMore(response.has_more || false);
       }
     } catch (error) {
       console.error('Failed to fetch feed:', error);
@@ -777,9 +779,11 @@ function ProjectCard({ project }: { project: Project }) {
               <span className={`px-2 py-1 rounded text-xs font-semibold font-canva-sans ${getStatusColor(project.status)}`}>
                 {project.status.toUpperCase()}
               </span>
-              <span className="text-xs font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
-                {project.university.name}
-              </span>
+              {project.university && (
+                <span className="text-xs font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                  {project.university.name}
+                </span>
+              )}
             </div>
             <h3 className="text-xl font-bold font-roca-two mb-2 group-hover:underline" style={{ color: 'var(--text-primary)' }}>
               {project.title}
@@ -791,16 +795,18 @@ function ProjectCard({ project }: { project: Project }) {
         </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.categories.slice(0, 3).map((cat, idx) => (
-            <span
-              key={idx}
-              className="px-3 py-1 rounded-full text-xs font-semibold font-canva-sans"
-              style={{ background: 'var(--hover-bg)', color: 'var(--primary-orange)' }}>
-              {cat}
-            </span>
-          ))}
-        </div>
+        {project.categories && project.categories.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {project.categories.slice(0, 3).map((cat, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1 rounded-full text-xs font-semibold font-canva-sans"
+                style={{ background: 'var(--hover-bg)', color: 'var(--primary-orange)' }}>
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Needs */}
         {project.needs && project.needs.length > 0 && (
@@ -825,7 +831,7 @@ function ProjectCard({ project }: { project: Project }) {
             <div className="flex items-center space-x-2">
               <Users className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
               <span className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
-                {project.team_size} {project.team_size === 1 ? 'member' : 'members'}
+                {project.team_size || 1} {(project.team_size || 1) === 1 ? 'member' : 'members'}
               </span>
             </div>
           </div>

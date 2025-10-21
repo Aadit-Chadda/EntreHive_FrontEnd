@@ -39,6 +39,7 @@ export interface UserProfile {
   research_interests?: string;
   investment_focus?: string;
   company?: string;
+  interests?: string[];
   linkedin_url?: string;
   website_url?: string;
   github_url?: string;
@@ -74,6 +75,7 @@ export interface RegistrationData {
   location?: string;
   university_id?: string;
   verified_university?: boolean;
+  interests?: string[];
 }
 
 export interface ProfileUpdateData {
@@ -90,6 +92,7 @@ export interface ProfileUpdateData {
   research_interests?: string;
   investment_focus?: string;
   company?: string;
+  interests?: string[];
   linkedin_url?: string;
   website_url?: string;
   github_url?: string;

@@ -19,6 +19,7 @@ export default function SignUp() {
     bio: '',
     location: '',
     university: '',
+    interests: [] as string[],
   });
   const [universityVerification, setUniversityVerification] = useState<{
     verified: boolean;
@@ -232,6 +233,7 @@ export default function SignUp() {
         location: formData.location || undefined,
         university_id: universityVerification.university?.id || undefined,
         verified_university: universityVerification.verified,
+        interests: formData.interests.length > 0 ? formData.interests : undefined,
       };
 
       await AuthService.register(registrationData);
@@ -716,6 +718,55 @@ export default function SignUp() {
                     />
                   </div>
                 </div>
+
+                {/* Investor Interests (only for investors) */}
+                {formData.userRole === 'investor' && (
+                  <div className="group">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Investment Interests (Select all that apply)
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { id: 'AI', label: 'AI', icon: '🤖' },
+                        { id: 'Web Dev', label: 'Web Dev', icon: '💻' },
+                        { id: 'Fintech', label: 'Fintech', icon: '💰' },
+                        { id: 'Robotics', label: 'Robotics', icon: '🤖' },
+                        { id: 'Biotech', label: 'Biotech', icon: '🧬' },
+                        { id: 'Climate', label: 'Climate', icon: '🌍' },
+                        { id: 'Hardware', label: 'Hardware', icon: '⚙️' },
+                        { id: 'SaaS', label: 'SaaS', icon: '☁️' },
+                        { id: 'EdTech', label: 'EdTech', icon: '📚' },
+                        { id: 'HealthTech', label: 'HealthTech', icon: '🏥' },
+                        { id: 'Social Impact', label: 'Social Impact', icon: '💝' },
+                        { id: 'Gaming', label: 'Gaming', icon: '🎮' },
+                      ].map((interest) => (
+                        <button
+                          key={interest.id}
+                          type="button"
+                          onClick={() => {
+                            setFormData(prev => ({
+                              ...prev,
+                              interests: prev.interests.includes(interest.id)
+                                ? prev.interests.filter(i => i !== interest.id)
+                                : [...prev.interests, interest.id]
+                            }));
+                          }}
+                          className={`px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 flex items-center justify-center space-x-2 ${
+                            formData.interests.includes(interest.id)
+                              ? 'border-blue-500 bg-blue-50 text-blue-700'
+                              : 'border-gray-300 bg-white/50 text-gray-700 hover:bg-white/70'
+                          }`}
+                        >
+                          <span>{interest.icon}</span>
+                          <span>{interest.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-xs text-gray-500">
+                      Your interests help us show you relevant projects in your feed
+                    </p>
+                  </div>
+                )}
 
                 {/* Bio Field */}
                 <div className="group">

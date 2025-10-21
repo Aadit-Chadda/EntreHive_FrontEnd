@@ -39,6 +39,14 @@ import {
   EmailTemplates,
   EmailConfiguration
 } from './email-sections';
+import {
+  InvestorFeedOverview,
+  InterestManagement,
+  FeedFeatures,
+  TechnicalImplementation,
+  UserFlow,
+  Testing
+} from './investor-feed-sections';
 
 interface Section {
   id: string;
@@ -119,6 +127,19 @@ export default function DocumentationPage() {
         { id: 'admin-overview', title: 'Admin Overview' },
         { id: 'admin-features', title: 'Features & Capabilities' },
         { id: 'admin-contact', title: 'Contact Management' },
+      ]
+    },
+    {
+      id: 'investor-feed',
+      title: 'Investor Feed',
+      icon: CubeIcon,
+      subsections: [
+        { id: 'investor-feed-overview', title: 'Overview' },
+        { id: 'interest-management', title: 'Interest Management' },
+        { id: 'feed-features', title: 'Feed Features' },
+        { id: 'technical-implementation', title: 'Technical Details' },
+        { id: 'user-flow', title: 'User Flow & Best Practices' },
+        { id: 'testing', title: 'Testing Guide' },
       ]
     }
   ];
@@ -279,6 +300,18 @@ function DocumentationContent({ section }: { section: string }) {
         return <AdminFeatures />;
       case 'admin-contact':
         return <AdminContact />;
+      case 'investor-feed-overview':
+        return <InvestorFeedOverview />;
+      case 'interest-management':
+        return <InterestManagement />;
+      case 'feed-features':
+        return <FeedFeatures />;
+      case 'technical-implementation':
+        return <TechnicalImplementation />;
+      case 'user-flow':
+        return <UserFlow />;
+      case 'testing':
+        return <Testing />;
       default:
         return <FrontendOverview />;
     }

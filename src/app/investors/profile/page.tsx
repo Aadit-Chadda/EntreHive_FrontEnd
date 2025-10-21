@@ -15,6 +15,9 @@ export default function InvestorProfile() {
   const router = useRouter();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [editingInterests, setEditingInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [savingInterests, setSavingInterests] = useState(false);
 
   const handleResendVerification = async () => {
     setIsResendingVerification(true);
@@ -50,12 +53,71 @@ export default function InvestorProfile() {
     }
   };
 
+  // Initialize interests from profile
+  useEffect(() => {
+    if (profile?.interests) {
+      setSelectedInterests(profile.interests);
+    }
+  }, [profile]);
+
   // Check if user is investor
   useEffect(() => {
     if (user && user.user_role && user.user_role !== 'investor') {
       router.push('/forbidden');
     }
   }, [user, router]);
+
+  const availableInterests = [
+    { id: 'AI', label: 'AI', icon: '🤖' },
+    { id: 'Web Dev', label: 'Web Dev', icon: '💻' },
+    { id: 'Fintech', label: 'Fintech', icon: '💰' },
+    { id: 'Robotics', label: 'Robotics', icon: '🤖' },
+    { id: 'Biotech', label: 'Biotech', icon: '🧬' },
+    { id: 'Climate', label: 'Climate', icon: '🌍' },
+    { id: 'Hardware', label: 'Hardware', icon: '⚙️' },
+    { id: 'SaaS', label: 'SaaS', icon: '☁️' },
+    { id: 'EdTech', label: 'EdTech', icon: '📚' },
+    { id: 'HealthTech', label: 'HealthTech', icon: '🏥' },
+    { id: 'Social Impact', label: 'Social Impact', icon: '💝' },
+    { id: 'Gaming', label: 'Gaming', icon: '🎮' },
+  ];
+
+  const handleSaveInterests = async () => {
+    setSavingInterests(true);
+    try {
+      const token = localStorage.getItem('access_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const response = await fetch(`${apiUrl}/api/feed/investor/interests/`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ interests: selectedInterests }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update interests');
+      }
+
+      await refreshProfile();
+      setEditingInterests(false);
+      alert('Interests updated successfully!');
+    } catch (error) {
+      console.error('Error updating interests:', error);
+      alert('Failed to update interests');
+    } finally {
+      setSavingInterests(false);
+    }
+  };
+
+  const toggleInterest = (interestId: string) => {
+    setSelectedInterests(prev => 
+      prev.includes(interestId)
+        ? prev.filter(id => id !== interestId)
+        : [...prev, interestId]
+    );
+  };
 
   if (!user || user.user_role !== 'investor' || !profile) {
     return null;
@@ -255,6 +317,98 @@ export default function InvestorProfile() {
               </p>
             </motion.div>
           )}
+
+          {/* Investment Interests */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="rounded-2xl p-6 border mb-6"
+            style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-3">
+                <Target className="w-6 h-6" style={{ color: 'var(--accent-pine)' }} />
+                <h2 className="text-2xl font-bold font-roca-two" style={{ color: 'var(--text-primary)' }}>
+                  Investment Interests
+                </h2>
+              </div>
+              <button
+                onClick={() => setEditingInterests(!editingInterests)}
+                className="flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold font-canva-sans border transition-all duration-200 hover:scale-105"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', background: 'var(--hover-bg)' }}>
+                <Edit className="w-4 h-4" />
+                <span>{editingInterests ? 'Cancel' : 'Edit'}</span>
+              </button>
+            </div>
+
+            {!editingInterests ? (
+              <div className="flex flex-wrap gap-2">
+                {profile.interests && profile.interests.length > 0 ? (
+                  profile.interests.map((interest: string) => {
+                    const interestData = availableInterests.find(i => i.id === interest);
+                    return (
+                      <div
+                        key={interest}
+                        className="px-4 py-2 rounded-lg border-2 font-medium text-sm flex items-center space-x-2"
+                        style={{ borderColor: 'var(--accent-pine)', background: 'rgba(111, 136, 122, 0.1)', color: 'var(--text-primary)' }}>
+                        <span>{interestData?.icon || '🎯'}</span>
+                        <span>{interest}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-base font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                    No interests selected. Click Edit to add your investment interests.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {availableInterests.map((interest) => (
+                    <button
+                      key={interest.id}
+                      type="button"
+                      onClick={() => toggleInterest(interest.id)}
+                      className={`px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 flex items-center justify-center space-x-2 ${
+                        selectedInterests.includes(interest.id)
+                          ? 'text-white'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{
+                        borderColor: selectedInterests.includes(interest.id) ? 'var(--accent-pine)' : 'var(--border)',
+                        background: selectedInterests.includes(interest.id) ? 'var(--accent-pine)' : 'var(--hover-bg)',
+                        color: selectedInterests.includes(interest.id) ? 'white' : 'var(--text-primary)'
+                      }}>
+                      <span>{interest.icon}</span>
+                      <span>{interest.label}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="flex justify-end space-x-3 pt-2">
+                  <button
+                    onClick={() => {
+                      setSelectedInterests(profile?.interests || []);
+                      setEditingInterests(false);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold font-canva-sans transition-all duration-200"
+                    style={{ color: 'var(--text-secondary)' }}>
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveInterests}
+                    disabled={savingInterests}
+                    className="px-6 py-2 rounded-lg font-semibold font-canva-sans text-white transition-all duration-200 hover:scale-105"
+                    style={{ background: savingInterests ? 'var(--border)' : 'var(--accent-pine)' }}>
+                    {savingInterests ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+                <p className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                  Your interests help us show you relevant projects in your feed
+                </p>
+              </div>
+            )}
+          </motion.div>
 
           {/* Stats */}
           <motion.div

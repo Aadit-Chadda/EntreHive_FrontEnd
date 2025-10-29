@@ -12,7 +12,7 @@ import { EnhancedUserProfile, PostSummary, ProjectSummary } from '@/types';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib/profileBranding';
 
 // Simple post display component for PostSummary
-const PostSummaryCard = ({ post, router }: { post: PostSummary; router: any }) => (
+const PostSummaryCard = ({ post, router }: { post: PostSummary; router: ReturnType<typeof useRouter> }) => (
   <div className="p-4 rounded-lg transition-colors cursor-pointer group" style={{border: '1px solid var(--border)'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
     <div onClick={() => router.push(`/posts/${post.id}`)}>
       <p className="mb-3 line-clamp-3 group-hover:text-[var(--primary-orange)] transition-colors" style={{color: 'var(--text-primary)'}}>{post.content}</p>
@@ -43,7 +43,7 @@ const PostSummaryCard = ({ post, router }: { post: PostSummary; router: any }) =
 );
 
 // Simple project display component for ProjectSummary
-const ProjectSummaryCard = ({ project, router }: { project: ProjectSummary; router: any }) => (
+const ProjectSummaryCard = ({ project, router }: { project: ProjectSummary; router: ReturnType<typeof useRouter> }) => (
   <div className="p-4 rounded-lg transition-colors cursor-pointer group" style={{border: '1px solid var(--border)'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
     <div onClick={() => router.push(`/projects/${project.id}`)}>
       <div className="flex items-start justify-between mb-3">
@@ -143,7 +143,7 @@ export default function PublicProfilePage() {
   };
 
   const handleStartChat = async () => {
-    const currentUserRole = user?.profile?.user_role;
+    const currentUserRole = user?.user_role;
     const targetUserRole = profile?.user_role;
 
     // If current user is student and target is professor/investor, they need to send a project request
@@ -167,13 +167,14 @@ export default function PublicProfilePage() {
       const conversation = await messagingApi.createConversation({
         recipient_id: profile.id,
         message: messageText.trim()
-      });
+      }) as { id: string };
 
       // Navigate to the conversation
       router.push(`/inbox/${conversation.id}`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error sending message:', error);
-      alert(error.message || 'Failed to send message. You may need to send a project request first if you are a student.');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. You may need to send a project request first if you are a student.';
+      alert(errorMessage);
     } finally {
       setSendingMessage(false);
     }

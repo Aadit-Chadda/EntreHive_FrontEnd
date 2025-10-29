@@ -100,7 +100,7 @@ export default function InboxPage() {
 
   const handleRespondToRequest = async (requestId: string, action: 'accept' | 'decline') => {
     try {
-      const response = await apiService.respondToProjectRequest(requestId, action);
+      const response = await apiService.respondToProjectRequest(requestId, action) as { conversation_id?: string };
       
       if (action === 'accept' && response.conversation_id) {
         router.push(`/inbox/${response.conversation_id}`);
@@ -215,7 +215,7 @@ export default function InboxPage() {
                 )}
               </button>
 
-              {user?.profile?.user_role === 'student' && (
+              {user?.user_role === 'student' && (
                 <button
                   onClick={() => setActiveTab('sent')}
                   className={`flex-1 px-6 py-4 text-sm font-medium font-canva-sans transition-colors relative`}
@@ -246,7 +246,7 @@ export default function InboxPage() {
                     No conversations yet
                   </h3>
                   <p className="font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
-                    {user?.profile?.user_role === 'student'
+                    {user?.user_role === 'student'
                       ? 'Send a project view request to start a conversation'
                       : 'Your conversations will appear here'}
                   </p>
@@ -318,7 +318,7 @@ export default function InboxPage() {
                               }`}
                               style={{ color: conv.unread_count > 0 ? 'var(--text-primary)' : 'var(--text-secondary)' }}
                             >
-                              {conv.last_message.sender_id === user?.id ? 'You: ' : ''}
+                              {conv.last_message.sender_id === user?.pk ? 'You: ' : ''}
                               {conv.last_message.content}
                             </p>
                           )}

@@ -95,7 +95,7 @@ export default function VerificationWarningBanner({
                 </button>
                 <div className="flex items-center gap-2 text-xs" style={{color: 'var(--text-muted)'}}>
                   <Mail className="w-3 h-3" />
-                  <span>Check your spam folder if you don't see the email</span>
+                  <span>Check your spam folder if you don&apos;t see the email</span>
                 </div>
               </div>
             </div>

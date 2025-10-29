@@ -216,7 +216,7 @@ export default function ProjectInvitations({ projectId, showUserInvitations = fa
 
                   {invitation.message && (
                     <p className="text-sm text-gray-700 mb-2 italic">
-                      "{invitation.message}"
+                      &quot;{invitation.message}"
                     </p>
                   )}
 

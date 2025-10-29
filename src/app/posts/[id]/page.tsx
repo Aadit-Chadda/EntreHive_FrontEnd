@@ -484,7 +484,6 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
               style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
               onClick={() => {
                 setShowMobileNav(false);
-                setShowRightPanel(false);
               }}
             />
           )}

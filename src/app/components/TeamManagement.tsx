@@ -148,12 +148,11 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
                   value={searchUsername}
                   onChange={(e) => setSearchUsername(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleAddTeamMember()}
-                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
+                  className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-gray-500"
                   style={{
                     border: '1px solid var(--border)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--text-primary)',
-                    '--placeholder-color': 'var(--text-muted)'
+                    color: 'var(--text-primary)'
                   }}
                   onFocus={(e) => {
                     e.currentTarget.style.borderColor = 'var(--primary-orange)';

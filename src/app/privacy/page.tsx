@@ -192,11 +192,11 @@ export default function PrivacyPolicy() {
               </div>
             </LazyLoad>
 
-            {/* Children's Privacy */}
+            {/* Children&apos;s Privacy */}
             <LazyLoad animationType="fade-up">
               <div className="mb-12">
                 <h2 className="text-2xl font-bold font-roca-two mb-4" style={{color: 'var(--secondary-charcoal)'}}>
-                  8. Children's Privacy
+                  8. Children&apos;s Privacy
                 </h2>
                 <p className="font-canva-sans leading-relaxed" style={{color: 'var(--secondary-taupe)'}}>
                   Our platform is intended for users who are at least 18 years old or enrolled in a university. 
@@ -214,7 +214,7 @@ export default function PrivacyPolicy() {
                 </h2>
                 <p className="font-canva-sans leading-relaxed" style={{color: 'var(--secondary-taupe)'}}>
                   We may update this Privacy Policy from time to time. The updated version will be indicated by an 
-                  updated "Last Updated" date. We will notify you of material changes by posting the new Privacy Policy 
+                  updated &quot;Last Updated" date. We will notify you of material changes by posting the new Privacy Policy 
                   on this page and, where appropriate, through email or platform notifications. Your continued use of 
                   the platform after changes constitutes acceptance of the updated policy.
                 </p>

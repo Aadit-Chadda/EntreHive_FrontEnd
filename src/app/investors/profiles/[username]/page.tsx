@@ -80,15 +80,15 @@ export default function InvestorProfileView() {
     try {
       setLoading(true);
       setError(null);
-      const data = await api.get(`/api/accounts/profile/investor/${username}/`);
+      const data = await api.get(`/api/accounts/profile/investor/${username}/`) as UserProfile & { is_following?: boolean, followers_count?: number };
       setProfile(data);
       
       // Set follow status from profile data
       setIsFollowing(data.is_following || false);
       setFollowersCount(data.followers_count || 0);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load profile:', err);
-      setError(err.message || 'Failed to load profile');
+      setError(err instanceof Error ? err.message : 'Failed to load profile');
     } finally {
       setLoading(false);
     }
@@ -108,9 +108,9 @@ export default function InvestorProfileView() {
         setIsFollowing(true);
         setFollowersCount(prev => prev + 1);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to toggle follow:', err);
-      alert(err.message || 'Failed to update follow status');
+      alert(err instanceof Error ? err.message : 'Failed to update follow status');
     } finally {
       setFollowLoading(false);
     }

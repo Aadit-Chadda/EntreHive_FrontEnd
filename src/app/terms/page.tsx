@@ -40,7 +40,7 @@ export default function TermsOfService() {
                 </h2>
                 <p className="font-canva-sans leading-relaxed mb-4" style={{color: 'var(--secondary-taupe)'}}>
                   Welcome to EntreHive. These Terms of Service ("Terms") govern your access to and use of our platform, 
-                  including our website, mobile applications, and related services (collectively, the "Service"). 
+                  including our website, mobile applications, and related services (collectively, the &quot;Service&quot;). 
                   By accessing or using the Service, you agree to be bound by these Terms.
                 </p>
                 <p className="font-canva-sans leading-relaxed" style={{color: 'var(--secondary-taupe)'}}>
@@ -84,7 +84,7 @@ export default function TermsOfService() {
                   <li>Be responsible for all activities that occur under your account</li>
                 </ul>
                 <p className="font-canva-sans leading-relaxed" style={{color: 'var(--secondary-taupe)'}}>
-                  You may not use another user's account, share your account credentials, or create multiple accounts.
+                  You may not use another user&apos;s account, share your account credentials, or create multiple accounts.
                 </p>
               </div>
             </LazyLoad>
@@ -108,7 +108,7 @@ export default function TermsOfService() {
                   <li>Impersonating another person or entity</li>
                   <li>Posting spam, promotional content, or unsolicited messages</li>
                   <li>Infringing on intellectual property rights</li>
-                  <li>Interfering with or disrupting the Service's functionality</li>
+                  <li>Interfering with or disrupting the Service&apos;s functionality</li>
                 </ul>
               </div>
             </LazyLoad>
@@ -120,7 +120,7 @@ export default function TermsOfService() {
                   4. User Content
                 </h2>
                 <p className="font-canva-sans leading-relaxed mb-4" style={{color: 'var(--secondary-taupe)'}}>
-                  You retain ownership of content you post on EntreHive ("User Content"). By posting User Content, you grant us:
+                  You retain ownership of content you post on EntreHive (&quot;User Content&quot;). By posting User Content, you grant us:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 font-canva-sans mb-4" style={{color: 'var(--secondary-taupe)'}}>
                   <li>A worldwide, non-exclusive, royalty-free license to use, reproduce, modify, adapt, publish, and display your User Content</li>
@@ -203,7 +203,7 @@ export default function TermsOfService() {
                   8. Disclaimers
                 </h2>
                 <p className="font-canva-sans leading-relaxed mb-4" style={{color: 'var(--secondary-taupe)'}}>
-                  THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+                  THE SERVICE IS PROVIDED "AS IS" AND &quot;AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
                   INCLUDING BUT NOT LIMITED TO:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
@@ -299,7 +299,7 @@ export default function TermsOfService() {
                 </h2>
                 <p className="font-canva-sans leading-relaxed" style={{color: 'var(--secondary-taupe)'}}>
                   We reserve the right to modify these Terms at any time. We will notify you of material changes by 
-                  posting the updated Terms on the platform and updating the "Last Updated" date. Your continued use 
+                  posting the updated Terms on the platform and updating the &quot;Last Updated" date. Your continued use 
                   of the Service after changes become effective constitutes acceptance of the updated Terms. If you 
                   do not agree to the changes, you must stop using the Service.
                 </p>

@@ -188,9 +188,9 @@ export default function InvestorFeed() {
 
   const fetchTopics = async () => {
     try {
-      const response: any = await api.get('/api/feed/investor/topics/');
+      const response = await api.get('/api/feed/investor/topics/') as { topics?: string[] } | string[];
       if (response) {
-        setTopics(response.topics || response || []);
+        setTopics((response as any).topics || response || []);
       }
     } catch (error) {
       console.error('Failed to fetch topics:', error);
@@ -200,7 +200,7 @@ export default function InvestorFeed() {
 
   const fetchUniversities = async () => {
     try {
-      const response: any = await api.get('/api/universities/');
+      const response = await api.get('/api/universities/') as University[];
       if (response) {
         setUniversities(response || []);
       }
@@ -212,17 +212,16 @@ export default function InvestorFeed() {
 
   const fetchStats = async () => {
     try {
-      const response: any = await api.get('/api/feed/investor/stats/');
+      const response = await api.get('/api/feed/investor/stats/') as { total_projects: number; raising_funding: number; prototypes_ready: number };
       if (response) {
         setStats(response);
       }
     } catch (error) {
       console.error('Failed to fetch stats:', error);
       setStats({
-        total_posts: 0,
         total_projects: 0,
-        active_users: 0,
-        universities: 0
+        raising_funding: 0,
+        prototypes_ready: 0
       });
     }
   };
@@ -262,7 +261,7 @@ export default function InvestorFeed() {
         params.append('cursor', nextCursor);
       }
       
-      const response: any = await api.get(`/api/feed/investor/?${params.toString()}`);
+      const response = await api.get(`/api/feed/investor/?${params.toString()}`) as { results?: any[], next_cursor?: string | null, has_more?: boolean };
       
       if (response) {
         const results = response.results || [];
@@ -619,10 +618,10 @@ export default function InvestorFeed() {
                           key={filter.id}
                           onClick={() => setQuickFilter(quickFilter === filter.id ? null : filter.id)}
                           className={`px-4 py-2 rounded-lg font-canva-sans text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                            quickFilter === filter.id ? 'ring-2' : ''
+                            quickFilter === filter.id ? 'ring-2 ring-orange-500' : ''
                           }`}
                           style={quickFilter === filter.id
-                            ? { background: 'var(--primary-orange)', color: 'white', ringColor: 'var(--primary-orange)' }
+                            ? { background: 'var(--primary-orange)', color: 'white' }
                             : { background: 'var(--hover-bg)', color: 'var(--text-primary)' }
                           }>
                           <span>{filter.icon}</span>
@@ -643,10 +642,10 @@ export default function InvestorFeed() {
                           key={topic.id}
                           onClick={() => toggleTopic(topic.id)}
                           className={`px-4 py-2 rounded-lg font-canva-sans text-sm font-medium transition-all duration-200 flex items-center space-x-2 ${
-                            selectedTopics.includes(topic.id) ? 'ring-2' : ''
+                            selectedTopics.includes(topic.id) ? 'ring-2 ring-green-600' : ''
                           }`}
                           style={selectedTopics.includes(topic.id)
-                            ? { background: 'var(--accent-pine)', color: 'white', ringColor: 'var(--accent-pine)' }
+                            ? { background: 'var(--accent-pine)', color: 'white' }
                             : { background: 'var(--hover-bg)', color: 'var(--text-primary)' }
                           }>
                           <span>{topic.icon}</span>

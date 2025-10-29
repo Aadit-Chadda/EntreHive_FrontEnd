@@ -95,8 +95,8 @@ export default function Feed() {
             onClick={() => setShowFloatingComposer(true)}
             className="p-2 text-white rounded-lg transition-all duration-200 shadow-md"
             style={{backgroundColor: 'var(--primary-orange)'}}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--accent-terracotta)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--primary-orange)'}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-orange)'}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -282,8 +282,8 @@ export default function Feed() {
               onClick={scrollToTop}
               className="fixed bottom-6 left-6 z-50 w-12 h-12 text-white rounded-full shadow-xl transition-all duration-200 backdrop-blur-sm"
               style={{backgroundColor: 'var(--accent-pine)'}}
-              onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--secondary-charcoal)'}
-              onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-pine)'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-charcoal)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-pine)'}
             >
               <ArrowUp className="w-6 h-6 mx-auto" />
             </motion.button>

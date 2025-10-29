@@ -88,10 +88,11 @@ export default function InvestorProjectDetailPage() {
         `/api/projects/investor/${projectId}/`
       );
       setProject(response);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error loading project:', error);
-      if (error.status === 403 || error.status === 404) {
-        alert(error.message || 'Project not found or you do not have permission to view it');
+      const err = error as { status?: number, message?: string };
+      if (err.status === 403 || err.status === 404) {
+        alert(err.message || 'Project not found or you do not have permission to view it');
         router.push('/investors');
       }
     } finally {
@@ -622,7 +623,7 @@ export default function InvestorProjectDetailPage() {
                     background: 'var(--hover-bg)', 
                     color: 'var(--text-primary)', 
                     borderColor: 'var(--border)',
-                    '--tw-ring-color': 'var(--primary-orange)' 
+                     
                   } as React.CSSProperties}
                 />
                 <div className="flex items-center gap-3 mt-4">

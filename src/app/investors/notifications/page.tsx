@@ -88,8 +88,8 @@ export default function InvestorNotifications() {
               {/* Right Side - Theme Toggle, Notifications, Profile */}
               <div className="flex items-center space-x-3">
                 <ThemeToggle />
-                <div className="relative p-2 rounded-lg ring-2"
-                     style={{ color: 'var(--text-primary)', ringColor: 'var(--primary-orange)', background: 'var(--hover-bg)' }}>
+                <div className="relative p-2 rounded-lg ring-2 ring-orange-500"
+                     style={{ color: 'var(--text-primary)', background: 'var(--hover-bg)' }}>
                   <Bell className="w-5 h-5" />
                 </div>
                 <Link href="/investors/profile">
@@ -208,7 +208,7 @@ export default function InvestorNotifications() {
                 No notifications yet
               </h3>
               <p className="text-lg font-canva-sans mb-6" style={{ color: 'var(--text-secondary)' }}>
-                We'll notify you when there are updates on projects you're interested in
+                We&apos;ll notify you when there are updates on projects you&apos;re interested in
               </p>
               <Link href="/investors"
                     className="inline-block px-6 py-3 rounded-lg font-semibold font-canva-sans text-white transition-all duration-200 hover:scale-105"

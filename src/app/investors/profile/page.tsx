@@ -160,8 +160,8 @@ export default function InvestorProfile() {
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                   <Bell className="w-5 h-5" />
                 </Link>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ring-2"
-                     style={{ background: 'linear-gradient(135deg, var(--accent-terracotta) 0%, var(--accent-pine) 100%)', ringColor: 'var(--primary-orange)' }}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden ring-2 ring-orange-500"
+                     style={{ background: 'linear-gradient(135deg, var(--accent-terracotta) 0%, var(--accent-pine) 100%)' }}>
                   {profile.profile_picture ? (
                     <img src={profile.profile_picture} alt={user.username} className="w-full h-full object-cover" />
                   ) : (

@@ -11,6 +11,7 @@ import { Camera, X, Eye, EyeOff, Lock } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user, profile, updateProfile } = useAuth();
+  const [showMobileNav, setShowMobileNav] = useState(false);
   
   // Scroll to security section if hash is present
   useEffect(() => {
@@ -146,7 +147,7 @@ export default function SettingsPage() {
                     borderColor: 'var(--secondary-taupe)',
                     backgroundColor: 'var(--surface)',
                     color: 'var(--secondary-charcoal)',
-                    '--tw-ring-color': 'var(--primary-orange)'
+                    
                   }}
                   placeholder="e.g., Computer Science"
                 />
@@ -164,7 +165,7 @@ export default function SettingsPage() {
                     borderColor: 'var(--secondary-taupe)',
                     backgroundColor: 'var(--surface)',
                     color: 'var(--secondary-charcoal)',
-                    '--tw-ring-color': 'var(--primary-orange)'
+                    
                   }}
                   placeholder="e.g., 2025"
                   min="1950"
@@ -190,7 +191,7 @@ export default function SettingsPage() {
                   borderColor: 'var(--secondary-taupe)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--secondary-charcoal)',
-                  '--tw-ring-color': 'var(--primary-orange)'
+                  
                 }}
                 placeholder="e.g., Computer Science Department"
               />
@@ -208,7 +209,7 @@ export default function SettingsPage() {
                   borderColor: 'var(--secondary-taupe)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--secondary-charcoal)',
-                  '--tw-ring-color': 'var(--primary-orange)'
+                  
                 }}
                 placeholder="Describe your research interests..."
               />
@@ -231,7 +232,7 @@ export default function SettingsPage() {
                   borderColor: 'var(--secondary-taupe)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--secondary-charcoal)',
-                  '--tw-ring-color': 'var(--primary-orange)'
+                  
                 }}
                 placeholder="e.g., Silicon Valley Ventures"
               />
@@ -249,7 +250,7 @@ export default function SettingsPage() {
                   borderColor: 'var(--secondary-taupe)',
                   backgroundColor: 'var(--surface)',
                   color: 'var(--secondary-charcoal)',
-                  '--tw-ring-color': 'var(--primary-orange)'
+                  
                 }}
                 placeholder="Describe your investment focus..."
               />
@@ -265,7 +266,7 @@ export default function SettingsPage() {
     return (
       <ProtectedRoute>
         <div className="flex min-h-screen" style={{backgroundColor: 'var(--background)'}}>
-          <LeftNavigation />
+          <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin w-12 h-12 border-4 rounded-full" style={{
               borderColor: 'var(--neutral-light-orange)',
@@ -280,7 +281,7 @@ export default function SettingsPage() {
   return (
     <ProtectedRoute>
       <div className="flex min-h-screen" style={{backgroundColor: 'var(--background)'}}>
-        <LeftNavigation />
+        <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
         
         <div className="flex-1 p-8 overflow-y-auto">
           <div className="max-w-4xl mx-auto space-y-6">
@@ -428,7 +429,7 @@ export default function SettingsPage() {
                         borderColor: 'var(--secondary-taupe)',
                         backgroundColor: 'var(--surface)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                     />
                   </div>
@@ -445,7 +446,7 @@ export default function SettingsPage() {
                         borderColor: 'var(--secondary-taupe)',
                         backgroundColor: 'var(--surface)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                     />
                   </div>
@@ -464,7 +465,7 @@ export default function SettingsPage() {
                         borderColor: 'var(--secondary-taupe)',
                         backgroundColor: 'var(--surface)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                     >
                       <option value="student">Student</option>
@@ -504,7 +505,7 @@ export default function SettingsPage() {
                       borderColor: 'var(--secondary-taupe)',
                       backgroundColor: 'var(--surface)',
                       color: 'var(--secondary-charcoal)',
-                      '--tw-ring-color': 'var(--primary-orange)'
+                      
                     }}
                     placeholder="e.g., San Francisco, CA"
                   />
@@ -523,7 +524,7 @@ export default function SettingsPage() {
                       borderColor: 'var(--secondary-taupe)',
                       backgroundColor: 'var(--surface)',
                       color: 'var(--secondary-charcoal)',
-                      '--tw-ring-color': 'var(--primary-orange)'
+                      
                     }}
                     placeholder="Tell us about yourself..."
                   />
@@ -549,7 +550,7 @@ export default function SettingsPage() {
                           borderColor: 'var(--secondary-taupe)',
                           backgroundColor: 'var(--surface)',
                           color: 'var(--secondary-charcoal)',
-                          '--tw-ring-color': 'var(--primary-orange)'
+                          
                         }}
                         placeholder="https://linkedin.com/in/yourname"
                       />
@@ -567,7 +568,7 @@ export default function SettingsPage() {
                           borderColor: 'var(--secondary-taupe)',
                           backgroundColor: 'var(--surface)',
                           color: 'var(--secondary-charcoal)',
-                          '--tw-ring-color': 'var(--primary-orange)'
+                          
                         }}
                         placeholder="https://yourwebsite.com"
                       />
@@ -585,7 +586,7 @@ export default function SettingsPage() {
                           borderColor: 'var(--secondary-taupe)',
                           backgroundColor: 'var(--surface)',
                           color: 'var(--secondary-charcoal)',
-                          '--tw-ring-color': 'var(--primary-orange)'
+                          
                         }}
                         placeholder="https://github.com/yourusername"
                       />
@@ -808,7 +809,7 @@ function ChangePasswordSection() {
                 borderColor: fieldErrors.oldPassword || fieldErrors.old_password ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                 backgroundColor: 'var(--surface)',
                 color: 'var(--secondary-charcoal)',
-                '--tw-ring-color': 'var(--primary-orange)'
+                
               }}
               placeholder="Enter your current password"
               value={formData.oldPassword}
@@ -849,7 +850,7 @@ function ChangePasswordSection() {
                 borderColor: fieldErrors.newPassword || fieldErrors.new_password1 ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                 backgroundColor: 'var(--surface)',
                 color: 'var(--secondary-charcoal)',
-                '--tw-ring-color': 'var(--primary-orange)'
+                
               }}
               placeholder="Enter your new password"
               value={formData.newPassword}
@@ -891,7 +892,7 @@ function ChangePasswordSection() {
                 borderColor: fieldErrors.confirmPassword || fieldErrors.new_password2 ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                 backgroundColor: 'var(--surface)',
                 color: 'var(--secondary-charcoal)',
-                '--tw-ring-color': 'var(--primary-orange)'
+                
               }}
               placeholder="Confirm your new password"
               value={formData.confirmPassword}

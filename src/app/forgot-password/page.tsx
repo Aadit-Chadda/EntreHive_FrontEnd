@@ -110,10 +110,10 @@ export default function ForgotPassword() {
                   Check your email!
                 </h3>
                 <p className="text-sm font-canva-sans text-green-600 mb-4">
-                  We've sent password reset instructions to <strong>{email}</strong>
+                  We&apos;ve sent password reset instructions to <strong>{email}</strong>
                 </p>
                 <p className="text-xs font-canva-sans text-green-600">
-                  Didn't receive the email? Check your spam folder or try again with a different email address.
+                  Didn&apos;t receive the email? Check your spam folder or try again with a different email address.
                 </p>
               </div>
 
@@ -151,11 +151,10 @@ export default function ForgotPassword() {
                       type="email"
                       autoComplete="email"
                       required
-                      className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
+                      className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200 hover:bg-white/70"
                       style={{
                         borderColor: 'var(--secondary-taupe)',
-                        color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        color: 'var(--secondary-charcoal)'
                       }}
                       placeholder="Enter your email"
                       value={email}
@@ -189,10 +188,9 @@ export default function ForgotPassword() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="group relative w-full flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="group relative w-full flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   style={{
-                    backgroundColor: 'var(--primary-orange)',
-                    '--tw-ring-color': 'var(--primary-orange)'
+                    backgroundColor: 'var(--primary-orange)'
                   }}
                 >
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -224,7 +222,7 @@ export default function ForgotPassword() {
         {/* Bottom text */}
         <div className="text-center">
           <p className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Sign up here</Link>
           </p>
         </div>

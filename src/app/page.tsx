@@ -225,7 +225,7 @@ export default function Home() {
                     <p className="text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>No Hierarchy, Pure Collaboration</p>
                   </dt>
                   <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-                    Whether you're a student or professor, entrepreneur or investor - your ideas matter. 
+                    Whether you&apos;re a student or professor, entrepreneur or investor - your ideas matter. 
                     In our hive, expertise trumps titles every time.
                   </dd>
                 </div>
@@ -249,7 +249,7 @@ export default function Home() {
               </p>
               <p className="mt-4 max-w-3xl text-xl font-canva-sans mx-auto"
                  style={{color: 'var(--secondary-taupe)'}}>
-                From discovery to funding - here's how EntreHive connects student entrepreneurs with the resources, 
+                From discovery to funding - here&apos;s how EntreHive connects student entrepreneurs with the resources, 
                 partners, and opportunities they need to succeed
               </p>
             </div>
@@ -406,7 +406,7 @@ export default function Home() {
                 </h3>
                 <p className="text-lg font-canva-sans max-w-2xl mx-auto"
                    style={{color: 'var(--secondary-taupe)'}}>
-                  More than just a platform - it's a complete entrepreneurial ecosystem
+                  More than just a platform - it&apos;s a complete entrepreneurial ecosystem
                 </p>
               </div>
 

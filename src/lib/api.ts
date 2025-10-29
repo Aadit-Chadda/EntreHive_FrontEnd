@@ -445,7 +445,7 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        content_type: string;
+        content_type: 'post' | 'project';
         content_id: string;
         score: number;
         content: PostData | ProjectData;
@@ -477,7 +477,7 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        content_type: string;
+        content_type: 'post' | 'project';
         content_id: string;
         score: number;
         content: PostData | ProjectData;
@@ -509,7 +509,7 @@ export const feedApi = {
     const query = queryParams.toString();
     return apiClient.get<{
       results: Array<{
-        content_type: string;
+        content_type: 'post' | 'project';
         content_id: string;
         score: number;
         content: PostData | ProjectData;

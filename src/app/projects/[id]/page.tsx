@@ -64,10 +64,11 @@ export default function ProjectDetailsPage() {
       };
       
       setProject(sanitizedProject);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to load project:', err);
-      setError(err.message || 'Failed to load project');
-      if (err.status === 404) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load project';
+      setError(errorMessage);
+      if (err && typeof err === 'object' && 'status' in err && err.status === 404) {
         router.push('/projects');
       }
     } finally {
@@ -97,8 +98,9 @@ export default function ProjectDetailsPage() {
       setIsDeleting(true);
       await projectApi.deleteProject(project.id);
       router.push('/projects');
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete project');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete project';
+      alert(errorMessage);
       setIsDeleting(false);
     }
   };
@@ -153,12 +155,12 @@ export default function ProjectDetailsPage() {
       };
       
       setProject(sanitizedProject);
-    } catch (updateError: any) {
+    } catch (updateError: unknown) {
       console.error('Failed to update banner', updateError);
       
       // More detailed error message
-      const errorMessage = updateError?.message || 'Unknown error occurred';
-      const errorDetails = updateError?.details ? JSON.stringify(updateError.details) : '';
+      const errorMessage = updateError instanceof Error ? updateError.message : 'Unknown error occurred';
+      const errorDetails = updateError && typeof updateError === 'object' && 'details' in updateError ? JSON.stringify(updateError.details) : '';
       
       alert(`Failed to update banner: ${errorMessage}${errorDetails ? '\n\nDetails: ' + errorDetails : ''}`);
     } finally {

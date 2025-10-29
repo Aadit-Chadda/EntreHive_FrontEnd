@@ -199,7 +199,7 @@ export default function ResetPassword() {
                       style={{
                         borderColor: fieldErrors.password ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                       placeholder="Enter new password"
                       value={formData.password}
@@ -251,7 +251,7 @@ export default function ResetPassword() {
                       style={{
                         borderColor: fieldErrors.confirmPassword ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                       placeholder="Confirm your new password"
                       value={formData.confirmPassword}
@@ -307,7 +307,7 @@ export default function ResetPassword() {
                   className="group relative w-full flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   style={{
                     backgroundColor: 'var(--primary-orange)',
-                    '--tw-ring-color': 'var(--primary-orange)'
+                    
                   }}
                 >
                   <span className="absolute left-0 inset-y-0 flex items-center pl-3">

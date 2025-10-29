@@ -14,7 +14,7 @@ export default function ProjectComposer({ onProjectCreate, onClose }: ProjectCom
     type: 'side_project' as any,
     status: 'concept' as any,
     summary: '',
-    needs: [] as string[],
+    needs: [] as ("design" | "dev" | "marketing" | "research" | "funding" | "mentor")[],
     categories: [] as string[],
     tags: [] as string[],
     previewImage: '',
@@ -46,7 +46,7 @@ export default function ProjectComposer({ onProjectCreate, onClose }: ProjectCom
     { value: 'public', label: 'Public' },
   ];
 
-  const needsOptions = ['design', 'dev', 'marketing', 'research', 'funding', 'mentor'];
+  const needsOptions: ("design" | "dev" | "marketing" | "research" | "funding" | "mentor")[] = ['design', 'dev', 'marketing', 'research', 'funding', 'mentor'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,7 +124,7 @@ export default function ProjectComposer({ onProjectCreate, onClose }: ProjectCom
     }));
   };
 
-  const toggleNeed = (need: string) => {
+  const toggleNeed = (need: "design" | "dev" | "marketing" | "research" | "funding" | "mentor") => {
     setFormData(prev => ({
       ...prev,
       needs: prev.needs.includes(need)

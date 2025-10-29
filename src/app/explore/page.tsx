@@ -130,7 +130,7 @@ export default function ExplorePage() {
     setIsSearching(true);
     try {
       // Use the comprehensive search API
-      const searchData = await api.get(`/api/accounts/search/?q=${encodeURIComponent(query)}&type=${searchType}`);
+      const searchData = await api.get(`/api/accounts/search/?q=${encodeURIComponent(query)}&type=${searchType}`) as { users?: User[], posts?: any[], projects?: any[], hashtags?: string[] };
       
       setSearchResults({
         users: searchData.users || [],
@@ -143,7 +143,7 @@ export default function ExplorePage() {
       console.error('Search error:', error);
       // Fallback to individual APIs if comprehensive search fails
       try {
-        const usersData = await api.get(`/api/accounts/search/users/?q=${encodeURIComponent(query)}`);
+        const usersData = await api.get(`/api/accounts/search/users/?q=${encodeURIComponent(query)}`) as { results?: User[] };
         setSearchResults({
           users: usersData.results || [],
           posts: [],
@@ -575,7 +575,7 @@ export default function ExplorePage() {
                                       <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                                       <div className="absolute top-3 right-3">
                                         <span className="px-2 py-1 text-xs font-medium rounded-full text-white bg-black bg-opacity-50">
-                                          {project.project_type}
+                                          {project.type}
                                         </span>
           </div>
         </div>
@@ -586,27 +586,27 @@ export default function ExplorePage() {
                                       </h4>
                                       
                                       <p className="text-sm font-canva-sans mb-3 line-clamp-2" style={{color: 'var(--text-muted)'}}>
-                                        {project.summary}
+                                        {project.description}
                                       </p>
                                       
                                       <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                           <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden" 
                                                style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}>
-                                            {project.owner?.profile?.profile_picture ? (
+                                            {project.user?.profile_picture ? (
                                               <img
-                                                src={project.owner.profile.profile_picture}
-                                                alt={project.owner.full_name}
+                                                src={project.user.profile_picture}
+                                                alt={project.user.full_name}
                                                 className="w-full h-full object-cover"
                                               />
                                             ) : (
                                               <span className="text-white font-semibold text-xs">
-                                                {project.owner?.full_name?.[0] || project.owner?.username?.[0] || 'U'}
+                                                {project.user?.full_name?.[0] || project.user?.username?.[0] || 'U'}
                                               </span>
                                             )}
                                           </div>
                                           <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>
-                                            {project.owner?.username || 'Unknown'}
+                                            {project.user?.username || 'Unknown'}
                                           </span>
                                         </div>
                                         
@@ -853,7 +853,7 @@ export default function ExplorePage() {
                                 No Results Found
                 </h3>
                               <p className="text-lg font-canva-sans mb-6" style={{color: 'var(--text-secondary)'}}>
-                                No results found for "{searchQuery}". Try different keywords or check your spelling.
+                                No results found for &quot;{searchQuery}&quot;. Try different keywords or check your spelling.
                               </p>
                               <motion.button
                                 whileHover={{ scale: 1.05 }}
@@ -892,7 +892,7 @@ export default function ExplorePage() {
                         </h2>
                         <p className="text-xl font-canva-sans max-w-2xl mx-auto" style={{color: 'var(--text-secondary)'}}>
                           Discover incredible entrepreneurs, groundbreaking projects, and inspiring stories. 
-                          Use the search bar above to find exactly what you're looking for.
+                          Use the search bar above to find exactly what you&apos;re looking for.
                         </p>
                         <motion.div
                           initial={{ opacity: 0 }}
@@ -945,8 +945,8 @@ export default function ExplorePage() {
                 onClick={scrollToTop}
                 className="fixed bottom-6 left-6 z-50 w-12 h-12 text-white rounded-full shadow-xl transition-all duration-200 backdrop-blur-sm"
                 style={{backgroundColor: 'var(--accent-pine)'}}
-                onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--secondary-charcoal)'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'var(--accent-pine)'}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-charcoal)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-pine)'}
               >
                 <ArrowUp className="w-6 h-6 mx-auto" />
               </motion.button>
@@ -1045,7 +1045,6 @@ export default function ExplorePage() {
                 style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
                 onClick={() => {
                   setShowMobileNav(false);
-                  setShowRightPanel(false);
                 }}
               />
             )}

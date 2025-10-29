@@ -359,7 +359,7 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                   </svg>
                   What do you need help with?
                 </h3>
-                <p className="text-sm text-gray-700 mb-4">Select all areas where you're looking for collaborators or support</p>
+                <p className="text-sm text-gray-700 mb-4">Select all areas where you&apos;re looking for collaborators or support</p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {NEED_OPTIONS.map(need => (
                     <label 
@@ -392,7 +392,7 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Categories
                   </label>
-                  <p className="text-xs text-gray-600 mb-3">Add broad categories like "AI", "EdTech", "FinTech", etc.</p>
+                  <p className="text-xs text-gray-600 mb-3">Add broad categories like "AI", "EdTech", &quot;FinTech&quot;, etc.</p>
                   <div className="flex flex-wrap gap-2 mb-3">
                     {formData.categories?.map(category => (
                       <span

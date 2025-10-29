@@ -35,7 +35,7 @@ export default function ProjectsPage() {
       setIsLoading(true);
       setError(null);
       
-      const params: any = {};
+      const params: Record<string, string> = {};
       if (searchQuery) params.search = searchQuery;
       
       if (filter !== 'all') {
@@ -62,8 +62,9 @@ export default function ProjectsPage() {
         project && project.id && self.findIndex(p => p.id === project.id) === index
       );
       setProjects(uniqueProjects);
-    } catch (err: any) {
-      setError(err.message || 'Failed to load projects');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load projects';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -110,8 +111,9 @@ export default function ProjectsPage() {
     try {
       await projectApi.deleteProject(projectId);
       setProjects(prev => prev.filter(p => p.id !== projectId));
-    } catch (err: any) {
-      alert(err.message || 'Failed to delete project');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete project';
+      alert(errorMessage);
     }
   };
 
@@ -459,7 +461,6 @@ export default function ProjectsPage() {
             style={{backgroundColor: 'rgba(0, 0, 0, 0.5)'}}
             onClick={() => {
               setShowMobileNav(false);
-              setShowRightPanel(false);
             }}
           />
         )}

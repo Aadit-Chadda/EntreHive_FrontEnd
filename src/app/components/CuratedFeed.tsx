@@ -420,8 +420,8 @@ export default function CuratedFeed({
                 ) : (
                   <ProjectCard
                     project={feedItem.content as ProjectData}
-                    onProjectUpdate={(project) => handleItemUpdate(project, 'project')}
-                    onProjectDelete={(projectId) => handleItemDelete(projectId, 'project')}
+                    onUpdate={(project) => handleItemUpdate(project, 'project')}
+                    onDelete={(projectId) => handleItemDelete(projectId, 'project')}
                   />
                 )}
                 

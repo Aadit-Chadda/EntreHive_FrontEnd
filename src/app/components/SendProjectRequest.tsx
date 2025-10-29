@@ -71,9 +71,9 @@ export default function SendProjectRequest({
       });
       onSuccess();
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error sending request:', error);
-      alert(error.message || 'Failed to send request');
+      alert(error instanceof Error ? error.message : 'Failed to send request');
     } finally {
       setLoading(false);
     }

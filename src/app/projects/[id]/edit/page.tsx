@@ -251,7 +251,7 @@ export default function EditProjectPage() {
     { value: 'public', label: 'Public', description: 'Anyone can see this project' },
   ];
 
-  const NEED_OPTIONS = ['design', 'dev', 'marketing', 'research', 'funding', 'mentor'];
+  const NEED_OPTIONS = ['design', 'dev', 'marketing', 'research', 'funding', 'mentor'] as const;
 
   if (isLoading) {
     return (
@@ -490,7 +490,7 @@ export default function EditProjectPage() {
                                 </p>
                               )}
                               <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                                {formData.title.length}/140 characters
+                                {formData.title?.length || 0}/140 characters
                               </p>
                             </div>
 
@@ -720,11 +720,12 @@ export default function EditProjectPage() {
                                 <label key={need} className="flex items-center cursor-pointer">
                                   <input
                                     type="checkbox"
-                                    checked={formData.needs.includes(need as any)}
+                                    checked={formData.needs?.includes(need) || false}
                                     onChange={(e) => {
+                                      const currentNeeds = formData.needs || [];
                                       const newNeeds = e.target.checked
-                                        ? [...formData.needs, need]
-                                        : formData.needs.filter(n => n !== need);
+                                        ? [...currentNeeds, need]
+                                        : currentNeeds.filter(n => n !== need);
                                       handleInputChange('needs', newNeeds);
                                     }}
                                     className="w-4 h-4 border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)] accent-[var(--primary)]"
@@ -767,7 +768,7 @@ export default function EditProjectPage() {
                               <input
                                 type="text"
                                 id="categories"
-                                value={formData.categories.join(', ')}
+                                value={formData.categories?.join(', ') || ''}
                                 onChange={(e) => handleArrayInputChange('categories', e.target.value)}
                                 placeholder="e.g., AI, EdTech, FinTech"
                                 className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]"
@@ -790,7 +791,7 @@ export default function EditProjectPage() {
                               <input
                                 type="text"
                                 id="tags"
-                                value={formData.tags.join(', ')}
+                                value={formData.tags?.join(', ') || ''}
                                 onChange={(e) => handleArrayInputChange('tags', e.target.value)}
                                 placeholder="e.g., machine-learning, mobile-app, social-impact"
                                 className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]"

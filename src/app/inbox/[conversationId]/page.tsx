@@ -92,9 +92,9 @@ export default function ConversationPage() {
       await apiService.sendMessage(conversationId, { content: newMessage.trim() });
       setNewMessage('');
       await loadConversation(); // Reload to get new message
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error sending message:', error);
-      alert(error.message || 'Failed to send message');
+      alert(error instanceof Error ? error.message : 'Failed to send message');
     } finally {
       setSending(false);
     }
@@ -205,7 +205,7 @@ export default function ConversationPage() {
                 </div>
               ) : (
                 conversation.messages.map((message, index) => {
-                  const isOwnMessage = message.sender.id === user?.id;
+                  const isOwnMessage = message.sender.id === user?.pk;
                   const showAvatar =
                     index === 0 ||
                     conversation.messages[index - 1].sender.id !== message.sender.id;
@@ -304,7 +304,7 @@ export default function ConversationPage() {
             ) : (
               <div className="text-center py-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {user?.profile?.user_role === 'student'
+                  {user?.user_role === 'student'
                     ? 'You can reply once the other person sends you a message or accepts your request.'
                     : 'You cannot send messages in this conversation.'}
                 </p>

@@ -112,10 +112,10 @@ export default function SignUp() {
       const data = await apiClient.post('/api/universities/verify-email/', {
         email: email,
         user_role: formData.userRole
-      });
+      }) as { verified: boolean; university?: { id: string; name: string; short_name: string; city: string; country: string }; message: string };
       setUniversityVerification({
         verified: data.verified,
-        university: data.university,
+        university: data.university || null,
         checking: false,
         error: '',
         message: data.message
@@ -361,7 +361,7 @@ export default function SignUp() {
                       style={{
                         borderColor: 'var(--secondary-taupe)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                       value={formData.userRole}
                       onChange={handleChange}
@@ -396,7 +396,7 @@ export default function SignUp() {
                       style={{
                         borderColor: fieldErrors.username ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                       placeholder="johndoe123"
                       value={formData.username}
@@ -433,7 +433,7 @@ export default function SignUp() {
                         style={{
                           borderColor: fieldErrors.firstName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                           color: 'var(--secondary-charcoal)',
-                          '--tw-ring-color': 'var(--primary-orange)'
+                          
                         }}
                         placeholder="John"
                         value={formData.firstName}
@@ -458,7 +458,7 @@ export default function SignUp() {
                         style={{
                           borderColor: fieldErrors.lastName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
                           color: 'var(--secondary-charcoal)',
-                          '--tw-ring-color': 'var(--primary-orange)'
+                          
                         }}
                         placeholder="Doe"
                         value={formData.lastName}
@@ -507,7 +507,7 @@ export default function SignUp() {
                             ? '#10B981' 
                             : 'var(--secondary-taupe)',
                         color: 'var(--secondary-charcoal)',
-                        '--tw-ring-color': 'var(--primary-orange)'
+                        
                       }}
                       placeholder={formData.userRole === 'investor' ? "your.email@company.com" : "john.doe@university.edu"}
                       value={formData.email}
@@ -860,7 +860,7 @@ Examples:
                 className="flex-1 group relative flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 style={{
                   backgroundColor: 'var(--primary-orange)',
-                  '--tw-ring-color': 'var(--primary-orange)'
+                  
                 }}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">

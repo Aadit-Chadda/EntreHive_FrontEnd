@@ -4,10 +4,9 @@ import { useState } from 'react';
 
 interface RightExploreProps {
   showRightPanel: boolean;
-  setShowRightPanel: (show: boolean) => void;
 }
 
-export default function RightExplore({ showRightPanel, setShowRightPanel }: RightExploreProps) {
+export default function RightExplore({ showRightPanel }: RightExploreProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -75,7 +74,6 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold font-roca-two" style={{color: 'var(--text-primary)'}}>Explore</h2>
           <button
-            onClick={() => setShowRightPanel(false)}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,20 +97,11 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search EntreHive"
-            className="block w-full pl-10 pr-3 py-2 rounded-lg text-sm font-canva-sans focus:outline-none focus:ring-2 focus:border-transparent"
+            className="block w-full pl-10 pr-3 py-2 rounded-lg text-sm font-canva-sans focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-gray-500"
             style={{
               backgroundColor: 'var(--hover-bg)',
               border: '1px solid var(--border)',
-              color: 'var(--text-primary)',
-              '::placeholder': { color: 'var(--text-muted)' }
-            }}
-            onFocus={(e) => {
-              e.target.style.ring = '2px solid var(--primary-orange)';
-              e.target.style.borderColor = 'var(--primary-orange)';
-            }}
-            onBlur={(e) => {
-              e.target.style.ring = 'none';
-              e.target.style.borderColor = 'var(--border)';
+              color: 'var(--text-primary)'
             }}
           />
         </div>
@@ -206,12 +195,12 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
                   className="px-4 py-2 text-white text-xs font-semibold font-canva-sans rounded-full transition-all duration-300 flex-shrink-0 hover:scale-105 hover:shadow-md"
                   style={{backgroundColor: 'var(--primary-orange)'}}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = 'var(--accent-terracotta)';
-                    e.target.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                    e.currentTarget.style.transform = 'scale(1.05)';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'var(--primary-orange)';
-                    e.target.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                    e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
                   Follow
@@ -229,10 +218,10 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
               className="transition-all duration-300 hover:scale-105 hover:font-medium" 
               style={{color: 'var(--text-secondary)'}} 
               onMouseEnter={(e) => {
-                e.target.style.color = 'var(--primary-orange)';
+                e.currentTarget.style.color = 'var(--primary-orange)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
               }}
             >
               About
@@ -242,10 +231,10 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
               className="transition-all duration-300 hover:scale-105 hover:font-medium" 
               style={{color: 'var(--text-secondary)'}} 
               onMouseEnter={(e) => {
-                e.target.style.color = 'var(--primary-orange)';
+                e.currentTarget.style.color = 'var(--primary-orange)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
               }}
             >
               Terms
@@ -255,10 +244,10 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
               className="transition-all duration-300 hover:scale-105 hover:font-medium" 
               style={{color: 'var(--text-secondary)'}} 
               onMouseEnter={(e) => {
-                e.target.style.color = 'var(--primary-orange)';
+                e.currentTarget.style.color = 'var(--primary-orange)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
               }}
             >
               Privacy
@@ -268,10 +257,10 @@ export default function RightExplore({ showRightPanel, setShowRightPanel }: Righ
               className="transition-all duration-300 hover:scale-105 hover:font-medium" 
               style={{color: 'var(--text-secondary)'}} 
               onMouseEnter={(e) => {
-                e.target.style.color = 'var(--primary-orange)';
+                e.currentTarget.style.color = 'var(--primary-orange)';
               }}
               onMouseLeave={(e) => {
-                e.target.style.color = 'var(--text-secondary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
               }}
             >
               Help

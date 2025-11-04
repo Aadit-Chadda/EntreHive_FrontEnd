@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import LeftNavigation from '../../components/LeftNavigation';
 import RightSidebar from '../../components/RightSidebar';
 import TeamManagement from '../../components/TeamManagement';
-import ProjectInvitations from '../../components/ProjectInvitations';
+import ProjectViewRequests from '../../components/ProjectViewRequests';
 import { ThemeProvider } from '../../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ProjectData, ProjectUpdateData } from '@/types';
@@ -1215,7 +1215,7 @@ export default function ProjectDetailsPage() {
                   </button>
                 </div>
                 <div className="p-6">
-                  <ProjectInvitations projectId={project.id} />
+                  <ProjectViewRequests projectId={project.id} />
                 </div>
               </div>
             </div>

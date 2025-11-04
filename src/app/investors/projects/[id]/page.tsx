@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
-import { api } from '@/lib/api';
+import { api, apiService } from '@/lib/api';
 import { getProjectBannerGradient } from '@/lib/projectBranding';
 import { ThemeToggle } from '../../../components/ThemeProvider';
 import { TrendingUp, ArrowLeft, Inbox, Bell, ChevronDown, ExternalLink, Users, Calendar, FileText, Tag, AlertTriangle, Info, Mail } from 'lucide-react';
@@ -102,14 +102,26 @@ export default function InvestorProjectDetailPage() {
 
   const handleSendMessage = async () => {
     if (!message.trim() || !project) return;
+
     try {
       setSending(true);
-      router.push('/inbox');
+
+      // Create group conversation with the project team
+      await apiService.createGroupConversation({
+        project_id: project.id,
+        initial_message: message.trim()
+      });
+
+      // Success! Message sent to project team
       setShowMessageModal(false);
       setMessage('');
+
+      // Navigate to inbox to see the conversation
+      router.push('/inbox');
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Failed to send message');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
+      alert(errorMessage);
     } finally {
       setSending(false);
     }

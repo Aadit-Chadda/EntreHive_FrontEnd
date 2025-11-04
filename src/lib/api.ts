@@ -754,6 +754,30 @@ export const messagingApi = {
       active_conversations: number;
     }>('/api/messaging/stats/');
   },
+
+  // Group Conversations
+  createGroupConversation: async (data: {
+    project_id: string;
+    initial_message: string;
+  }) => {
+    return apiClient.post('/api/messaging/group-conversations/create/', data);
+  },
+
+  getGroupConversations: async () => {
+    return apiClient.get('/api/messaging/group-conversations/');
+  },
+
+  getGroupConversationDetail: async (groupId: string) => {
+    return apiClient.get(`/api/messaging/group-conversations/${groupId}/`);
+  },
+
+  getGroupMessages: async (groupId: string) => {
+    return apiClient.get(`/api/messaging/group-conversations/${groupId}/messages/`);
+  },
+
+  sendGroupMessage: async (groupId: string, content: string) => {
+    return apiClient.post(`/api/messaging/group-conversations/${groupId}/messages/create/`, { content });
+  },
 };
 
 // Re-export for backwards compatibility

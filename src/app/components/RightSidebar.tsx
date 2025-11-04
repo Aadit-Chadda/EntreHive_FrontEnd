@@ -406,7 +406,7 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
                   <div className="flex items-start justify-between">
                     <div
                       className="flex items-start space-x-3 flex-1 cursor-pointer"
-                      onClick={() => router.push(`/profile/${suggestion.username}`)}
+                      onClick={() => router.push(`/profiles/${suggestion.username}`)}
                     >
                       <div className="flex-shrink-0">
                         {suggestion.profile_picture ? (

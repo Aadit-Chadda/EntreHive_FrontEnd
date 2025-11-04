@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { api } from '@/lib/api';
+import { useToast } from '@/contexts/ToastContext';
+import { api, apiService } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, MapPin, Building2, GraduationCap, ArrowLeft, ExternalLink, Briefcase, TrendingUp, Inbox, Bell, ChevronDown, Users, Calendar, FileText, Eye } from 'lucide-react';
 import { ThemeToggle } from '../../../components/ThemeProvider';
@@ -53,10 +54,11 @@ interface ProjectSummary {
 
 export default function InvestorProfileView() {
   const { user, profile: currentUserProfile } = useAuth();
+  const { showToast } = useToast();
   const params = useParams();
   const router = useRouter();
   const username = params.username as string;
-  
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,6 +66,9 @@ export default function InvestorProfileView() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [followersCount, setFollowersCount] = useState(0);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageText, setMessageText] = useState('');
+  const [sendingMessage, setSendingMessage] = useState(false);
 
   useEffect(() => {
     if (user && user.user_role !== 'investor') {
@@ -96,7 +101,7 @@ export default function InvestorProfileView() {
 
   const handleFollowToggle = async () => {
     if (followLoading) return;
-    
+
     setFollowLoading(true);
     try {
       if (isFollowing) {
@@ -113,6 +118,30 @@ export default function InvestorProfileView() {
       alert(err instanceof Error ? err.message : 'Failed to update follow status');
     } finally {
       setFollowLoading(false);
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!messageText.trim() || !profile || !user) return;
+
+    try {
+      setSendingMessage(true);
+
+      // Create conversation with initial message
+      const conversation = await apiService.createConversation({
+        recipient_id: profile.id,
+        message: messageText.trim(),
+      }) as { id: string };
+
+      // Navigate to the conversation
+      showToast('Message sent successfully!', 'success');
+      router.push(`/inbox/${conversation.id}`);
+    } catch (error: unknown) {
+      console.error('Error sending message:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
+      showToast(errorMessage, 'error');
+    } finally {
+      setSendingMessage(false);
     }
   };
 
@@ -341,8 +370,8 @@ export default function InvestorProfileView() {
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-3 mt-20">
-                  <button 
-                    onClick={() => router.push('/inbox')}
+                  <button
+                    onClick={() => setShowMessageModal(true)}
                     className="inline-flex items-center px-6 py-3 rounded-xl font-semibold font-canva-sans transition-all hover:scale-105 shadow-md border-2"
                     style={{ background: 'var(--hover-bg)', color: 'var(--text-primary)', borderColor: 'var(--border)' }}>
                     <Mail className="w-5 h-5 mr-2" />
@@ -573,6 +602,75 @@ export default function InvestorProfileView() {
           </div>
         </div>
       </div>
+
+      {/* Message Modal */}
+      {showMessageModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="rounded-lg w-full max-w-md"
+            style={{ background: 'var(--surface)' }}
+          >
+            <div className="border-b px-6 py-4" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold font-roca-two" style={{ color: 'var(--text-primary)' }}>
+                  Send Message to {profile?.first_name} {profile?.last_name}
+                </h3>
+                <button
+                  onClick={() => setShowMessageModal(false)}
+                  className="transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <textarea
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="Type your message here..."
+                rows={5}
+                className="w-full px-4 py-2 border rounded-lg font-canva-sans resize-none focus:outline-none focus:ring-2 transition-all"
+                style={{
+                  borderColor: 'var(--border)',
+                  background: 'var(--background)',
+                  color: 'var(--text-primary)',
+                  '--tw-ring-color': 'var(--primary-orange)'
+                } as React.CSSProperties}
+              />
+
+              <div className="mt-4 flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowMessageModal(false)}
+                  className="px-4 py-2 rounded-lg font-canva-sans transition-colors"
+                  style={{ color: 'var(--text-primary)', background: 'var(--hover-bg)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--active-bg)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'var(--hover-bg)'}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!messageText.trim() || sendingMessage}
+                  className="px-6 py-2 rounded-lg font-canva-sans text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--primary-orange)' }}
+                  onMouseEnter={(e) => !sendingMessage && (e.currentTarget.style.background = 'var(--accent-terracotta)')}
+                  onMouseLeave={(e) => !sendingMessage && (e.currentTarget.style.background = 'var(--primary-orange)')}
+                >
+                  {sendingMessage ? 'Sending...' : 'Send Message'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </ProtectedRoute>
   );
 }

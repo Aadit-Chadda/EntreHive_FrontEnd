@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import LeftNavigation from '../../components/LeftNavigation';
 // We'll create inline components for PostSummary and ProjectSummary display
 import { ThemeProvider } from '../../components/ThemeProvider';
@@ -76,6 +77,7 @@ export default function PublicProfilePage() {
   const params = useParams();
   const username = params.username as string;
   const { user } = useAuth();
+  const { showToast } = useToast();
   const [profile, setProfile] = useState<EnhancedUserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -149,10 +151,10 @@ export default function PublicProfilePage() {
     // If current user is student and target is professor/investor, they need to send a project request
     if (currentUserRole === 'student' && (targetUserRole === 'professor' || targetUserRole === 'investor')) {
       // For now, just inform them - they need to send project request from project page
-      alert('To message professors or investors, please send them a project view request from one of your projects.');
+      showToast('To message professors or investors, please send them a project view request from one of your projects.', 'info', 7000);
       return;
     }
-    
+
     // For all other cases (professor/investor -> student, or same roles), show message modal
     setShowMessageModal(true);
   };
@@ -162,7 +164,7 @@ export default function PublicProfilePage() {
 
     try {
       setSendingMessage(true);
-      
+
       // Create conversation with initial message
       const conversation = await messagingApi.createConversation({
         recipient_id: profile.id,
@@ -170,11 +172,12 @@ export default function PublicProfilePage() {
       }) as { id: string };
 
       // Navigate to the conversation
+      showToast('Message sent successfully!', 'success');
       router.push(`/inbox/${conversation.id}`);
     } catch (error: unknown) {
       console.error('Error sending message:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. You may need to send a project request first if you are a student.';
-      alert(errorMessage);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to send message. Please try again.';
+      showToast(errorMessage, 'error');
     } finally {
       setSendingMessage(false);
     }

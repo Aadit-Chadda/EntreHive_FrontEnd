@@ -282,10 +282,10 @@ export default function TermsOfService() {
                 </h2>
                 <p className="font-canva-sans leading-relaxed mb-4" style={{color: 'var(--secondary-taupe)'}}>
                   If you have a dispute with EntreHive, you agree to first contact us at{' '}
-                  <a href="mailto:support@entrehive.app" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
-                    support@entrehive.app
+                  <a href="mailto:support@entrehive.ca" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
+                    support@entrehive.ca
                   </a>{' '}
-                  to attempt to resolve the dispute informally. Any disputes that cannot be resolved informally shall be 
+                  to attempt to resolve the dispute informally. Any disputes that cannot be resolved informally shall be
                   governed by the laws of the jurisdiction where EntreHive is registered, without regard to conflict of law principles.
                 </p>
               </div>
@@ -337,8 +337,8 @@ export default function TermsOfService() {
                   </p>
                   <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Email:{' '}
-                    <a href="mailto:support@entrehive.app" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
-                      support@entrehive.app
+                    <a href="mailto:support@entrehive.ca" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
+                      support@entrehive.ca
                     </a>
                   </p>
                 </div>

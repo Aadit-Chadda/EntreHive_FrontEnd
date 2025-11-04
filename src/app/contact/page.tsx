@@ -127,12 +127,12 @@ export default function Contact() {
                 <p className="font-canva-sans mb-4" style={{color: 'var(--secondary-taupe)'}}>
                   Send us an email anytime
                 </p>
-                <a 
-                  href="mailto:support@entrehive.app" 
+                <a
+                  href="mailto:support@entrehive.ca"
                   className="font-canva-sans font-semibold hover:underline"
                   style={{color: 'var(--primary-orange)'}}
                 >
-                  support@entrehive.app
+                  support@entrehive.ca
                 </a>
               </div>
             </LazyLoad>
@@ -216,7 +216,7 @@ export default function Contact() {
                       </ul>
                     ) : (
                       <p className="font-canva-sans text-center text-sm" style={{color: '#dc3545'}}>
-                        Failed to send message. Please try again or email us directly at support@entrehive.app
+                        Failed to send message. Please try again or email us directly at support@entrehive.ca
                       </p>
                     )}
                   </div>

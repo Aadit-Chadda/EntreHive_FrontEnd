@@ -72,15 +72,12 @@ export default function Login() {
         <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: 'var(--primary-orange)'}}>
           {/* Header */}
           <div className="text-center">
-            <div className="mx-auto h-16 w-16 flex items-center justify-center mb-6">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300 border-2 hexagon" style={{
-                backgroundColor: 'var(--primary-orange)',
-                borderColor: 'var(--primary-orange)'
-              }}>
-                <img 
-                  src="/logo_official.jpeg" 
-                  alt="EntreHive Logo" 
-                  className="w-12 h-12 rounded-full object-cover"
+            <div className="mx-auto h-32 w-32 flex items-center justify-center mb-6">
+              <div className="w-32 h-32 flex items-center justify-center hover:scale-110 transition-transform duration-300">
+                <img
+                  src="/Logoblacktransparent.png"
+                  alt="EntreHive Logo"
+                  className="w-32 h-32 object-contain"
                 />
               </div>
             </div>

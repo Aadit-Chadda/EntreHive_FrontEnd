@@ -171,8 +171,8 @@ export default function PrivacyPolicy() {
                 </ul>
                 <p className="font-canva-sans leading-relaxed mt-4" style={{color: 'var(--secondary-taupe)'}}>
                   To exercise these rights, please contact us at{' '}
-                  <a href="mailto:support@entrehive.app" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
-                    support@entrehive.app
+                  <a href="mailto:support@entrehive.ca" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
+                    support@entrehive.ca
                   </a>
                 </p>
               </div>
@@ -236,8 +236,8 @@ export default function PrivacyPolicy() {
                   </p>
                   <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
                     Email:{' '}
-                    <a href="mailto:support@entrehive.app" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
-                      support@entrehive.app
+                    <a href="mailto:support@entrehive.ca" className="font-semibold hover:underline" style={{color: 'var(--primary-orange)'}}>
+                      support@entrehive.ca
                     </a>
                   </p>
                 </div>

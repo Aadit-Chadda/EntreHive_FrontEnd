@@ -159,7 +159,7 @@ export default function Home() {
                        color: 'var(--primary-orange)',
                        backgroundColor: 'var(--neutral-light-orange)'
                      }}>
-                  <span className="text-lg mr-2">🤝</span>
+                  <span className="text-lg mr-4">🤝</span>
                   <span>Peer-to-Peer Connection Platform</span>
                 </div>
               </div>
@@ -169,7 +169,7 @@ export default function Home() {
           <div className="mt-20">
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-16 md:gap-y-16 lg:gap-x-20 lg:gap-y-20">
               <LazyLoad animationType="fade-left" delay={100}>
-                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-8 px-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
                     <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300" style={{backgroundColor: 'var(--primary-orange)'}}>
                       <span className="text-2xl">🎯</span>
@@ -184,7 +184,7 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-right" delay={200}>
-                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-8 px-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
                     <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--accent-pine)'}}>
@@ -200,7 +200,7 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-left" delay={300}>
-                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-8 px-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
                     <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--accent-terracotta)'}}>
@@ -216,7 +216,7 @@ export default function Home() {
               </LazyLoad>
 
               <LazyLoad animationType="fade-right" delay={400}>
-                <div className="relative group hover-lift p-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-8 px-8 pl-12 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
                     <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 rounded-xl text-white group-hover:scale-110 transition-transform duration-300"
                          style={{backgroundColor: 'var(--secondary-red)'}}>

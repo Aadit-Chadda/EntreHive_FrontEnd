@@ -26,6 +26,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "EntreHive - Student Entrepreneurship Platform",
   description: "A peer-to-peer platform connecting student entrepreneurs, investors, and service providers in universities.",
+  icons: {
+    icon: '/Logoblacktransparent.png',
+    shortcut: '/Logoblacktransparent.png',
+    apple: '/Logoblacktransparent.png',
+  },
 };
 
 export default function RootLayout({
@@ -35,6 +40,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/png" href="/Logoblacktransparent.png" />
+        <link rel="shortcut icon" type="image/png" href="/Logoblacktransparent.png" />
+        <link rel="apple-touch-icon" href="/Logoblacktransparent.png" />
+      </head>
       <body
         className={`${rocaTwo.variable} ${canvaSans.variable} ${inter.variable} font-sans antialiased`}
         style={{backgroundColor: 'var(--background)'}}

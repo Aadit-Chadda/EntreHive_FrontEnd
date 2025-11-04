@@ -15,13 +15,13 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* EntreHive Logo - Left Side */}
-          <div className="flex items-center">
+          <div className="flex items-center flex-shrink-0">
             <Link href="/" className="flex items-center space-x-3 group">
               <div className="relative">
-                <img 
-                  src="/Logoblacktransparent.png" 
-                  alt="EntreHive Logo" 
-                  className="w-10 h-10 object-contain"
+                <img
+                  src="/Logoblacktransparent.png"
+                  alt="EntreHive Logo"
+                  className="w-14 h-14 object-contain"
                 />
               </div>
               <div className="flex items-center space-x-1">
@@ -30,9 +30,9 @@ const Navigation = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+          {/* Desktop Navigation - Center */}
+          <div className="hidden md:flex flex-1 justify-center">
+            <div className="flex items-baseline space-x-8">
               <Link
                 href="/"
                 className="text-gray-700 font-canva-sans px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105 relative group"
@@ -66,30 +66,28 @@ const Navigation = () => {
           </div>
 
           {/* Auth Buttons - Right Side */}
-          <div className="hidden md:block">
-            <div className="ml-4 flex items-center space-x-4">
-              <Link
-                href="/login"
-                className="text-gray-700 font-canva-sans px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-                style={{'color': 'var(--secondary-charcoal)'}}
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="relative text-white px-6 py-2.5 rounded-xl text-sm font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 transform group overflow-hidden"
-                style={{'background': 'var(--primary-orange)'}}
-              >
-                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
-                <span className="relative flex items-center space-x-1">
-                  <span>Join Now</span>
-                  <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
-              </Link>
-            </div>
+          <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
+            <Link
+              href="/login"
+              className="text-gray-700 font-canva-sans px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+              style={{'color': 'var(--secondary-charcoal)'}}
+            >
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="relative text-white px-6 py-2.5 rounded-xl text-sm font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 transform group overflow-hidden"
+              style={{'background': 'var(--primary-orange)'}}
+            >
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
+              <span className="relative flex items-center space-x-1">
+                <span>Join Now</span>
+                <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
+            </Link>
           </div>
 
           {/* Mobile menu button */}

@@ -25,7 +25,7 @@ interface ProjectViewRequest {
     full_name?: string;
   };
   message: string;
-  status: 'pending' | 'accepted' | 'declined';
+  status: 'pending' | 'accepted' | 'declined' | 'cancelled';
   created_at: string;
 }
 
@@ -68,9 +68,30 @@ export default function ProjectViewRequests({ projectId }: ProjectViewRequestsPr
 
     setIsSending(true);
     try {
+      // First, search for the user by username to get their ID
+      const searchResults = await apiService.searchUsers({ q: recipientUsername.trim() });
+
+      if (!searchResults.results || searchResults.results.length === 0) {
+        showToast('User not found. Please check the username.', 'error');
+        setIsSending(false);
+        return;
+      }
+
+      // Find exact match (case-insensitive)
+      const exactMatch = searchResults.results.find(
+        (user: any) => user.username.toLowerCase() === recipientUsername.trim().toLowerCase()
+      );
+
+      if (!exactMatch) {
+        showToast('User not found. Please check the username.', 'error');
+        setIsSending(false);
+        return;
+      }
+
+      // Now create the request with the recipient ID
       await apiService.createProjectViewRequest({
         project_id: projectId,
-        recipient_username: recipientUsername.trim(),
+        recipient_id: exactMatch.id,
         message: message.trim(),
       });
 

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import ConditionalLayout from '../components/ConditionalLayout';
 import { apiService } from '@/lib/api';
+import { GroupConversation, ProjectViewRequest } from '@/types';
 
 interface Conversation {
   id: string;
@@ -30,54 +31,6 @@ interface Conversation {
   } | null;
   unread_count: number;
   last_message_at: string;
-  created_at: string;
-}
-
-interface GroupConversation {
-  id: string;
-  project: {
-    id: string;
-    title: string;
-  };
-  created_by: {
-    id: number;
-    username: string;
-    full_name?: string;
-  };
-  participant_count: number;
-  last_message: {
-    content: string;
-    sender: {
-      id: number;
-      username: string;
-    };
-    created_at: string;
-  } | null;
-  unread_count: number;
-  last_message_at: string;
-  created_at: string;
-}
-
-interface ProjectViewRequest {
-  id: string;
-  project: {
-    id: string;
-    title: string;
-  };
-  requester: {
-    id: number;
-    username: string;
-    first_name: string | null;
-    last_name: string | null;
-    full_name?: string;
-    profile_picture: string | null;
-  };
-  recipient: {
-    id: number;
-    username: string;
-  };
-  message: string;
-  status: string;
   created_at: string;
 }
 
@@ -191,7 +144,7 @@ export default function InboxPage() {
     }
   };
 
-  const getInitials = (firstName: string | null, lastName: string | null, username?: string) => {
+  const getInitials = (firstName: string | null | undefined, lastName: string | null | undefined, username?: string) => {
     if (firstName && lastName) {
       return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
     }
@@ -204,7 +157,7 @@ export default function InboxPage() {
     return '?';
   };
 
-  const getDisplayName = (firstName: string | null, lastName: string | null, fullName?: string, username?: string) => {
+  const getDisplayName = (firstName: string | null | undefined, lastName: string | null | undefined, fullName?: string, username?: string) => {
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }

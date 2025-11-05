@@ -170,10 +170,11 @@ export class ApiClient {
 export const apiClient = new ApiClient();
 
 // Project API functions
-import { 
+import {
   ProjectData, ProjectCreateData, ProjectUpdateData, ProjectInvitation, ProjectInvitationCreate, AddTeamMemberData,
   PostData, PostCreateData, PostUpdateData, PostComment, CommentCreateData, PostLike, PostsResponse,
-  UserProfile
+  UserProfile,
+  GroupConversation, GroupConversationDetail, GroupMessage
 } from '@/types';
 
 export const projectApi = {
@@ -763,20 +764,20 @@ export const messagingApi = {
     return apiClient.post('/api/messaging/group-conversations/create/', data);
   },
 
-  getGroupConversations: async () => {
-    return apiClient.get('/api/messaging/group-conversations/');
+  getGroupConversations: async (): Promise<GroupConversation[]> => {
+    return apiClient.get<GroupConversation[]>('/api/messaging/group-conversations/');
   },
 
-  getGroupConversationDetail: async (groupId: string) => {
-    return apiClient.get(`/api/messaging/group-conversations/${groupId}/`);
+  getGroupConversationDetail: async (groupId: string): Promise<GroupConversationDetail> => {
+    return apiClient.get<GroupConversationDetail>(`/api/messaging/group-conversations/${groupId}/`);
   },
 
-  getGroupMessages: async (groupId: string) => {
-    return apiClient.get(`/api/messaging/group-conversations/${groupId}/messages/`);
+  getGroupMessages: async (groupId: string): Promise<GroupMessage[]> => {
+    return apiClient.get<GroupMessage[]>(`/api/messaging/group-conversations/${groupId}/messages/`);
   },
 
-  sendGroupMessage: async (groupId: string, content: string) => {
-    return apiClient.post(`/api/messaging/group-conversations/${groupId}/messages/create/`, { content });
+  sendGroupMessage: async (groupId: string, content: string): Promise<GroupMessage> => {
+    return apiClient.post<GroupMessage>(`/api/messaging/group-conversations/${groupId}/messages/create/`, { content });
   },
 };
 

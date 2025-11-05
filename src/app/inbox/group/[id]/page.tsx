@@ -6,45 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import ConditionalLayout from '@/app/components/ConditionalLayout';
 import { apiService } from '@/lib/api';
-
-interface GroupConversationDetail {
-  id: string;
-  project: {
-    id: string;
-    title: string;
-    description?: string;
-  };
-  created_by: {
-    id: number;
-    username: string;
-    full_name?: string;
-    profile_picture?: string;
-  };
-  participants: Array<{
-    id: number;
-    username: string;
-    full_name?: string;
-    profile_picture?: string;
-    user_role?: string;
-  }>;
-  participant_count: number;
-  last_message_at: string;
-  created_at: string;
-}
-
-interface GroupMessage {
-  id: string;
-  sender: {
-    id: number;
-    username: string;
-    full_name?: string;
-    profile_picture?: string;
-  };
-  content: string;
-  attachment?: string;
-  read_by: number[];
-  created_at: string;
-}
+import { GroupConversationDetail, GroupMessage } from '@/types';
 
 export default function GroupConversationPage() {
   const { user } = useAuth();
@@ -233,7 +195,7 @@ export default function GroupConversationPage() {
                     {groupConversation.project.title}
                   </h1>
                   <p className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
-                    {groupConversation.participant_count} participants
+                    {groupConversation.participants.length} participants
                   </p>
                 </div>
               </div>
@@ -272,7 +234,7 @@ export default function GroupConversationPage() {
                   </div>
                 ) : (
                   messages.map((message, index) => {
-                    const isOwnMessage = message.sender.id === user?.id;
+                    const isOwnMessage = message.sender.id === user?.pk;
                     const showAvatar = index === 0 || messages[index - 1].sender.id !== message.sender.id;
                     const showName = !isOwnMessage && showAvatar;
 
@@ -404,7 +366,7 @@ export default function GroupConversationPage() {
                       <div className="flex-1 min-w-0">
                         <p className="font-medium font-canva-sans truncate" style={{ color: 'var(--text-primary)' }}>
                           {participant.full_name || participant.username}
-                          {participant.id === user?.id && (
+                          {participant.id === user?.pk && (
                             <span className="ml-2 text-xs" style={{ color: 'var(--text-secondary)' }}>(You)</span>
                           )}
                         </p>

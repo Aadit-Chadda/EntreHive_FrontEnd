@@ -542,6 +542,8 @@ export interface TrendingTopic {
 export interface ConversationParticipant {
   id: number;
   username: string;
+  first_name?: string | null;
+  last_name?: string | null;
   full_name?: string;
   profile_picture: string | null;
   user_role?: UserRole;
@@ -620,6 +622,15 @@ export interface GroupConversation {
   };
   created_by: ConversationParticipant;
   participants: ConversationParticipant[];
+  participant_count: number;
+  last_message: {
+    content: string;
+    sender: {
+      id: number;
+      username: string;
+    };
+    created_at: string;
+  } | null;
   created_at: string;
   updated_at: string;
   last_message_at: string | null;

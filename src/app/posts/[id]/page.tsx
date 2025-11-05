@@ -433,14 +433,14 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              <AnimatePresence>
-                                {comments.map((comment, index) => (
+                              <AnimatePresence mode="popLayout">
+                                {comments.map((comment) => (
                                   <motion.div
-                                    key={`comment-${comment.id}-${index}`}
+                                    key={comment.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -20 }}
-                                    transition={{ delay: index * 0.1 }}
+                                    transition={{ duration: 0.2 }}
                                     layout
                                   >
                                     <CommentCard
@@ -831,14 +831,14 @@ function CommentCard({
       {/* Replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-3 space-y-3">
-          <AnimatePresence>
-            {comment.replies.map((reply, index) => (
+          <AnimatePresence mode="popLayout">
+            {comment.replies.map((reply) => (
               <motion.div
-                key={`reply-${reply.id}-${comment.id}-${index}`}
+                key={reply.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ delay: index * 0.05 }}
+                transition={{ duration: 0.2 }}
                 layout
               >
                 <CommentCard

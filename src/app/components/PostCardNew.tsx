@@ -24,17 +24,12 @@ interface PostCardProps {
   showComments?: boolean;
 }
 
-export default function PostCard({ 
-  post, 
-  onPostUpdate, 
+export default function PostCard({
+  post,
+  onPostUpdate,
   onPostDelete,
-  showComments = false 
+  showComments = false
 }: PostCardProps) {
-  // Debug render counter
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  console.log(`PostCard render #${renderCount.current} - Post ID: ${post.id}`);
-
   const [isLiked, setIsLiked] = useState(post.is_liked);
   const [likesCount, setLikesCount] = useState(post.likes_count);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -44,21 +39,16 @@ export default function PostCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
-  // Only sync state on initial mount or when post ID changes
+  // Sync state when post data changes
   useEffect(() => {
     setIsLiked(post.is_liked);
     setLikesCount(post.likes_count);
-  }, [post.id]);
-  
-  // Separate effect to sync content changes
+  }, [post.is_liked, post.likes_count]);
+
+  // Sync content changes
   useEffect(() => {
     setEditContent(post.content);
   }, [post.content]);
-
-  // Debug effect to track state changes
-  useEffect(() => {
-    console.log('State changed - isLiked:', isLiked, 'likesCount:', likesCount);
-  }, [isLiked, likesCount]);
 
   const formatTimestamp = useCallback((timestamp: string) => {
     const now = new Date();
@@ -79,22 +69,41 @@ export default function PostCard({
 
   const handleLike = async () => {
     if (isLiking) return;
-    
-    console.log('Current state before like:', { isLiked, likesCount });
+
     setIsLiking(true);
-    
+
+    // Store previous state for rollback on error
+    const previousIsLiked = isLiked;
+    const previousLikesCount = likesCount;
+
+    // Optimistic update - toggle immediately for instant feedback
+    const newIsLiked = !isLiked;
+    const newLikesCount = newIsLiked ? likesCount + 1 : likesCount - 1;
+
+    setIsLiked(newIsLiked);
+    setLikesCount(newLikesCount);
+
     try {
       const response = await postsApi.toggleLike(post.id);
-      console.log('Like response:', response); // Debug log
-      console.log('About to update state - liked:', response.liked, 'count:', response.likes_count);
-      
-      // Update with actual server response
+
+      // Verify server response matches our optimistic update
+      // If not, use server values as source of truth
       setIsLiked(response.liked);
       setLikesCount(response.likes_count);
-      
-      console.log('State updated - new values should be:', { liked: response.liked, count: response.likes_count });
+
+      // Notify parent component if handler exists
+      if (onPostUpdate) {
+        onPostUpdate({
+          ...post,
+          is_liked: response.liked,
+          likes_count: response.likes_count
+        });
+      }
     } catch (error) {
       console.error('Failed to toggle like:', error);
+      // Rollback on error
+      setIsLiked(previousIsLiked);
+      setLikesCount(previousLikesCount);
     } finally {
       setIsLiking(false);
     }
@@ -435,26 +444,32 @@ export default function PostCard({
       <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-4">
           <motion.button
-            whileTap={{ scale: 0.95 }}
+            whileTap={{ scale: 0.9 }}
             onClick={handleLike}
             disabled={isLiking}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all ${
-              isLiked 
-                ? 'text-red-600 bg-red-50 dark:bg-red-900/30' 
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 disabled:opacity-70 ${
+              isLiked
+                ? 'text-red-600 bg-red-50 dark:bg-red-900/30'
                 : 'text-gray-600 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30'
             }`}
           >
-            <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-            <span className="text-sm font-medium">{likesCount}</span>
-            {/* Debug info */}
-            {process.env.NODE_ENV === 'development' && (
-              <span className="text-xs" style={{color: 'var(--text-muted)'}} title={`Debug: isLiked=${isLiked}, count=${likesCount}`}>
-                {(() => {
-                  console.log('JSX render - isLiked:', isLiked, 'likesCount:', likesCount);
-                  return '';
-                })()}
-              </span>
-            )}
+            <motion.div
+              animate={{
+                scale: isLiked ? [1, 1.3, 1] : 1
+              }}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart className={`w-4 h-4 transition-all ${isLiked ? 'fill-current' : ''}`} />
+            </motion.div>
+            <motion.span
+              key={likesCount}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className="text-sm font-medium"
+            >
+              {likesCount}
+            </motion.span>
           </motion.button>
 
           <Link

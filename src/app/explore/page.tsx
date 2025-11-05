@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, MessageSquare } from 'lucide-react';
+import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, MessageSquare, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import RightSidebar from '../components/RightSidebar';
@@ -55,17 +55,20 @@ interface Post {
 interface Project {
   id: string;
   title: string;
-  description: string;
+  summary?: string;
   banner_image?: string;
   banner_gradient?: string;
-  type: string;
+  project_type: string;
   status: string;
   team_count: number;
   created_at: string;
-  user: {
+  owner: {
     username: string;
     full_name: string;
-    profile_picture?: string;
+    profile: {
+      full_name: string;
+      profile_picture?: string;
+    };
   };
 }
 
@@ -549,73 +552,95 @@ export default function ExplorePage() {
                               
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {(searchType === 'all' ? searchResults.projects.slice(0, 6) : searchResults.projects).map((project, index) => (
-                                  <motion.div
-                                    key={project.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    whileHover={{ y: -5 }}
-                                    className="rounded-2xl border transition-all duration-300 hover:shadow-xl cursor-pointer overflow-hidden"
-                                    style={{
-                                      backgroundColor: 'var(--surface)',
-                                      borderColor: 'var(--border)'
-                                    }}
-                                  >
-                                    {/* Project Banner */}
-                                    <div 
-                                      className="h-32 relative"
+                                  <Link href={`/projects/${project.id}`} key={project.id}>
+                                    <motion.div
+                                      initial={{ opacity: 0, y: 20 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ delay: index * 0.1 }}
+                                      whileHover={{ y: -5 }}
+                                      className="rounded-2xl border transition-all duration-300 hover:shadow-xl cursor-pointer overflow-hidden"
                                       style={{
-                                        background: project.banner_image 
-                                          ? `url(${project.banner_image})` 
-                                          : project.banner_gradient ? `var(--gradient-${project.banner_gradient})` : 'linear-gradient(135deg, var(--primary-orange), var(--accent-terracotta))',
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
+                                        backgroundColor: 'var(--surface)',
+                                        borderColor: 'var(--border)'
                                       }}
                                     >
-                                      <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                                      <div className="absolute top-3 right-3">
-                                        <span className="px-2 py-1 text-xs font-medium rounded-full text-white bg-black bg-opacity-50">
-                                          {project.type}
-                                        </span>
-          </div>
-        </div>
+                                    {/* Project Banner */}
+                                    {project.banner_image ? (
+                                      <div
+                                        className="h-32 relative"
+                                        style={{
+                                          backgroundImage: `url(${project.banner_image})`,
+                                          backgroundSize: 'cover',
+                                          backgroundPosition: 'center'
+                                        }}
+                                      >
+                                        <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                                        {project.project_type && (
+                                          <div className="absolute top-3 right-3">
+                                            <span className="px-3 py-1 text-xs font-medium rounded-full text-white bg-black bg-opacity-50 capitalize">
+                                              {project.project_type}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div
+                                        className="h-32 relative flex items-center justify-center"
+                                        style={{
+                                          background: 'linear-gradient(135deg, var(--primary-orange), var(--accent-terracotta))'
+                                        }}
+                                      >
+                                        <div className="text-white text-center px-4">
+                                          <BookOpen className="w-8 h-8 mx-auto mb-2 opacity-80" />
+                                          <p className="text-sm font-semibold opacity-90">{project.title}</p>
+                                        </div>
+                                        {project.project_type && (
+                                          <div className="absolute top-3 right-3">
+                                            <span className="px-3 py-1 text-xs font-medium rounded-full text-white bg-black bg-opacity-30 capitalize">
+                                              {project.project_type}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
 
                                     <div className="p-4">
                                       <h4 className="font-semibold text-lg font-roca-two mb-2 line-clamp-1" style={{color: 'var(--text-primary)'}}>
                                         {project.title}
                                       </h4>
-                                      
+
                                       <p className="text-sm font-canva-sans mb-3 line-clamp-2" style={{color: 'var(--text-muted)'}}>
-                                        {project.description}
+                                        {project.summary || 'No description available'}
                                       </p>
-                                      
+
                                       <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                          <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden" 
+                                          <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden"
                                                style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}>
-                                            {project.user?.profile_picture ? (
+                                            {project.owner?.profile?.profile_picture ? (
                                               <img
-                                                src={project.user.profile_picture}
-                                                alt={project.user.full_name}
+                                                src={project.owner.profile.profile_picture}
+                                                alt={project.owner.profile.full_name || project.owner.username}
                                                 className="w-full h-full object-cover"
                                               />
                                             ) : (
                                               <span className="text-white font-semibold text-xs">
-                                                {project.user?.full_name?.[0] || project.user?.username?.[0] || 'U'}
+                                                {project.owner?.profile?.full_name?.[0] || project.owner?.username?.[0] || 'U'}
                                               </span>
                                             )}
                                           </div>
                                           <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>
-                                            {project.user?.username || 'Unknown'}
+                                            {project.owner?.profile?.full_name || project.owner?.username || 'Unknown'}
                                           </span>
                                         </div>
-                                        
+
                                         <div className="text-xs font-canva-sans" style={{color: 'var(--text-muted)'}}>
                                           {project.team_count || 1} members
                                         </div>
                                       </div>
                                     </div>
-                                  </motion.div>
+                                    </motion.div>
+                                  </Link>
                                 ))}
           </div>
                             </motion.div>
@@ -759,77 +784,83 @@ export default function ExplorePage() {
 
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {(searchType === 'all' ? searchResults.posts.slice(0, 9) : searchResults.posts).map((post, index) => {
+                                  const truncateText = (text: string, maxLength: number) => {
+                                    if (!text) return "No content available";
+                                    const words = text.split(' ');
+                                    if (words.length <= maxLength) return text;
+                                    return words.slice(0, maxLength).join(' ') + '...';
+                                  };
+
                                   return (
-                                  <motion.div
-                                    key={post.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    whileHover={{ scale: 1.02 }}
-                                    className="aspect-square rounded-xl border transition-all duration-300 hover:shadow-lg cursor-pointer overflow-hidden relative group"
-                                    style={{
-                                      backgroundColor: 'var(--surface)',
-                                      borderColor: 'var(--border)'
-                                    }}
-                                  >
-                                    {post.image_url ? (
-                                      <img
-                                        src={post.image_url}
-                                        alt="Post content"
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div 
-                                        className="w-full h-full flex flex-col items-center justify-center p-6 relative"
-                                        style={{
-                                          background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                                        }}
-                                      >
-                                        <p className="text-sm font-canva-sans text-center text-white font-semibold leading-relaxed break-words">
-                                          {post.content || "No content available"}
-                                        </p>
-                                        
-                                        {/* Post type indicator */}
-                                        <div className="absolute top-3 right-3">
-                                          <span className="px-2 py-1 text-xs bg-black bg-opacity-40 text-white rounded-full font-medium">
-                                            Post
-                                          </span>
-                                        </div>
-                                      </div>
-                                    )}
-                                    
-                                    {/* Overlay with engagement */}
-                                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
-                                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-center">
-                                        <div className="flex items-center gap-4 text-sm">
-                                          <span className="flex items-center gap-1">
-                                            ❤️ {post.likes_count}
-                                          </span>
-                                          <span className="flex items-center gap-1">
-                                            💬 {post.comments_count}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    {/* Author info */}
-                                    <div className="absolute bottom-2 left-2 flex items-center gap-2">
-                                      <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden border-2 border-white" 
-                                           style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}>
-                                        {(post.author?.profile_picture || post.user?.profile_picture) ? (
+                                  <Link href={`/posts/${post.id}`} key={post.id}>
+                                    <motion.div
+                                      initial={{ opacity: 0, scale: 0.9 }}
+                                      animate={{ opacity: 1, scale: 1 }}
+                                      transition={{ delay: index * 0.05 }}
+                                      whileHover={{ y: -4, scale: 1.02 }}
+                                      className="rounded-xl border transition-all duration-300 hover:shadow-xl cursor-pointer overflow-hidden"
+                                      style={{
+                                        backgroundColor: 'var(--surface)',
+                                        borderColor: 'var(--border)'
+                                      }}
+                                    >
+                                      {post.image_url ? (
+                                        <div className="relative">
                                           <img
-                                            src={post.author?.profile_picture || post.user?.profile_picture}
-                                            alt={post.author?.full_name || post.user?.full_name}
-                                            className="w-full h-full object-cover"
+                                            src={post.image_url}
+                                            alt="Post content"
+                                            className="w-full h-48 object-cover"
                                           />
-                                        ) : (
-                                          <span className="text-white font-semibold text-xs">
-                                            {(post.author?.full_name || post.user?.full_name)?.[0] || (post.author?.username || post.user?.username)?.[0] || 'U'}
+                                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                        </div>
+                                      ) : null}
+
+                                      <div className="p-4">
+                                        {/* Author info */}
+                                        <div className="flex items-center gap-2 mb-3">
+                                          <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden"
+                                               style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}>
+                                            {(post.author?.profile_picture || post.user?.profile_picture) ? (
+                                              <img
+                                                src={post.author?.profile_picture || post.user?.profile_picture}
+                                                alt={post.author?.full_name || post.user?.full_name}
+                                                className="w-full h-full object-cover"
+                                              />
+                                            ) : (
+                                              <span className="text-white font-semibold text-xs">
+                                                {(post.author?.full_name || post.user?.full_name)?.[0] || (post.author?.username || post.user?.username)?.[0] || 'U'}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>
+                                              {post.author?.full_name || post.user?.full_name || 'Unknown User'}
+                                            </p>
+                                            <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>
+                                              @{post.author?.username || post.user?.username || 'unknown'}
+                                            </p>
+                                          </div>
+                                        </div>
+
+                                        {/* Post content */}
+                                        <p className="text-sm font-canva-sans mb-3 line-clamp-3" style={{color: 'var(--text-muted)'}}>
+                                          {truncateText(post.content, 20)}
+                                        </p>
+
+                                        {/* Engagement stats */}
+                                        <div className="flex items-center gap-4 text-sm" style={{color: 'var(--text-secondary)'}}>
+                                          <span className="flex items-center gap-1">
+                                            <Heart className="w-4 h-4" />
+                                            {post.likes_count}
                                           </span>
-                                        )}
+                                          <span className="flex items-center gap-1">
+                                            <MessageSquare className="w-4 h-4" />
+                                            {post.comments_count}
+                                          </span>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </motion.div>
+                                    </motion.div>
+                                  </Link>
                                   );
                                 })}
                               </div>

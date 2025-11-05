@@ -424,13 +424,6 @@ export default function CuratedFeed({
                     onDelete={(projectId) => handleItemDelete(projectId, 'project')}
                   />
                 )}
-                
-                {/* Feed Score Indicator (for debugging - can be removed) */}
-                {process.env.NODE_ENV === 'development' && (
-                  <div className="text-xs text-gray-400 mt-2 px-4">
-                    Score: {feedItem.score.toFixed(1)} | Type: {feedItem.content_type}
-                  </div>
-                )}
               </motion.div>
             ))}
             

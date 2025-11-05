@@ -3,10 +3,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { 
-  BookOpenIcon, 
-  CodeBracketIcon, 
-  ServerIcon, 
+import {
+  BookOpenIcon,
+  CodeBracketIcon,
+  ServerIcon,
   CogIcon,
   ChevronRightIcon,
   ChevronDownIcon,
@@ -15,7 +15,8 @@ import {
   CubeIcon,
   ShieldCheckIcon,
   ArrowLeftIcon,
-  EnvelopeIcon
+  EnvelopeIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import { 
   FrontendAuth, 
@@ -47,6 +48,15 @@ import {
   UserFlow,
   Testing
 } from './investor-feed-sections';
+import {
+  MessagingOverview,
+  ConversationSystem,
+  GroupMessaging,
+  ProjectViewRequests,
+  PermissionSystem,
+  MessagingTypes,
+  MessagingBestPractices
+} from './messaging-sections';
 
 interface Section {
   id: string;
@@ -117,6 +127,20 @@ export default function DocumentationPage() {
         { id: 'email-verification', title: 'Email Verification' },
         { id: 'email-templates', title: 'Template Details' },
         { id: 'email-configuration', title: 'Configuration & Setup' },
+      ]
+    },
+    {
+      id: 'messaging',
+      title: 'Messaging System',
+      icon: ChatBubbleLeftRightIcon,
+      subsections: [
+        { id: 'messaging-overview', title: 'Overview' },
+        { id: 'conversation-system', title: 'Conversations' },
+        { id: 'group-messaging', title: 'Group Messaging' },
+        { id: 'project-requests', title: 'Project View Requests' },
+        { id: 'permission-system', title: 'Permission System' },
+        { id: 'messaging-types', title: 'Types & Interfaces' },
+        { id: 'messaging-best-practices', title: 'Best Practices' },
       ]
     },
     {
@@ -294,6 +318,20 @@ function DocumentationContent({ section }: { section: string }) {
         return <EmailTemplates />;
       case 'email-configuration':
         return <EmailConfiguration />;
+      case 'messaging-overview':
+        return <MessagingOverview />;
+      case 'conversation-system':
+        return <ConversationSystem />;
+      case 'group-messaging':
+        return <GroupMessaging />;
+      case 'project-requests':
+        return <ProjectViewRequests />;
+      case 'permission-system':
+        return <PermissionSystem />;
+      case 'messaging-types':
+        return <MessagingTypes />;
+      case 'messaging-best-practices':
+        return <MessagingBestPractices />;
       case 'admin-overview':
         return <AdminOverview />;
       case 'admin-features':

@@ -100,6 +100,23 @@ export default function InboxPage() {
     }
   }, [user, activeTab]);
 
+  // Reload data when messages are marked as read (triggered from conversation pages)
+  useEffect(() => {
+    const handleMessagesRead = () => {
+      if (user) {
+        console.log('Messages marked as read, reloading inbox...');
+        loadData();
+      }
+    };
+
+    // Listen for custom event from conversation pages
+    window.addEventListener('messagesMarkedAsRead', handleMessagesRead);
+
+    return () => {
+      window.removeEventListener('messagesMarkedAsRead', handleMessagesRead);
+    };
+  }, [user, activeTab]);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -399,7 +416,7 @@ export default function InboxPage() {
                   {groupConversations.map((groupConv) => (
                     <div
                       key={groupConv.id}
-                      onClick={() => showToast('Group conversation detail view coming soon!', 'info')}
+                      onClick={() => router.push(`/inbox/group/${groupConv.id}`)}
                       className="p-4 cursor-pointer transition-colors"
                       style={{ background: 'var(--surface)' }}
                       onMouseEnter={(e) => e.currentTarget.style.background = 'var(--hover-bg)'}

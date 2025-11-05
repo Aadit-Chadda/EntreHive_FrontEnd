@@ -53,12 +53,25 @@ export default function ConversationPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (conversationId) {
+    if (conversationId && user) {
       loadConversation();
+
+      // Set up polling for new messages every 5 seconds
+      pollingIntervalRef.current = setInterval(() => {
+        loadConversation(false); // Don't show loading spinner during polling
+      }, 5000);
     }
-  }, [conversationId]);
+
+    // Cleanup interval on unmount
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [conversationId, user]);
 
   useEffect(() => {
     scrollToBottom();
@@ -68,17 +81,29 @@ export default function ConversationPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const loadConversation = async () => {
+  const loadConversation = async (showLoadingSpinner = true) => {
     try {
-      setLoading(true);
+      if (showLoadingSpinner) {
+        setLoading(true);
+      }
       const data = await apiService.getConversation(conversationId);
       setConversation(data);
+
+      // Notify inbox page that messages have been marked as read (backend does this automatically)
+      // Only dispatch on initial load, not during polling
+      if (showLoadingSpinner && typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('messagesMarkedAsRead'));
+      }
     } catch (error) {
       console.error('Error loading conversation:', error);
-      showToast('Failed to load conversation', 'error');
-      router.push('/inbox');
+      if (showLoadingSpinner) {
+        showToast('Failed to load conversation', 'error');
+        router.push('/inbox');
+      }
     } finally {
-      setLoading(false);
+      if (showLoadingSpinner) {
+        setLoading(false);
+      }
     }
   };
 

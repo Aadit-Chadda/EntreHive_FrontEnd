@@ -521,3 +521,247 @@ export interface TrendingTopic {
   created_at: string;
   updated_at: string;
 }
+
+// ============================================================
+// MESSAGING SYSTEM TYPES
+// ============================================================
+
+/**
+ * Messaging system supports three tiers:
+ * 1. Direct Messages (1-on-1 conversations)
+ * 2. Group Conversations (project-based team messaging)
+ * 3. Project View Requests (student → professor/investor permission flow)
+ */
+
+// Direct Messaging Types
+
+/**
+ * User participant in a conversation
+ * Includes profile information for display
+ */
+export interface ConversationParticipant {
+  id: number;
+  username: string;
+  full_name?: string;
+  profile_picture: string | null;
+  user_role?: UserRole;
+}
+
+/**
+ * Individual message in a conversation
+ */
+export interface Message {
+  id: string;
+  conversation: string;
+  sender: ConversationParticipant;
+  content: string;
+  read: boolean;
+  read_at: string | null;
+  attachment: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Conversation summary in inbox list
+ */
+export interface Conversation {
+  id: string;
+  participant_1: ConversationParticipant;
+  participant_2: ConversationParticipant;
+  initiated_by: ConversationParticipant;
+  related_project: {
+    id: string;
+    title: string;
+  } | null;
+  status: 'active' | 'archived';
+  last_message_at: string | null;
+  created_at: string;
+  updated_at: string;
+  unread_count: number;
+  last_message_preview?: string;
+}
+
+/**
+ * Detailed conversation with messages
+ */
+export interface ConversationDetail extends Conversation {
+  messages: Message[];
+}
+
+/**
+ * Request body for creating a new conversation
+ */
+export interface CreateConversationData {
+  recipient_id: number;
+  message: string;
+  project_id?: string;
+}
+
+/**
+ * Request body for sending a message
+ */
+export interface SendMessageData {
+  content: string;
+  attachment?: File;
+}
+
+// Group Messaging Types
+
+/**
+ * Group conversation for project teams
+ */
+export interface GroupConversation {
+  id: string;
+  project: {
+    id: string;
+    title: string;
+    owner: ConversationParticipant;
+  };
+  created_by: ConversationParticipant;
+  participants: ConversationParticipant[];
+  created_at: string;
+  updated_at: string;
+  last_message_at: string | null;
+  unread_count: number;
+  last_message_preview?: string;
+}
+
+/**
+ * Detailed group conversation with messages
+ */
+export interface GroupConversationDetail extends GroupConversation {
+  messages: GroupMessage[];
+}
+
+/**
+ * Message in a group conversation
+ * Uses read_by array to track who has read the message
+ */
+export interface GroupMessage {
+  id: string;
+  group_conversation: string;
+  sender: ConversationParticipant;
+  content: string;
+  read_by: number[]; // Array of user IDs who have read the message
+  attachment: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Request body for creating a group conversation
+ */
+export interface CreateGroupConversationData {
+  project_id: string;
+  message: string;
+}
+
+/**
+ * Request body for sending a group message
+ */
+export interface SendGroupMessageData {
+  content: string;
+  attachment?: File;
+}
+
+// Project View Request Types
+
+/**
+ * Request from student to professor/investor for project viewing permission
+ * Once accepted, creates a conversation for direct messaging
+ */
+export interface ProjectViewRequest {
+  id: string;
+  project: {
+    id: string;
+    title: string;
+    summary?: string;
+    preview_image?: string;
+  };
+  requester: ConversationParticipant;
+  recipient: ConversationParticipant;
+  message: string;
+  status: 'pending' | 'accepted' | 'declined' | 'cancelled';
+  conversation: {
+    id: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+  responded_at: string | null;
+}
+
+/**
+ * Request body for creating a project view request
+ */
+export interface CreateProjectViewRequestData {
+  project_id: string;
+  recipient_id: number;
+  message: string;
+}
+
+/**
+ * Request body for responding to a project view request
+ */
+export interface RespondToProjectViewRequestData {
+  action: 'accept' | 'decline';
+}
+
+// Inbox Statistics
+
+/**
+ * Inbox overview statistics
+ */
+export interface InboxStats {
+  total_conversations: number;
+  unread_conversations: number;
+  total_group_conversations: number;
+  unread_group_conversations: number;
+  pending_requests: number;
+  received_requests: number;
+  sent_requests: number;
+}
+
+// Messaging Permissions
+
+/**
+ * Permission check result
+ * Used to determine if a user can message another user
+ */
+export interface MessagingPermission {
+  can_message: boolean;
+  reason?: string;
+  grant_type?: 'role_based' | 'request_accepted' | 'replied';
+}
+
+// API Response Types
+
+/**
+ * Paginated list of conversations
+ */
+export interface ConversationsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Conversation[];
+}
+
+/**
+ * Paginated list of group conversations
+ */
+export interface GroupConversationsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: GroupConversation[];
+}
+
+/**
+ * Paginated list of project view requests
+ */
+export interface ProjectViewRequestsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ProjectViewRequest[];
+}

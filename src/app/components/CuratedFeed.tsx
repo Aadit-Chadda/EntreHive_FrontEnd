@@ -355,7 +355,7 @@ export default function CuratedFeed({
                   >
                     <div className="animate-bounce">
                       <Image
-                        src="/logo_w_name.png"
+                        src="/logoblacktransparent.png"
                         alt="EntreHive Logo"
                         width={60}
                         height={60}

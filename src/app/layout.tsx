@@ -42,9 +42,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" type="image/png" href="/Logoblacktransparent.png" />
-        <link rel="shortcut icon" type="image/png" href="/Logoblacktransparent.png" />
-        <link rel="apple-touch-icon" href="/Logoblacktransparent.png" />
+        <link rel="icon" type="image/png" href="/logo_w_name.png?v=2" />
+        <link rel="shortcut icon" type="image/png" href="/Logo_w_name.png?v=2" />
+        <link rel="apple-touch-icon" href="/Logo_w_name.png?v=2" />
       </head>
       <body
         className={`${rocaTwo.variable} ${canvaSans.variable} ${inter.variable} font-sans antialiased`}

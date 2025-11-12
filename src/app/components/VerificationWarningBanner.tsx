@@ -31,9 +31,9 @@ export default function VerificationWarningBanner({
         transition={{ duration: 0.3 }}
         className="mb-6 rounded-lg p-4 border-l-4"
         style={{
-          backgroundColor: isUrgent ? '#FEF3C7' : '#FDEEDB',
-          borderColor: isUrgent ? '#F59E0B' : 'var(--primary)',
-          border: '1px solid',
+          backgroundColor: isUrgent ? 'rgba(245, 158, 11, 0.15)' : 'rgba(243, 172, 59, 0.15)',
+          borderColor: isUrgent ? '#F59E0B' : 'var(--primary-orange)',
+          border: '2px solid',
           borderLeftWidth: '4px'
         }}
       >
@@ -42,26 +42,26 @@ export default function VerificationWarningBanner({
             <div className="flex-shrink-0 mr-3">
               <AlertTriangle
                 className="w-6 h-6"
-                style={{color: isUrgent ? '#F59E0B' : 'var(--primary)'}}
+                style={{color: isUrgent ? '#F59E0B' : 'var(--primary-orange)'}}
               />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h3
                   className="text-base font-semibold"
-                  style={{color: isUrgent ? '#78350F' : 'var(--primary-dark)'}}
+                  style={{color: isUrgent ? '#F59E0B' : 'var(--primary-orange)'}}
                 >
                   Verify Your Email Address
                 </h3>
                 {isUrgent && (
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{backgroundColor: 'rgba(220, 38, 38, 0.2)', color: '#DC2626'}}>
                     Urgent
                   </span>
                 )}
               </div>
               <p
                 className="text-sm mb-3"
-                style={{color: isUrgent ? '#78350F' : 'var(--text-primary)'}}
+                style={{color: 'var(--text-primary)'}}
               >
                 You have <strong>{days} {days === 1 ? 'day' : 'days'}</strong> remaining to verify your email address.
                 Your account will be temporarily disabled if not verified within this timeframe.

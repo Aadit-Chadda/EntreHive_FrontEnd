@@ -265,7 +265,7 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: 'var(--background)'}}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: '#F5F5F5'}}>
       {/* Hexagonal background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
@@ -287,22 +287,22 @@ export default function SignUp() {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>Step {step} of 2</span>
-            <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>{step === 1 ? 'Account Info' : 'Profile Setup'}</span>
+            <span className="text-sm font-medium font-canva-sans" style={{color: '#36454F'}}>Step {step} of 2</span>
+            <span className="text-sm font-canva-sans" style={{color: '#8a6b53'}}>{step === 1 ? 'Account Info' : 'Profile Setup'}</span>
           </div>
-          <div className="w-full rounded-full h-2" style={{backgroundColor: 'var(--neutral-off-white)'}}>
-            <div 
+          <div className="w-full rounded-full h-2" style={{backgroundColor: '#fdeedb'}}>
+            <div
               className="h-2 rounded-full transition-all duration-500 ease-out"
-              style={{ 
+              style={{
                 width: `${(step / 2) * 100}%`,
-                backgroundColor: 'var(--primary-orange)'
+                backgroundColor: '#F3AC3B'
               }}
             ></div>
           </div>
         </div>
 
         {/* Card Container */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: 'var(--primary-orange)'}}>
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: '#F3AC3B'}}>
           {/* Header */}
           <div className="text-center mb-8">
             <div className="mx-auto h-32 w-32 flex items-center justify-center mb-6">
@@ -314,21 +314,21 @@ export default function SignUp() {
                 />
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold font-roca-two mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+            <h2 className="text-3xl font-extrabold font-roca-two mb-2" style={{color: '#36454F'}}>
               {step === 1 ? 'Join the Hive' : 'Complete Your Profile'}
             </h2>
-            <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-              {step === 1 
-                ? 'Start your entrepreneurial journey with fellow students' 
+            <p className="font-canva-sans" style={{color: '#8a6b53'}}>
+              {step === 1
+                ? 'Start your entrepreneurial journey with fellow students'
                 : 'Complete your profile to join the community'
               }
             </p>
-            <p className="mt-4 text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+            <p className="mt-4 text-sm font-canva-sans" style={{color: '#8a6b53'}}>
               Already have an account?{' '}
               <Link
                 href="/login"
                 className="font-semibold hover:scale-105 transition-all duration-200"
-                style={{color: 'var(--primary-orange)'}}
+                style={{color: '#F3AC3B'}}
               >
                 Sign in here
               </Link>
@@ -341,12 +341,12 @@ export default function SignUp() {
               <div className="space-y-6 animate-fade-in-up">
                 {/* User Role Field - moved to step 1 */}
                 <div className="group">
-                  <label htmlFor="userRole" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                  <label htmlFor="userRole" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Your Role *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -356,9 +356,9 @@ export default function SignUp() {
                       required
                       className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
                       style={{
-                        borderColor: 'var(--secondary-taupe)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        borderColor: '#8a6b53',
+                        color: '#36454F',
+
                       }}
                       value={formData.userRole}
                       onChange={handleChange}
@@ -368,19 +368,19 @@ export default function SignUp() {
                       <option value="investor">💼 Investor</option>
                     </select>
                   </div>
-                  <p className="mt-1 text-xs font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                  <p className="mt-1 text-xs font-canva-sans" style={{color: '#8a6b53'}}>
                     This determines what features and content you&apos;ll see
                   </p>
                 </div>
 
                 {/* Username Field */}
                 <div className="group">
-                  <label htmlFor="username" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                  <label htmlFor="username" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Username *
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
@@ -391,9 +391,9 @@ export default function SignUp() {
                       required
                       className={`block w-full pl-10 pr-10 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${fieldErrors.username ? 'border-red-300' : ''}`}
                       style={{
-                        borderColor: fieldErrors.username ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        borderColor: fieldErrors.username ? '#E74C3C' : '#8a6b53',
+                        color: '#36454F',
+
                       }}
                       placeholder="johndoe123"
                       value={formData.username}
@@ -410,14 +410,14 @@ export default function SignUp() {
                     )}
                   </div>
                   {fieldErrors.username && (
-                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.username}</p>
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.username}</p>
                   )}
                 </div>
 
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="group">
-                    <label htmlFor="firstName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                    <label htmlFor="firstName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       First Name *
                     </label>
                     <div className="relative">
@@ -428,21 +428,21 @@ export default function SignUp() {
                         required
                         className={`block w-full px-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${fieldErrors.firstName ? '' : ''}`}
                         style={{
-                          borderColor: fieldErrors.firstName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
-                          color: 'var(--secondary-charcoal)',
-                          
+                          borderColor: fieldErrors.firstName ? '#E74C3C' : '#8a6b53',
+                          color: '#36454F',
+
                         }}
                         placeholder="John"
                         value={formData.firstName}
                         onChange={handleChange}
                       />
                       {fieldErrors.firstName && (
-                        <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.firstName}</p>
+                        <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.firstName}</p>
                       )}
                     </div>
                   </div>
                   <div className="group">
-                    <label htmlFor="lastName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                    <label htmlFor="lastName" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Last Name *
                     </label>
                     <div className="relative">
@@ -453,16 +453,16 @@ export default function SignUp() {
                         required
                         className={`block w-full px-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70`}
                         style={{
-                          borderColor: fieldErrors.lastName ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
-                          color: 'var(--secondary-charcoal)',
-                          
+                          borderColor: fieldErrors.lastName ? '#E74C3C' : '#8a6b53',
+                          color: '#36454F',
+
                         }}
                         placeholder="Doe"
                         value={formData.lastName}
                         onChange={handleChange}
                       />
                       {fieldErrors.lastName && (
-                        <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.lastName}</p>
+                        <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.lastName}</p>
                       )}
                     </div>
                   </div>
@@ -470,17 +470,17 @@ export default function SignUp() {
 
                 {/* Email Field */}
                 <div className="group">
-                  <label htmlFor="email" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                  <label htmlFor="email" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Email Address *
                     {formData.userRole !== 'investor' && (
-                      <span className="text-xs ml-2" style={{color: 'var(--secondary-taupe)'}}>
+                      <span className="text-xs ml-2" style={{color: '#8a6b53'}}>
                         (Use your institutional email)
                       </span>
                     )}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                       </svg>
                     </div>
@@ -491,20 +491,20 @@ export default function SignUp() {
                       autoComplete="email"
                       required
                       className={`block w-full pl-10 pr-10 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 ${
-                        fieldErrors.email 
-                          ? 'border-red-300' 
-                          : universityVerification.verified 
-                            ? 'border-green-300' 
+                        fieldErrors.email
+                          ? 'border-red-300'
+                          : universityVerification.verified
+                            ? 'border-green-300'
                             : ''
                       }`}
                       style={{
-                        borderColor: fieldErrors.email 
-                          ? 'var(--secondary-red)' 
-                          : universityVerification.verified 
-                            ? '#10B981' 
-                            : 'var(--secondary-taupe)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        borderColor: fieldErrors.email
+                          ? '#E74C3C'
+                          : universityVerification.verified
+                            ? '#10B981'
+                            : '#8a6b53',
+                        color: '#36454F',
+
                       }}
                       placeholder={formData.userRole === 'investor' ? "your.email@company.com" : "john.doe@university.edu"}
                       value={formData.email}
@@ -543,23 +543,23 @@ export default function SignUp() {
                   )}
                   
                   {fieldErrors.email && (
-                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{fieldErrors.email}</p>
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.email}</p>
                   )}
-                  
+
                   {universityVerification.error && !fieldErrors.email && formData.userRole !== 'investor' && (
-                    <p className="mt-1 text-sm font-canva-sans" style={{color: 'var(--secondary-red)'}}>{universityVerification.error}</p>
+                    <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{universityVerification.error}</p>
                   )}
                 </div>
 
                 {/* Password Fields */}
                 <div className="grid grid-cols-1 gap-4">
                   <div className="group">
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="password" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Password *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                         </svg>
                       </div>
@@ -569,7 +569,11 @@ export default function SignUp() {
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="new-password"
                         required
-                        className={`block w-full pl-10 pr-12 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.password ? 'border-red-300' : 'border-gray-300'}`}
+                        className={`block w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70`}
+                        style={{
+                          borderColor: fieldErrors.password ? '#E74C3C' : '#8a6b53',
+                          color: '#36454F'
+                        }}
                         placeholder="Create a strong password"
                         value={formData.password}
                         onChange={handleChange}
@@ -580,11 +584,11 @@ export default function SignUp() {
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-5 w-5 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                           </svg>
                         ) : (
-                          <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-5 w-5 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
@@ -592,18 +596,18 @@ export default function SignUp() {
                       </button>
                     </div>
                     {fieldErrors.password && (
-                      <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+                      <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.password}</p>
                     )}
-                    <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters with uppercase, lowercase, and number</p>
+                    <p className="mt-1 text-xs font-canva-sans" style={{color: '#8a6b53'}}>Must be at least 8 characters with uppercase, lowercase, and number</p>
                   </div>
 
                   <div className="group">
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="confirmPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Confirm Password *
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                       </div>
@@ -613,7 +617,11 @@ export default function SignUp() {
                         type={showConfirmPassword ? 'text' : 'password'}
                         autoComplete="new-password"
                         required
-                        className={`block w-full pl-10 pr-12 py-3 border rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 ${fieldErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'}`}
+                        className={`block w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70`}
+                        style={{
+                          borderColor: fieldErrors.confirmPassword ? '#E74C3C' : '#8a6b53',
+                          color: '#36454F'
+                        }}
                         placeholder="Confirm your password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -624,11 +632,11 @@ export default function SignUp() {
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
                         {showConfirmPassword ? (
-                          <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-5 w-5 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                           </svg>
                         ) : (
-                          <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-5 w-5 hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
@@ -636,7 +644,7 @@ export default function SignUp() {
                       </button>
                     </div>
                     {fieldErrors.confirmPassword && (
-                      <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
+                      <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.confirmPassword}</p>
                     )}
                   </div>
                 </div>
@@ -648,7 +656,7 @@ export default function SignUp() {
                 {/* University Information Display */}
                 {formData.userRole !== 'investor' && universityVerification.verified && universityVerification.university && (
                   <div className="group">
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Verified University
                     </label>
                     <div className="p-4 rounded-lg border-2" style={{backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: '#10B981'}}>
@@ -671,7 +679,7 @@ export default function SignUp() {
                 
                 {formData.userRole === 'investor' && (
                   <div className="group">
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Account Type
                     </label>
                     <div className="p-4 rounded-lg border-2" style={{backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: '#3B82F6'}}>
@@ -694,12 +702,12 @@ export default function SignUp() {
 
                 {/* Location Field */}
                 <div className="group">
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="location" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Location
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <svg className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
@@ -708,7 +716,11 @@ export default function SignUp() {
                       id="location"
                       name="location"
                       type="text"
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70"
+                      className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
+                      style={{
+                        borderColor: '#8a6b53',
+                        color: '#36454F'
+                      }}
                       placeholder="e.g., San Francisco, CA"
                       value={formData.location}
                       onChange={handleChange}
@@ -719,7 +731,7 @@ export default function SignUp() {
                 {/* Investor Interests (only for investors) */}
                 {formData.userRole === 'investor' && (
                   <div className="group">
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                    <label className="block text-sm font-medium font-canva-sans mb-3" style={{color: '#36454F'}}>
                       Investment Interests (Select all that apply)
                     </label>
                     <div className="grid grid-cols-2 gap-3">
@@ -759,7 +771,7 @@ export default function SignUp() {
                         </button>
                       ))}
                     </div>
-                    <p className="mt-2 text-xs text-gray-500">
+                    <p className="mt-2 text-xs font-canva-sans" style={{color: '#8a6b53'}}>
                       Your interests help us show you relevant projects in your feed
                     </p>
                   </div>
@@ -767,7 +779,7 @@ export default function SignUp() {
 
                 {/* Bio Field */}
                 <div className="group">
-                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="bio" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Bio/About You
                   </label>
                   <div className="relative">
@@ -775,10 +787,14 @@ export default function SignUp() {
                       id="bio"
                       name="bio"
                       rows={4}
-                      className="block w-full px-4 py-3 border border-gray-300 rounded-xl text-gray-900 bg-white/50 backdrop-blur-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 hover:bg-white/70 resize-none"
+                      className="block w-full px-4 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70 resize-none"
+                      style={{
+                        borderColor: '#8a6b53',
+                        color: '#36454F'
+                      }}
                       placeholder="Tell us about yourself, your interests, skills, or what you're passionate about...
 
-Examples: 
+Examples:
 • Student: Computer Science major interested in AI and startup development
 • Professor: AI researcher focused on machine learning applications in healthcare
 • Investor: Early-stage investor focused on edtech and fintech startups"
@@ -786,7 +802,7 @@ Examples:
                       onChange={handleChange}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">This will be displayed on your public profile</p>
+                  <p className="mt-1 text-xs font-canva-sans" style={{color: '#8a6b53'}}>This will be displayed on your public profile</p>
                 </div>
 
                 {/* Terms Checkbox */}
@@ -797,17 +813,18 @@ Examples:
                       name="agree-terms"
                       type="checkbox"
                       required
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors duration-200"
+                      className="h-4 w-4 rounded transition-colors duration-200"
+                      style={{accentColor: '#F3AC3B'}}
                     />
                   </div>
                   <div className="ml-3 text-sm">
-                    <label htmlFor="agree-terms" className="text-gray-700">
+                    <label htmlFor="agree-terms" className="font-canva-sans" style={{color: '#36454F'}}>
                       I agree to the{' '}
-                      <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium">
+                      <a href="/terms" target="_blank" rel="noopener noreferrer" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>
                         Terms of Service
                       </a>{' '}
                       and{' '}
-                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 font-medium">
+                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>
                         Privacy Policy
                       </a>
                     </label>
@@ -819,17 +836,17 @@ Examples:
             {/* Error Message */}
             {error && (
               <div className="rounded-xl border-2 p-4 animate-fade-in-up mt-6" style={{
-                backgroundColor: 'rgba(231, 159, 116, 0.1)',
-                borderColor: 'var(--secondary-red)'
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                borderColor: '#E74C3C'
               }}>
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-red)'}}>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#E74C3C'}}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</p>
+                    <p className="text-sm font-medium font-canva-sans" style={{color: '#E74C3C'}}>{error}</p>
                   </div>
                 </div>
               </div>
@@ -843,21 +860,21 @@ Examples:
                 onClick={prevStep}
                 className="flex-1 py-3 px-4 border-2 rounded-xl shadow-sm bg-white/50 backdrop-blur-sm text-base font-medium font-canva-sans hover:bg-white/70 hover:scale-105 transition-all duration-200"
                 style={{
-                  borderColor: 'var(--secondary-taupe)',
-                  color: 'var(--secondary-charcoal)'
+                  borderColor: '#8a6b53',
+                  color: '#36454F'
                 }}
               >
                 Back
               </button>
               )}
-              
+
               <button
                 type="submit"
                 disabled={isLoading}
                 className="flex-1 group relative flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 style={{
-                  backgroundColor: 'var(--primary-orange)',
-                  
+                  backgroundColor: '#F3AC3B',
+
                 }}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -880,11 +897,11 @@ Examples:
 
         {/* Bottom text */}
         <div className="text-center">
-          <p className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+          <p className="text-sm font-canva-sans" style={{color: '#8a6b53'}}>
             By creating an account, you agree to our{' '}
-            <a href="/terms" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Terms of Service</a>
+            <a href="/terms" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>Terms of Service</a>
             {' '}and{' '}
-            <a href="/privacy" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Privacy Policy</a>
+            <a href="/privacy" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>Privacy Policy</a>
           </p>
         </div>
       </div>

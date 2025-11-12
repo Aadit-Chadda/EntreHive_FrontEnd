@@ -4,7 +4,7 @@ import CookieConsent from './components/CookieConsent';
 
 export default function Home() {
   return (
-    <div style={{background: 'var(--background)'}}>
+    <div style={{background: '#F5F5F5', minHeight: '100vh'}}>
       {/* Hero Section */}
       <section className="relative bg-white overflow-hidden hexagon-pattern">
         <div className="max-w-7xl mx-auto">
@@ -31,19 +31,19 @@ export default function Home() {
               <div className="sm:text-center lg:text-left">
                 {/* Entrepreneurial Badge */}
                 <div className="mb-6 flex sm:justify-center lg:justify-start">
-                  <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold font-canva-sans" 
-                       style={{background: 'var(--primary-orange)', color: 'white'}}>
+                  <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-semibold font-canva-sans"
+                       style={{background: '#F3AC3B', color: 'white'}}>
                     <span className="font-roca-two">Bee Entrepreneurial</span>
                   </div>
                 </div>
-                
+
                 <h1 className="text-4xl tracking-tight font-extrabold font-roca-two sm:text-5xl md:text-6xl animate-fade-in-up">
-                  <span className="block xl:inline" style={{color: 'var(--secondary-charcoal)'}}>Where Students</span>{' '}
-                  <span className="block xl:inline" style={{color: 'var(--primary-orange)'}}>Build the Future</span>
+                  <span className="block xl:inline" style={{color: '#36454F'}}>Where Students</span>{' '}
+                  <span className="block xl:inline" style={{color: '#F3AC3B'}}>Build the Future</span>
                 </h1>
                 <p className="mt-3 text-base font-canva-sans sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0 animate-fade-in-up stagger-2"
-                   style={{color: 'var(--secondary-taupe)'}}>
-                  A hive for entrepreneurs to connect. Our peer-to-peer platform brings together student entrepreneurs, 
+                   style={{color: '#8a6b53'}}>
+                  A hive for entrepreneurs to connect. Our peer-to-peer platform brings together student entrepreneurs,
                   investors, and service providers to turn ideas into reality through real-world experience and university collaboration.
                 </p>
                 <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start animate-fade-in-up stagger-3">
@@ -51,7 +51,7 @@ export default function Home() {
                     <Link
                       href="/feed"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium font-canva-sans rounded-md text-white hover:shadow-lg md:py-4 md:text-lg md:px-10 transition-all duration-300"
-                      style={{background: 'var(--accent-pine)'}}
+                      style={{background: '#214F38'}}
                     >
                       Enter the Hive
                     </Link>
@@ -61,9 +61,9 @@ export default function Home() {
                       href="/signup"
                       className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium font-canva-sans rounded-md hover:shadow-lg md:py-4 md:text-lg md:px-10 transition-all duration-300"
                       style={{
-                        color: 'var(--primary-orange)', 
-                        backgroundColor: 'var(--neutral-light-orange)',
-                        borderColor: 'var(--primary-orange)'
+                        color: '#F3AC3B',
+                        backgroundColor: '#fdeedb',
+                        borderColor: '#F3AC3B'
                       }}
                     >
                       Join the Hive
@@ -122,7 +122,7 @@ export default function Home() {
                 
                 <div className="bg-white/95 backdrop-blur-sm rounded-xl px-6 py-3 border-2 shadow-lg"
                      style={{borderColor: 'var(--primary-orange)'}}>
-                  <p className="text-lg font-semibold font-roca-two animate-fade-in-up" style={{color: 'var(--text-primary)'}}>The Entrepreneurial Hive</p>
+                  <p className="text-lg font-semibold font-roca-two animate-fade-in-up" style={{color: 'black'}}>The Entrepreneurial Hive</p>
                   <div className="mt-3 flex justify-center space-x-2">
                     <div className="w-3 h-3 rounded-full animate-ping" style={{backgroundColor: 'var(--primary-orange)', animationDelay: '0.6s'}}></div>
                     <div className="w-3 h-3 rounded-full animate-ping" style={{backgroundColor: 'var(--accent-pine)', animationDelay: '0.8s'}}></div>

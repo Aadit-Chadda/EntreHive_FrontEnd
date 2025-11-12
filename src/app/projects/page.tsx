@@ -169,13 +169,13 @@ export default function ProjectsPage() {
             transition={{ delay: 0.1 }}
             className="flex items-center space-x-2"
           >
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+            <div className="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
               <Image
-                src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
+                src="/Logoblacktransparent.png"
                 alt="EntreHive Logo"
-                width={32}
-                height={32}
-                className="w-full h-full object-contain p-0.5"
+                width={64}
+                height={64}
+                className="w-full h-full object-contain p-1"
               />
             </div>
             <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</span>

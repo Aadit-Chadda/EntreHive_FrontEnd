@@ -49,11 +49,11 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: 'var(--background)'}}>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: '#F5F5F5'}}>
       {/* Hexagonal background decoration */}
       <div className="absolute inset-0 overflow-hidden">
         {[...Array(12)].map((_, i) => (
-          <div 
+          <div
             key={i}
             className="hexagon absolute animate-hexagon-float"
             style={{
@@ -69,7 +69,7 @@ export default function Login() {
 
       <div className="relative max-w-md w-full space-y-8">
         {/* Card Container */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: 'var(--primary-orange)'}}>
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-2xl border-2 p-8 animate-fade-in-up" style={{borderColor: '#F3AC3B'}}>
           {/* Header */}
           <div className="text-center">
             <div className="mx-auto h-32 w-32 flex items-center justify-center mb-6">
@@ -81,18 +81,18 @@ export default function Login() {
                 />
               </div>
             </div>
-            <h2 className="text-3xl font-extrabold font-roca-two mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+            <h2 className="text-3xl font-extrabold font-roca-two mb-2" style={{color: '#36454F'}}>
               Welcome back to the Hive!
             </h2>
-            <p className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+            <p className="font-canva-sans" style={{color: '#8a6b53'}}>
               Sign in to continue your entrepreneurial journey
             </p>
-            <p className="mt-4 text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+            <p className="mt-4 text-sm font-canva-sans" style={{color: '#8a6b53'}}>
               Don&apos;t have an account?{' '}
               <Link
                 href="/signup"
                 className="font-semibold hover:scale-105 transition-all duration-200"
-                style={{color: 'var(--primary-orange)'}}
+                style={{color: '#F3AC3B'}}
               >
                 Create one here
               </Link>
@@ -104,12 +104,12 @@ export default function Login() {
             <div className="space-y-4">
               {/* Email Field */}
               <div className="group">
-                <label htmlFor="email-address" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                <label htmlFor="email-address" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                   Email Address
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                    <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                     </svg>
                   </div>
@@ -121,9 +121,9 @@ export default function Login() {
                     required
                     className="block w-full pl-10 pr-3 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
                     style={{
-                      borderColor: 'var(--secondary-taupe)',
-                      color: 'var(--secondary-charcoal)',
-                      
+                      borderColor: '#8a6b53',
+                      color: '#36454F',
+
                     }}
                     placeholder="Enter your email"
                     value={formData.email}
@@ -134,12 +134,12 @@ export default function Login() {
 
               {/* Password Field */}
               <div className="group">
-                <label htmlFor="password" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+                <label htmlFor="password" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                   Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                    <svg className="h-5 w-5 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                     </svg>
                   </div>
@@ -151,9 +151,9 @@ export default function Login() {
                     required
                     className="block w-full pl-10 pr-12 py-3 border-2 rounded-xl bg-white/50 backdrop-blur-sm font-canva-sans placeholder-gray-500 focus:outline-none focus:ring-2 transition-all duration-200 hover:bg-white/70"
                     style={{
-                      borderColor: 'var(--secondary-taupe)',
-                      color: 'var(--secondary-charcoal)',
-                      
+                      borderColor: '#8a6b53',
+                      color: '#36454F',
+
                     }}
                     placeholder="Enter your password"
                     value={formData.password}
@@ -165,11 +165,11 @@ export default function Login() {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                       </svg>
                     ) : (
-                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-taupe)'}}>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#8a6b53'}}>
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                       </svg>
@@ -188,17 +188,17 @@ export default function Login() {
                   type="checkbox"
                   className="h-4 w-4 rounded transition-colors duration-200"
                   style={{
-                    accentColor: 'var(--primary-orange)',
-                    borderColor: 'var(--secondary-taupe)'
+                    accentColor: '#F3AC3B',
+                    borderColor: '#8a6b53'
                   }}
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                <label htmlFor="remember-me" className="ml-2 block text-sm font-canva-sans" style={{color: '#8a6b53'}}>
                   Remember me
                 </label>
               </div>
 
               <div className="text-sm">
-                <Link href="/forgot-password" className="font-semibold font-canva-sans hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>
+                <Link href="/forgot-password" className="font-semibold font-canva-sans hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>
                   Forgot password?
                 </Link>
               </div>
@@ -207,17 +207,17 @@ export default function Login() {
             {/* Error Message */}
             {error && (
               <div className="rounded-xl border-2 p-4 animate-fade-in-up" style={{
-                backgroundColor: 'rgba(231, 159, 116, 0.1)',
-                borderColor: 'var(--secondary-red)'
+                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                borderColor: '#E74C3C'
               }}>
                 <div className="flex">
                   <div className="flex-shrink-0">
-                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--secondary-red)'}}>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#E74C3C'}}>
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                     </svg>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</p>
+                    <p className="text-sm font-medium font-canva-sans" style={{color: '#E74C3C'}}>{error}</p>
                   </div>
                 </div>
               </div>
@@ -230,8 +230,8 @@ export default function Login() {
                 disabled={isLoading}
                 className="group relative w-full flex justify-center py-3 px-4 border-2 border-transparent text-base font-medium font-canva-sans rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                 style={{
-                  backgroundColor: 'var(--primary-orange)',
-                  
+                  backgroundColor: '#F3AC3B',
+
                 }}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -254,11 +254,11 @@ export default function Login() {
 
         {/* Bottom text */}
         <div className="text-center">
-          <p className="text-sm font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+          <p className="text-sm font-canva-sans" style={{color: '#8a6b53'}}>
             By signing in, you agree to our{' '}
-            <a href="/terms" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Terms of Service</a>
+            <a href="/terms" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>Terms of Service</a>
             {' '}and{' '}
-            <a href="/privacy" className="font-medium hover:scale-105 transition-all duration-200" style={{color: 'var(--primary-orange)'}}>Privacy Policy</a>
+            <a href="/privacy" className="font-medium hover:scale-105 transition-all duration-200" style={{color: '#F3AC3B'}}>Privacy Policy</a>
           </p>
         </div>
       </div>

@@ -130,7 +130,7 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           )}
 
           {/* Add Team Member Section */}
-          <div className="rounded-lg p-6 mb-6" style={{backgroundColor: 'var(--neutral-light-orange)'}}>
+          <div className="rounded-lg p-6 mb-6" style={{backgroundColor: 'var(--background)', border: '2px solid var(--primary-orange)'}}>
             <h3 className="text-lg font-semibold mb-4 flex items-center" style={{color: 'var(--text-primary)'}}>
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -201,9 +201,9 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           </div>
 
           {/* Current Team Section */}
-          <div className="rounded-lg p-6" style={{backgroundColor: 'var(--hover-bg)'}}>
+          <div className="rounded-lg p-6" style={{backgroundColor: 'var(--background)', border: '2px solid var(--border)'}}>
             <h3 className="text-lg font-semibold mb-4 flex items-center" style={{color: 'var(--text-primary)'}}>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--text-secondary)'}}>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: 'var(--primary-orange)'}}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
               Current Team Members ({project.team_count})
@@ -295,7 +295,7 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
           </div>
 
           {/* Help Text */}
-          <div className="mt-6 p-4 rounded-lg" style={{backgroundColor: 'var(--neutral-light-orange)', border: '1px solid var(--primary-orange)/30'}}>
+          <div className="mt-6 p-4 rounded-lg" style={{backgroundColor: 'var(--background)', border: '2px solid var(--primary-orange)'}}>
             <div className="flex">
               <div className="flex-shrink-0">
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" style={{color: 'var(--primary-orange)'}}>
@@ -323,10 +323,10 @@ export default function TeamManagement({ project, onProjectUpdate, onClose }: Te
             <button
               onClick={onClose}
               className="px-6 py-3 text-white font-medium rounded-lg focus:outline-none transition-colors"
-              style={{backgroundColor: 'var(--secondary-charcoal)'}}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-taupe)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-charcoal)'}
-              onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px var(--secondary-charcoal)/20'}
+              style={{backgroundColor: '#8a6b53'}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#6d543f'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#8a6b53'}
+              onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px rgba(138, 107, 83, 0.3)'}
               onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
             >
               Close

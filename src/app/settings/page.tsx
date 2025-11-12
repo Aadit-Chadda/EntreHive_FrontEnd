@@ -137,7 +137,7 @@ export default function SettingsPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Major</label>
+                <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Major</label>
                 <input
                   type="text"
                   name="major"
@@ -146,16 +146,16 @@ export default function SettingsPage() {
                   disabled={!isEditing}
                   className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                   style={{
-                    borderColor: 'var(--secondary-taupe)',
+                    borderColor: 'var(--border)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--secondary-charcoal)',
-                    
+                    color: 'var(--text-primary)',
+
                   }}
                   placeholder="e.g., Computer Science"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Graduation Year</label>
+                <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Graduation Year</label>
                 <input
                   type="number"
                   name="graduation_year"
@@ -164,10 +164,10 @@ export default function SettingsPage() {
                   disabled={!isEditing}
                   className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                   style={{
-                    borderColor: 'var(--secondary-taupe)',
+                    borderColor: 'var(--border)',
                     backgroundColor: 'var(--surface)',
-                    color: 'var(--secondary-charcoal)',
-                    
+                    color: 'var(--text-primary)',
+
                   }}
                   placeholder="e.g., 2025"
                   min="1950"
@@ -181,7 +181,7 @@ export default function SettingsPage() {
         return (
           <>
             <div>
-              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Department</label>
+              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Department</label>
               <input
                 type="text"
                 name="department"
@@ -190,16 +190,16 @@ export default function SettingsPage() {
                 disabled={!isEditing}
                 className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                 style={{
-                  borderColor: 'var(--secondary-taupe)',
+                  borderColor: 'var(--border)',
                   backgroundColor: 'var(--surface)',
-                  color: 'var(--secondary-charcoal)',
-                  
+                  color: 'var(--text-primary)',
+
                 }}
                 placeholder="e.g., Computer Science Department"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Research Interests</label>
+              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Research Interests</label>
               <textarea
                 name="research_interests"
                 value={formData.research_interests || ''}
@@ -208,10 +208,10 @@ export default function SettingsPage() {
                 rows={3}
                 className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all resize-none"
                 style={{
-                  borderColor: 'var(--secondary-taupe)',
+                  borderColor: 'var(--border)',
                   backgroundColor: 'var(--surface)',
-                  color: 'var(--secondary-charcoal)',
-                  
+                  color: 'var(--text-primary)',
+
                 }}
                 placeholder="Describe your research interests..."
               />
@@ -222,7 +222,7 @@ export default function SettingsPage() {
         return (
           <>
             <div>
-              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Company/Fund</label>
+              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Company/Fund</label>
               <input
                 type="text"
                 name="company"
@@ -231,16 +231,16 @@ export default function SettingsPage() {
                 disabled={!isEditing}
                 className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                 style={{
-                  borderColor: 'var(--secondary-taupe)',
+                  borderColor: 'var(--border)',
                   backgroundColor: 'var(--surface)',
-                  color: 'var(--secondary-charcoal)',
-                  
+                  color: 'var(--text-primary)',
+
                 }}
                 placeholder="e.g., Silicon Valley Ventures"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Investment Focus</label>
+              <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Investment Focus</label>
               <textarea
                 name="investment_focus"
                 value={formData.investment_focus || ''}
@@ -249,10 +249,10 @@ export default function SettingsPage() {
                 rows={3}
                 className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all resize-none"
                 style={{
-                  borderColor: 'var(--secondary-taupe)',
+                  borderColor: 'var(--border)',
                   backgroundColor: 'var(--surface)',
-                  color: 'var(--secondary-charcoal)',
-                  
+                  color: 'var(--text-primary)',
+
                 }}
                 placeholder="Describe your investment focus..."
               />
@@ -293,7 +293,7 @@ export default function SettingsPage() {
               borderColor: 'var(--primary-orange)'
             }}>
               <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-extrabold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>
+                <h1 className="text-3xl font-extrabold font-roca-two" style={{color: 'var(--text-primary)'}}>
                   Profile Settings
                 </h1>
                 <button
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                 {/* Basic Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>First Name</label>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>First Name</label>
                     <input
                       type="text"
                       name="first_name"
@@ -428,15 +428,15 @@ export default function SettingsPage() {
                       disabled={!isEditing}
                       className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                       style={{
-                        borderColor: 'var(--secondary-taupe)',
+                        borderColor: 'var(--border)',
                         backgroundColor: 'var(--surface)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        color: 'var(--text-primary)',
+
                       }}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Last Name</label>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Last Name</label>
                     <input
                       type="text"
                       name="last_name"
@@ -445,10 +445,10 @@ export default function SettingsPage() {
                       disabled={!isEditing}
                       className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                       style={{
-                        borderColor: 'var(--secondary-taupe)',
+                        borderColor: 'var(--border)',
                         backgroundColor: 'var(--surface)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        color: 'var(--text-primary)',
+
                       }}
                     />
                   </div>
@@ -456,7 +456,7 @@ export default function SettingsPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Role</label>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Role</label>
                     <select
                       name="user_role"
                       value={formData.user_role}
@@ -464,10 +464,10 @@ export default function SettingsPage() {
                       disabled={!isEditing}
                       className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                       style={{
-                        borderColor: 'var(--secondary-taupe)',
+                        borderColor: 'var(--border)',
                         backgroundColor: 'var(--surface)',
-                        color: 'var(--secondary-charcoal)',
-                        
+                        color: 'var(--text-primary)',
+
                       }}
                     >
                       <option value="student">Student</option>
@@ -476,16 +476,16 @@ export default function SettingsPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>University</label>
+                    <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>University</label>
                     <input
                       type="text"
                       value={profile?.university_name || 'No university set'}
                       disabled
                       className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans cursor-not-allowed opacity-60"
                       style={{
-                        borderColor: 'var(--secondary-taupe)',
+                        borderColor: 'var(--border)',
                         backgroundColor: 'var(--surface)',
-                        color: 'var(--secondary-charcoal)'
+                        color: 'var(--text-primary)'
                       }}
                     />
                     <p className="text-xs font-canva-sans mt-1" style={{color: 'var(--text-muted)'}}>
@@ -495,7 +495,7 @@ export default function SettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Location</label>
+                  <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Location</label>
                   <input
                     type="text"
                     name="location"
@@ -504,17 +504,17 @@ export default function SettingsPage() {
                     disabled={!isEditing}
                     className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                     style={{
-                      borderColor: 'var(--secondary-taupe)',
+                      borderColor: 'var(--border)',
                       backgroundColor: 'var(--surface)',
-                      color: 'var(--secondary-charcoal)',
-                      
+                      color: 'var(--text-primary)',
+
                     }}
                     placeholder="e.g., San Francisco, CA"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Bio</label>
+                  <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Bio</label>
                   <textarea
                     name="bio"
                     value={formData.bio || ''}
@@ -523,10 +523,10 @@ export default function SettingsPage() {
                     rows={4}
                     className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all resize-none"
                     style={{
-                      borderColor: 'var(--secondary-taupe)',
+                      borderColor: 'var(--border)',
                       backgroundColor: 'var(--surface)',
-                      color: 'var(--secondary-charcoal)',
-                      
+                      color: 'var(--text-primary)',
+
                     }}
                     placeholder="Tell us about yourself..."
                   />
@@ -537,10 +537,10 @@ export default function SettingsPage() {
 
                 {/* Social Links */}
                 <div className="border-t-2 pt-6" style={{borderColor: 'var(--border)'}}>
-                  <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--secondary-charcoal)'}}>Social Links</h3>
+                  <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>Social Links</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>LinkedIn</label>
+                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>LinkedIn</label>
                       <input
                         type="url"
                         name="linkedin_url"
@@ -549,16 +549,16 @@ export default function SettingsPage() {
                         disabled={!isEditing}
                         className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                         style={{
-                          borderColor: 'var(--secondary-taupe)',
+                          borderColor: 'var(--border)',
                           backgroundColor: 'var(--surface)',
-                          color: 'var(--secondary-charcoal)',
-                          
+                          color: 'var(--text-primary)',
+
                         }}
                         placeholder="https://linkedin.com/in/yourname"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>Website</label>
+                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Website</label>
                       <input
                         type="url"
                         name="website_url"
@@ -567,16 +567,16 @@ export default function SettingsPage() {
                         disabled={!isEditing}
                         className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                         style={{
-                          borderColor: 'var(--secondary-taupe)',
+                          borderColor: 'var(--border)',
                           backgroundColor: 'var(--surface)',
-                          color: 'var(--secondary-charcoal)',
-                          
+                          color: 'var(--text-primary)',
+
                         }}
                         placeholder="https://yourwebsite.com"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>GitHub</label>
+                      <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>GitHub</label>
                       <input
                         type="url"
                         name="github_url"
@@ -585,10 +585,10 @@ export default function SettingsPage() {
                         disabled={!isEditing}
                         className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all"
                         style={{
-                          borderColor: 'var(--secondary-taupe)',
+                          borderColor: 'var(--border)',
                           backgroundColor: 'var(--surface)',
-                          color: 'var(--secondary-charcoal)',
-                          
+                          color: 'var(--text-primary)',
+
                         }}
                         placeholder="https://github.com/yourusername"
                       />
@@ -598,7 +598,7 @@ export default function SettingsPage() {
 
                 {/* Privacy Settings */}
                 <div className="border-t-2 pt-6" style={{borderColor: 'var(--border)'}}>
-                  <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--secondary-charcoal)'}}>Privacy Settings</h3>
+                  <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>Privacy Settings</h3>
                   <div className="space-y-4">
                     <label className="flex items-center space-x-3 cursor-pointer">
                       <input
@@ -612,7 +612,7 @@ export default function SettingsPage() {
                           accentColor: 'var(--primary-orange)'
                         }}
                       />
-                      <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>Make my profile visible to other users</span>
+                      <span className="text-sm font-canva-sans" style={{color: 'var(--text-primary)'}}>Make my profile visible to other users</span>
                     </label>
                     <label className="flex items-center space-x-3 cursor-pointer">
                       <input
@@ -626,7 +626,7 @@ export default function SettingsPage() {
                           accentColor: 'var(--primary-orange)'
                         }}
                       />
-                      <span className="text-sm font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>Show my email address to other users</span>
+                      <span className="text-sm font-canva-sans" style={{color: 'var(--text-primary)'}}>Show my email address to other users</span>
                     </label>
                   </div>
                 </div>
@@ -643,7 +643,7 @@ export default function SettingsPage() {
                       }}
                       className="px-6 py-3 rounded-xl font-medium font-canva-sans transition-all hover:scale-105 shadow-md"
                       style={{
-                        backgroundColor: 'var(--secondary-taupe)',
+                        backgroundColor: '#8a6b53',
                         color: 'white'
                       }}
                     >
@@ -666,7 +666,7 @@ export default function SettingsPage() {
 
               {/* Account Information */}
               <div className="mt-8 pt-6 border-t-2" style={{borderColor: 'var(--border)'}}>
-                <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--secondary-charcoal)'}}>Account Information</h3>
+                <h3 className="text-lg font-semibold font-roca-two mb-4" style={{color: 'var(--text-primary)'}}>Account Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
                   <div>
                     <span className="font-medium">Username:</span> {profile.username}
@@ -773,7 +773,7 @@ function ChangePasswordSection() {
       <div className="mb-6 flex items-center space-x-3">
         <Lock className="w-6 h-6" style={{color: 'var(--primary-orange)'}} />
         <div>
-          <h2 className="text-2xl font-extrabold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Security Settings</h2>
+          <h2 className="text-2xl font-extrabold font-roca-two" style={{color: 'var(--text-primary)'}}>Security Settings</h2>
           <p className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>Change your password to keep your account secure</p>
         </div>
       </div>
@@ -787,7 +787,7 @@ function ChangePasswordSection() {
           <p className="font-canva-sans font-medium" style={{color: 'var(--secondary-red)'}}>{error}</p>
         </div>
       )}
-      
+
       {success && (
         <div className="mb-6 p-4 rounded-xl border-2 animate-fade-in-up" style={{
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -800,7 +800,7 @@ function ChangePasswordSection() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Current Password */}
         <div>
-          <label htmlFor="oldPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+          <label htmlFor="oldPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>
             Current Password
           </label>
           <div className="relative">
@@ -813,10 +813,10 @@ function ChangePasswordSection() {
                 fieldErrors.oldPassword || fieldErrors.old_password ? 'border-red-300' : ''
               }`}
               style={{
-                borderColor: fieldErrors.oldPassword || fieldErrors.old_password ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                borderColor: fieldErrors.oldPassword || fieldErrors.old_password ? 'var(--secondary-red)' : 'var(--border)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--secondary-charcoal)',
-                
+                color: 'var(--text-primary)',
+
               }}
               placeholder="Enter your current password"
               value={formData.oldPassword}
@@ -828,9 +828,9 @@ function ChangePasswordSection() {
               onClick={() => setShowOldPassword(!showOldPassword)}
             >
               {showOldPassword ? (
-                <EyeOff className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <EyeOff className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               ) : (
-                <Eye className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <Eye className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               )}
             </button>
           </div>
@@ -841,7 +841,7 @@ function ChangePasswordSection() {
 
         {/* New Password */}
         <div>
-          <label htmlFor="newPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+          <label htmlFor="newPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>
             New Password
           </label>
           <div className="relative">
@@ -854,10 +854,10 @@ function ChangePasswordSection() {
                 fieldErrors.newPassword || fieldErrors.new_password1 ? 'border-red-300' : ''
               }`}
               style={{
-                borderColor: fieldErrors.newPassword || fieldErrors.new_password1 ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                borderColor: fieldErrors.newPassword || fieldErrors.new_password1 ? 'var(--secondary-red)' : 'var(--border)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--secondary-charcoal)',
-                
+                color: 'var(--text-primary)',
+
               }}
               placeholder="Enter your new password"
               value={formData.newPassword}
@@ -869,9 +869,9 @@ function ChangePasswordSection() {
               onClick={() => setShowNewPassword(!showNewPassword)}
             >
               {showNewPassword ? (
-                <EyeOff className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <EyeOff className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               ) : (
-                <Eye className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <Eye className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               )}
             </button>
           </div>
@@ -883,7 +883,7 @@ function ChangePasswordSection() {
 
         {/* Confirm New Password */}
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--secondary-charcoal)'}}>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>
             Confirm New Password
           </label>
           <div className="relative">
@@ -896,10 +896,10 @@ function ChangePasswordSection() {
                 fieldErrors.confirmPassword || fieldErrors.new_password2 ? 'border-red-300' : ''
               }`}
               style={{
-                borderColor: fieldErrors.confirmPassword || fieldErrors.new_password2 ? 'var(--secondary-red)' : 'var(--secondary-taupe)',
+                borderColor: fieldErrors.confirmPassword || fieldErrors.new_password2 ? 'var(--secondary-red)' : 'var(--border)',
                 backgroundColor: 'var(--surface)',
-                color: 'var(--secondary-charcoal)',
-                
+                color: 'var(--text-primary)',
+
               }}
               placeholder="Confirm your new password"
               value={formData.confirmPassword}
@@ -911,9 +911,9 @@ function ChangePasswordSection() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? (
-                <EyeOff className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <EyeOff className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               ) : (
-                <Eye className="h-5 w-5" style={{color: 'var(--secondary-taupe)'}} />
+                <Eye className="h-5 w-5" style={{color: 'var(--text-secondary)'}} />
               )}
             </button>
           </div>

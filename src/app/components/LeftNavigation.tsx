@@ -44,12 +44,12 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 px-6 py-4 relative z-10" style={{borderBottom: '1px solid var(--border)'}}>
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                 <Image
-                  src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
+                  src="/Logoblacktransparent.png"
                   alt="EntreHive Logo"
-                  width={48}
-                  height={48}
+                  width={64}
+                  height={64}
                   className="w-full h-full object-contain p-1"
                 />
               </div>
@@ -184,7 +184,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
                 <Image
-                  src={resolvedTheme === 'dark' ? "/Logoblacktransparent.png" : "/LogoWhitetransparent.png"}
+                  src="/Logoblacktransparent.png"
                   alt="EntreHive Logo"
                   width={40}
                   height={40}

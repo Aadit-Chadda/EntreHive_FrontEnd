@@ -1643,13 +1643,10 @@ function ProfileBannerEditor({
                         ? 'border-[var(--primary-orange)] ring-2 ring-[var(--primary-orange)]/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                     }`}
+                    style={{ background: gradient.gradient }}
                   >
-                    <div
-                      className="w-full h-full"
-                      style={{ background: gradient.gradient }}
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-20 flex items-end p-2">
-                      <span className="text-white text-xs font-medium">{gradient.name}</span>
+                    <div className="absolute inset-0 flex items-end p-2">
+                      <span className="text-white text-xs font-medium drop-shadow-lg">{gradient.name}</span>
                     </div>
                   </button>
                 ))}

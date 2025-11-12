@@ -132,14 +132,15 @@ export default function FeedTabs() {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -30 }}
-        transition={{ 
+        transition={{
           duration: 0.5,
           ease: [0.25, 0.46, 0.45, 0.94]
         }}
       >
-        <CuratedFeed 
+        <CuratedFeed
           feedType={activeTab}
           showComposer={activeTab === 'home'}
+          showCreateProjectCard={activeTab === 'home'}
         />
       </motion.div>
     </div>

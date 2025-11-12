@@ -561,7 +561,6 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                     <div className="space-y-1">
                       <p><strong>Private:</strong> Only visible to you and your team members</p>
                       <p><strong>University Only:</strong> Visible to students and faculty from your university</p>
-                      <p><strong>Cross University:</strong> Visible to all verified students and faculty</p>
                       <p><strong>Public:</strong> Visible to everyone on the platform</p>
                     </div>
                   </div>

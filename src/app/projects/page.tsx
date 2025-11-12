@@ -25,6 +25,16 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Check for create query parameter and auto-open form
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('create') === 'true') {
+      setShowCreateForm(true);
+      // Remove the query parameter from URL without refreshing
+      window.history.replaceState({}, '', '/projects');
+    }
+  }, []);
+
   // Load projects from API
   useEffect(() => {
     loadProjects();

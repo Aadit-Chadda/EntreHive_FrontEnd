@@ -1,24 +1,29 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, RefreshCw, AlertCircle, Settings, TrendingUp, Home, University, Globe } from 'lucide-react';
 import Image from 'next/image';
 import PostComposerNew from './PostComposerNew';
 import PostCardNew from './PostCardNew';
 import ProjectCard from './ProjectCard';
+import CreateProjectCard from './CreateProjectCard';
 import { FeedItem, FeedResponse, PostData, ProjectData } from '@/types';
 import { feedApi } from '@/lib/api';
 
 interface CuratedFeedProps {
   feedType?: 'home' | 'university' | 'public';
   showComposer?: boolean;
+  showCreateProjectCard?: boolean;
 }
 
-export default function CuratedFeed({ 
-  feedType = 'home', 
-  showComposer = true 
+export default function CuratedFeed({
+  feedType = 'home',
+  showComposer = true,
+  showCreateProjectCard = true
 }: CuratedFeedProps) {
+  const router = useRouter();
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -289,11 +294,23 @@ export default function CuratedFeed({
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <PostComposerNew 
+          <PostComposerNew
             onPostCreated={handlePostCreated}
             placeholder="What's happening in your projects?"
             compact={true}
           />
+        </motion.div>
+      )}
+
+      {/* Create Project Card */}
+      {showCreateProjectCard && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-8"
+        >
+          <CreateProjectCard onClick={() => router.push('/projects?create=true')} />
         </motion.div>
       )}
 

@@ -20,6 +20,10 @@ export interface NotificationsResponse {
   notifications: Notification[];
   unread_count: number;
   total_count: number;
+  next?: string | null;
+  previous?: string | null;
+  count?: number;
+  results?: Notification[];
 }
 
 export interface FollowSuggestion {
@@ -39,6 +43,18 @@ export interface FollowSuggestionsResponse {
   count: number;
 }
 
+export interface NotificationPreferences {
+  id?: string;
+  user?: string;
+  follow_enabled: boolean;
+  like_enabled: boolean;
+  comment_enabled: boolean;
+  mention_enabled: boolean;
+  message_enabled: boolean;
+  project_invite_enabled: boolean;
+  project_join_enabled: boolean;
+}
+
 export class NotificationService {
   /**
    * Get notifications for the current user
@@ -46,6 +62,8 @@ export class NotificationService {
   static async getNotifications(params?: {
     is_read?: boolean;
     limit?: number;
+    page?: number;
+    page_size?: number;
   }): Promise<NotificationsResponse> {
     const queryParams = new URLSearchParams();
     if (params?.is_read !== undefined) {
@@ -54,9 +72,29 @@ export class NotificationService {
     if (params?.limit) {
       queryParams.append('limit', params.limit.toString());
     }
-    
+    if (params?.page) {
+      queryParams.append('page', params.page.toString());
+    }
+    if (params?.page_size) {
+      queryParams.append('page_size', params.page_size.toString());
+    }
+
     const url = `/api/notifications/?${queryParams.toString()}`;
-    return api.get<NotificationsResponse>(url);
+    const response = await api.get<NotificationsResponse>(url);
+
+    // Handle paginated response format
+    if (response.results) {
+      return {
+        notifications: response.results,
+        unread_count: response.unread_count || 0,
+        total_count: response.total_count || response.count || 0,
+        next: response.next,
+        previous: response.previous,
+        count: response.count,
+      };
+    }
+
+    return response;
   }
 
   /**
@@ -100,6 +138,20 @@ export class NotificationService {
    */
   static async getFollowSuggestions(limit: number = 5): Promise<FollowSuggestionsResponse> {
     return api.get<FollowSuggestionsResponse>(`/api/notifications/follow-suggestions/?limit=${limit}`);
+  }
+
+  /**
+   * Get notification preferences
+   */
+  static async getPreferences(): Promise<NotificationPreferences> {
+    return api.get<NotificationPreferences>('/api/notifications/preferences/');
+  }
+
+  /**
+   * Update notification preferences
+   */
+  static async updatePreferences(preferences: Partial<NotificationPreferences>): Promise<NotificationPreferences> {
+    return api.patch<NotificationPreferences>('/api/notifications/preferences/', preferences);
   }
 }
 

@@ -4,9 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/contexts/ToastContext';
 import { NotificationService, Notification, FollowSuggestion } from '@/lib/notifications';
 import { AuthService } from '@/lib/auth';
-import { Bell, Users, LogOut, Clock, Calendar, X, Check, User, KeyRound, ChevronDown } from 'lucide-react';
+import { Bell, Users, LogOut, Clock, Calendar, X, Check, User, Settings, ChevronDown, ExternalLink } from 'lucide-react';
 
 interface RightSidebarProps {
   className?: string;
@@ -15,6 +16,7 @@ interface RightSidebarProps {
 export default function RightSidebar({ className = '' }: RightSidebarProps) {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -39,11 +41,11 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
     const fetchNotifications = async () => {
       setLoadingNotifications(true);
       try {
-        const response = await NotificationService.getNotifications({ limit: 10 });
+        const response = await NotificationService.getNotifications({ limit: 5 });
         setNotifications(response.notifications);
         setUnreadCount(response.unread_count);
       } catch (error) {
-        console.error('Failed to fetch notifications:', error);
+        showToast('Failed to load notifications', 'error');
       } finally {
         setLoadingNotifications(false);
       }
@@ -62,7 +64,7 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
         const response = await NotificationService.getFollowSuggestions(5);
         setFollowSuggestions(response.suggestions);
       } catch (error) {
-        console.error('Failed to fetch follow suggestions:', error);
+        showToast('Failed to load follow suggestions', 'error');
       } finally {
         setLoadingSuggestions(false);
       }
@@ -96,9 +98,9 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
     router.push('/profile');
   };
 
-  const handleResetPasswordClick = () => {
+  const handleSettingsClick = () => {
     setIsDropdownOpen(false);
-    router.push('/settings#security');
+    router.push('/settings');
   };
 
   const handleNotificationClick = async (notification: Notification) => {
@@ -110,7 +112,7 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
       } catch (error) {
-        console.error('Failed to mark notification as read:', error);
+        showToast('Failed to mark notification as read', 'error');
       }
     }
 
@@ -124,8 +126,9 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
       await NotificationService.markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
       setUnreadCount(0);
+      showToast('All notifications marked as read', 'success');
     } catch (error) {
-      console.error('Failed to mark all as read:', error);
+      showToast('Failed to mark all as read', 'error');
     }
   };
 
@@ -135,8 +138,9 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
       await AuthService.followUser(username);
       // Remove from suggestions after following
       setFollowSuggestions(prev => prev.filter(s => s.username !== username));
+      showToast(`Now following ${username}`, 'success');
     } catch (error) {
-      console.error('Failed to follow user:', error);
+      showToast('Failed to follow user', 'error');
       setFollowingUsers(prev => {
         const newSet = new Set(prev);
         newSet.delete(username);
@@ -245,7 +249,7 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
                 </button>
 
                 <button
-                  onClick={handleResetPasswordClick}
+                  onClick={handleSettingsClick}
                   className="w-full px-4 py-3 flex items-center space-x-3 transition-colors hover:bg-opacity-80"
                   style={{
                     backgroundColor: 'transparent',
@@ -254,8 +258,8 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--hover-bg)')}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
-                  <KeyRound className="w-4 h-4" style={{ color: 'var(--primary-orange)' }} />
-                  <span className="font-medium">Change Password</span>
+                  <Settings className="w-4 h-4" style={{ color: 'var(--primary-orange)' }} />
+                  <span className="font-medium">Settings</span>
                 </button>
 
                 <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
@@ -372,6 +376,23 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
               ))
             )}
           </div>
+
+          {notifications.length > 0 && (
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => router.push('/notifications')}
+              className="w-full mt-4 px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+              style={{
+                backgroundColor: 'var(--background)',
+                color: 'var(--primary-orange)',
+                border: '1px solid var(--border)'
+              }}
+            >
+              <span className="text-sm font-medium">View All Notifications</span>
+              <ExternalLink className="w-4 h-4" />
+            </motion.button>
+          )}
         </div>
 
         {/* Follow Suggestions Section */}

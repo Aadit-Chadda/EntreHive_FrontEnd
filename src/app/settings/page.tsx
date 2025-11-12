@@ -7,7 +7,9 @@ import { ProfileUpdateData, UserRole } from '@/types';
 import { ApiError } from '@/lib/api';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '@/app/components/LeftNavigation';
-import { Camera, X, Eye, EyeOff, Lock } from 'lucide-react';
+import { Camera, X, Eye, EyeOff, Lock, Bell, Mail, MessageSquare, Heart, Users, FileText, Briefcase, UserPlus } from 'lucide-react';
+import { NotificationService, NotificationPreferences } from '@/lib/notifications';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function SettingsPage() {
   const { user, profile, updateProfile } = useAuth();
@@ -683,6 +685,11 @@ export default function SettingsPage() {
             <div id="security">
               <ChangePasswordSection />
             </div>
+
+            {/* Notification Preferences */}
+            <div id="notifications">
+              <NotificationPreferencesSection />
+            </div>
           </div>
         </div>
       </div>
@@ -930,6 +937,216 @@ function ChangePasswordSection() {
           </button>
         </div>
       </form>
+    </div>
+  );
+}
+
+function NotificationPreferencesSection() {
+  const { showToast } = useToast();
+  const [preferences, setPreferences] = useState<NotificationPreferences | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchPreferences();
+  }, []);
+
+  const fetchPreferences = async () => {
+    try {
+      setIsFetching(true);
+      const prefs = await NotificationService.getPreferences();
+      setPreferences(prefs);
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || 'Failed to load preferences');
+      showToast('Failed to load notification preferences', 'error');
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleChange = (field: keyof NotificationPreferences, value: boolean | string) => {
+    if (preferences) {
+      setPreferences({ ...preferences, [field]: value });
+    }
+  };
+
+  const handleSave = async () => {
+    if (!preferences) return;
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const updated = await NotificationService.updatePreferences(preferences);
+      setPreferences(updated);
+      setIsEditing(false);
+      showToast('Notification preferences saved successfully!', 'success');
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.message || 'Failed to update preferences');
+      showToast('Failed to save preferences', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    fetchPreferences(); // Reset to saved values
+    setError('');
+  };
+
+  if (isFetching) {
+    return (
+      <div className="rounded-2xl shadow-lg border-2 p-8 animate-fade-in-up" style={{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--primary-orange)'
+      }}>
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin w-12 h-12 border-4 rounded-full" style={{
+            borderColor: 'var(--neutral-light-orange)',
+            borderTopColor: 'var(--primary-orange)'
+          }}></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!preferences) {
+    return (
+      <div className="rounded-2xl shadow-lg border-2 p-8 animate-fade-in-up" style={{
+        backgroundColor: 'var(--surface)',
+        borderColor: 'var(--primary-orange)'
+      }}>
+        <p className="text-center font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>
+          Unable to load notification preferences
+        </p>
+      </div>
+    );
+  }
+
+  const notificationTypes = [
+    { key: 'follow', label: 'Follows', description: 'When someone follows you', icon: Users },
+    { key: 'like', label: 'Likes', description: 'When someone likes your post', icon: Heart },
+    { key: 'comment', label: 'Comments', description: 'When someone comments on your post', icon: MessageSquare },
+    { key: 'mention', label: 'Mentions', description: 'When someone mentions you in a post or comment', icon: FileText },
+    { key: 'message', label: 'Messages', description: 'When you receive a new message', icon: Mail },
+    { key: 'project_invite', label: 'Project Invitations', description: 'When someone invites you to a project', icon: Briefcase },
+    { key: 'project_join', label: 'Project Join Requests', description: 'When someone requests to join your project', icon: UserPlus },
+  ];
+
+  return (
+    <div className="rounded-2xl shadow-lg border-2 p-8 animate-fade-in-up" style={{
+      backgroundColor: 'var(--surface)',
+      borderColor: 'var(--primary-orange)'
+    }}>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center space-x-3">
+          <Bell className="w-6 h-6" style={{color: 'var(--primary-orange)'}} />
+          <div>
+            <h2 className="text-2xl font-extrabold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>
+              Notification Preferences
+            </h2>
+            <p className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
+              Choose which notifications you want to see in the app
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            if (isEditing) {
+              handleCancel();
+            } else {
+              setIsEditing(true);
+            }
+          }}
+          disabled={isLoading}
+          className="px-6 py-2 rounded-xl font-medium font-canva-sans transition-all duration-200 hover:scale-105 shadow-md disabled:opacity-50"
+          style={{
+            backgroundColor: isEditing ? 'var(--secondary-taupe)' : 'var(--primary-orange)',
+            color: 'white'
+          }}
+        >
+          {isEditing ? 'Cancel' : 'Edit Preferences'}
+        </button>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 rounded-xl border-2 animate-fade-in-up" style={{
+          backgroundColor: 'rgba(231, 76, 60, 0.1)',
+          borderColor: 'var(--secondary-red)'
+        }}>
+          <p className="font-canva-sans font-medium" style={{color: 'var(--secondary-red)'}}>{error}</p>
+        </div>
+      )}
+
+      {/* Notification Types */}
+      <div className="space-y-3">
+        {notificationTypes.map((type) => {
+          const Icon = type.icon;
+          const enabledKey = `${type.key}_enabled` as keyof NotificationPreferences;
+
+          return (
+            <label key={type.key} className="flex items-start space-x-3 cursor-pointer p-4 rounded-xl border-2 hover:shadow-md transition-all" style={{
+              backgroundColor: isEditing ? 'var(--background)' : 'var(--surface)',
+              borderColor: preferences[enabledKey] ? 'var(--primary-orange)' : 'var(--border)'
+            }}>
+              <input
+                type="checkbox"
+                checked={preferences[enabledKey] as boolean}
+                onChange={(e) => handleChange(enabledKey, e.target.checked)}
+                disabled={!isEditing}
+                className="w-5 h-5 rounded transition-colors disabled:opacity-50 mt-0.5"
+                style={{accentColor: 'var(--primary-orange)'}}
+              />
+              <div className="flex-1">
+                <div className="flex items-center space-x-2">
+                  <Icon className="w-5 h-5" style={{color: 'var(--primary-orange)'}} />
+                  <span className="text-base font-semibold font-canva-sans" style={{color: 'var(--secondary-charcoal)'}}>
+                    {type.label}
+                  </span>
+                </div>
+                <p className="text-sm font-canva-sans mt-1" style={{color: 'var(--text-muted)'}}>
+                  {type.description}
+                </p>
+              </div>
+            </label>
+          );
+        })}
+      </div>
+
+      {/* Save Button */}
+      {isEditing && (
+        <div className="flex justify-end space-x-4 pt-6 mt-6 border-t-2" style={{borderColor: 'var(--border)'}}>
+          <button
+            type="button"
+            onClick={handleCancel}
+            disabled={isLoading}
+            className="px-6 py-3 rounded-xl font-medium font-canva-sans transition-all hover:scale-105 disabled:opacity-50 shadow-md"
+            style={{
+              backgroundColor: 'var(--secondary-taupe)',
+              color: 'white'
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isLoading}
+            className="px-6 py-3 rounded-xl font-medium font-canva-sans transition-all hover:scale-105 disabled:opacity-50 shadow-md"
+            style={{
+              backgroundColor: 'var(--primary-orange)',
+              color: 'white'
+            }}
+          >
+            {isLoading ? 'Saving...' : 'Save Preferences'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

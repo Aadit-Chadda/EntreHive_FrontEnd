@@ -657,8 +657,121 @@ export default function ProjectDetailsPage() {
                         )}
                       </motion.div>
 
+                      {/* Approval Status Cards */}
+                      {project.approval_status === 'pending' && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                          className="rounded-2xl shadow-sm border p-6"
+                          style={{
+                            backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                            borderColor: 'rgba(245, 158, 11, 0.3)',
+                            borderLeftWidth: '4px',
+                            borderLeftColor: '#f59e0b'
+                          }}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div
+                              className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: 'rgba(245, 158, 11, 0.15)' }}
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                style={{ color: '#f59e0b' }}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h3
+                                className="text-lg font-semibold mb-1"
+                                style={{ color: '#d97706' }}
+                              >
+                                Project Under Review
+                              </h3>
+                              <p style={{ color: 'var(--text-secondary)' }}>
+                                This project is currently being reviewed by our moderation team. It will be visible to others once approved.
+                              </p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {project.approval_status === 'rejected' && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                          className="rounded-2xl shadow-sm border p-6"
+                          style={{
+                            backgroundColor: 'rgba(119, 11, 11, 0.08)',
+                            borderColor: 'rgba(119, 11, 11, 0.3)',
+                            borderLeftWidth: '4px',
+                            borderLeftColor: 'var(--secondary-red)'
+                          }}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div
+                              className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: 'rgba(119, 11, 11, 0.15)' }}
+                            >
+                              <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                style={{ color: 'var(--secondary-red)' }}
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                                />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <h3
+                                className="text-lg font-semibold mb-1"
+                                style={{ color: 'var(--secondary-red)' }}
+                              >
+                                Project Rejected
+                              </h3>
+                              <p className="mb-2" style={{ color: 'var(--text-secondary)' }}>
+                                This project has been rejected by our moderation team. Please review the reason below and make necessary changes before resubmitting.
+                              </p>
+                              {project.rejection_reason && (
+                                <div
+                                  className="mt-3 p-4 rounded-lg"
+                                  style={{
+                                    backgroundColor: 'rgba(119, 11, 11, 0.05)',
+                                    borderLeft: '3px solid var(--secondary-red)'
+                                  }}
+                                >
+                                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--secondary-red)' }}>
+                                    Rejection Reason:
+                                  </p>
+                                  <p className="text-sm whitespace-pre-wrap" style={{ color: 'var(--text-secondary)' }}>
+                                    {project.rejection_reason}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+
                       {/* Content Grid */}
-                      <motion.div 
+                      <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.3 }}

@@ -57,7 +57,6 @@ export default function InboxPage() {
   useEffect(() => {
     const handleMessagesRead = () => {
       if (user) {
-        console.log('Messages marked as read, reloading inbox...');
         loadData();
       }
     };
@@ -74,7 +73,6 @@ export default function InboxPage() {
     try {
       setLoading(true);
       setError(null);
-      console.log('Loading inbox data for tab:', activeTab);
 
       // Load stats
       const statsData = await apiService.getInboxStats();
@@ -86,17 +84,13 @@ export default function InboxPage() {
           apiService.getConversations({ status: 'active' }),
           apiService.getGroupConversations()
         ]);
-        console.log('Loaded conversations:', convData.length);
-        console.log('Loaded group conversations:', groupData.length);
         setConversations(convData);
         setGroupConversations(groupData);
       } else if (activeTab === 'requests') {
         const reqData = await apiService.getProjectViewRequests({ filter: 'received', status: 'pending' });
-        console.log('Loaded received requests:', reqData.length);
         setProjectRequests(reqData);
       } else if (activeTab === 'sent') {
         const sentData = await apiService.getProjectViewRequests({ filter: 'sent' });
-        console.log('Loaded sent requests:', sentData.length);
         setSentRequests(sentData);
       }
     } catch (err) {

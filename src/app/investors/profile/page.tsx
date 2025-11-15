@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ThemeToggle } from '../../components/ThemeProvider';
 import VerificationWarningBanner from '../../components/VerificationWarningBanner';
+import { apiClient, ApiError } from '@/lib/api';
 
 export default function InvestorProfile() {
   const { user, profile, refreshProfile } = useAuth();
@@ -23,30 +24,13 @@ export default function InvestorProfile() {
     setIsResendingVerification(true);
 
     try {
-      const token = localStorage.getItem('access_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await fetch(
-        `${apiUrl}/api/accounts/resend-verification/`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const data = await response.json();
-        alert(data.error || 'Failed to send verification email');
-        return;
-      }
-
-      const data = await response.json();
+      // Use apiClient which automatically sends httpOnly cookies
+      await apiClient.post<{ message: string }>('/api/accounts/resend-verification/', {});
       alert('Verification email sent! Please check your inbox.');
       await refreshProfile(); // Refresh to update verification_sent_at
     } catch (err) {
-      alert('An error occurred while sending verification email');
+      const apiError = err as ApiError;
+      alert(apiError.details?.error || 'An error occurred while sending verification email');
       console.error('Resend verification error:', err);
     } finally {
       setIsResendingVerification(false);
@@ -85,21 +69,8 @@ export default function InvestorProfile() {
   const handleSaveInterests = async () => {
     setSavingInterests(true);
     try {
-      const token = localStorage.getItem('access_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/api/feed/investor/interests/`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ interests: selectedInterests }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update interests');
-      }
-
+      // Use apiClient which automatically sends httpOnly cookies
+      await apiClient.put('/api/feed/investor/interests/', { interests: selectedInterests });
       await refreshProfile();
       setEditingInterests(false);
       alert('Interests updated successfully!');

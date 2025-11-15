@@ -218,6 +218,29 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
               </div>
             )}
 
+            {/* Approval Notice */}
+            <div className="mb-6 p-4 rounded-lg border-2" style={{
+              backgroundColor: 'rgba(243, 172, 59, 0.1)',
+              borderColor: 'var(--primary-orange)'
+            }}>
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 mt-0.5" style={{color: 'var(--primary-orange)'}} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3 flex-1">
+                  <h4 className="text-sm font-semibold font-canva-sans mb-1" style={{color: 'var(--text-primary)'}}>
+                    Project Review Required
+                  </h4>
+                  <p className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
+                    Your project will be submitted for admin review before it becomes visible to others. You&apos;ll see a &quot;Pending Review&quot; status until it&apos;s approved.
+                    Approved projects will be visible according to your visibility settings, while rejected projects will remain visible only to you.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information */}
               <div className="bg-gray-50 rounded-lg p-6">

@@ -12,7 +12,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
-import { ApiError } from '@/lib/api';
+import { ApiError, apiClient } from '@/lib/api';
 import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT, PROFILE_BANNER_GRADIENTS } from '@/lib/profileBranding';
 import type { ProfileBannerStyle } from '@/lib/profileBranding';
@@ -217,30 +217,16 @@ export default function ProfilePage() {
     setSuccess('');
 
     try {
-      const token = localStorage.getItem('access_token');
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const response = await fetch(
-        `${apiUrl}/api/accounts/resend-verification/`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const data = await response.json();
-        setError(data.error || 'Failed to send verification email');
-        return;
-      }
-
-      const data = await response.json();
+      // Use apiClient which automatically sends httpOnly cookies
+      const data = await apiClient.post<{ message: string }>('/api/accounts/resend-verification/', {});
       setSuccess('Verification email sent! Please check your inbox.');
       await refreshProfile(); // Refresh to update verification_sent_at
     } catch (err) {
-      setError('An error occurred while sending verification email');
+      const apiError = err as ApiError;
+      const errorMessage = apiError.details?.error
+        ? (Array.isArray(apiError.details.error) ? apiError.details.error[0] : apiError.details.error)
+        : 'An error occurred while sending verification email';
+      setError(errorMessage);
       console.error('Resend verification error:', err);
     } finally {
       setIsResendingVerification(false);

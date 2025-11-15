@@ -36,24 +36,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const isAuthenticated = !!user && !!localStorage.getItem('access_token');
+  // With httpOnly cookies, we can't check localStorage
+  // Authentication is determined by whether we have user data
+  const isAuthenticated = !!user;
 
   useEffect(() => {
-    checkAuthStatus();
+    // Skip auth check on public pages to prevent reload loops
+    const publicPages = ['/login', '/signup', '/forgot-password', '/', '/about', '/services'];
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+
+    // Only check auth if not on a public page
+    if (!publicPages.includes(currentPath)) {
+      checkAuthStatus();
+    } else {
+      // On public pages, just set loading to false
+      setIsLoading(false);
+    }
   }, []);
 
   const checkAuthStatus = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      if (!token) {
-        setIsLoading(false);
-        return;
-      }
-
-      // Get user profile to verify token and get user data
+      // With httpOnly cookies, tokens are sent automatically with requests
+      // Try to get user profile - if successful, user is authenticated
       const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
       setProfile(profileData);
-      
+
       // Create AuthUser from profile data
       const authUser: AuthUser = {
         pk: profileData.id,
@@ -65,10 +72,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       setUser(authUser);
     } catch (error) {
-      console.error('Auth check failed:', error);
-      // Clear invalid tokens
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      // If profile fetch fails (401), user is not authenticated
+      // Don't log error for expected 401 responses
+      if (error && typeof error === 'object' && 'status' in error && error.status !== 401) {
+        console.error('Auth check failed:', error);
+      }
+      // Clear user state if not authenticated
+      setUser(null);
+      setProfile(null);
     } finally {
       setIsLoading(false);
     }
@@ -82,9 +93,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         password,
       });
 
-      // Store tokens
-      localStorage.setItem('access_token', response.access);
-      localStorage.setItem('refresh_token', response.refresh);
+      // Tokens are now stored in httpOnly cookies automatically by the backend
+      // No need to manually store them in localStorage
 
       // Set user data
       setUser(response.user);
@@ -92,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Get full profile data
       const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
       setProfile(profileData);
-      
+
       // Update user with role from profile
       const updatedUser: AuthUser = {
         ...response.user,
@@ -100,11 +110,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       setUser(updatedUser);
 
-      // Redirect based on user role
-      if (profileData.user_role === 'investor') {
-        router.push('/investors');
+      // Handle return URL redirect with validation to prevent open redirect attacks
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get('returnUrl');
+
+      // Whitelist of allowed return URL paths
+      const allowedPaths = ['/feed', '/profile', '/projects', '/explore', '/settings', '/notifications', '/inbox', '/investors', '/bookmarks', '/posts'];
+
+      // Validate return URL: must start with /, not start with //, and match allowed paths
+      const isValidReturnUrl = returnUrl &&
+        returnUrl.startsWith('/') &&
+        !returnUrl.startsWith('//') && // Prevent protocol-relative URLs like //evil.com
+        allowedPaths.some(path => returnUrl.startsWith(path));
+
+      if (isValidReturnUrl) {
+        // Safe to redirect to the original page user was trying to access
+        router.push(decodeURIComponent(returnUrl));
       } else {
-        router.push('/feed');
+        // Default redirect based on user role
+        if (profileData.user_role === 'investor') {
+          router.push('/investors');
+        } else {
+          router.push('/feed');
+        }
       }
     } catch (error) {
       setIsLoading(false);
@@ -114,17 +142,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    // Clear tokens
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    
-    // Clear state
-    setUser(null);
-    setProfile(null);
-    
-    // Redirect to login
-    router.push('/login');
+  const logout = async () => {
+    try {
+      // Call backend logout to clear httpOnly cookies
+      await apiClient.post('/api/auth/logout/', {});
+
+      // Only clear state and redirect if server logout succeeded
+      setUser(null);
+      setProfile(null);
+
+      // Redirect to login
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      // Don't clear state if server logout failed - session still active
+      // Show error to user
+      if (typeof window !== 'undefined') {
+        alert('Logout failed. Please try again or close your browser to end your session.');
+      }
+      throw error;
+    }
   };
 
   const refreshProfile = async (): Promise<void> => {
@@ -154,105 +191,59 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const updateProfile = async (data: ProfileUpdateData): Promise<UserProfile> => {
     try {
-      console.log('=== FRONTEND DEBUG: Profile Update Start ===');
-      console.log('Original form data received:', JSON.stringify(data, null, 2));
-      console.log('Data keys:', Object.keys(data));
-      console.log('Data values:', Object.values(data));
-      
       let updatedProfile: UserProfile;
 
       // Check if we have a file upload (banner_image) that needs FormData
       const hasFileUpload = data.banner_image instanceof File;
 
-      console.log('Has file upload:', hasFileUpload);
-      console.log('Banner image type:', typeof data.banner_image);
-      console.log('Banner image value:', data.banner_image);
-
       if (hasFileUpload) {
         // Create FormData for file upload
         const formData = new FormData();
-        
-        console.log('=== FRONTEND DEBUG: FormData Creation ===');
-        
+
         // Add all the form fields to FormData, but skip empty strings and undefined values
         Object.entries(data).forEach(([key, value]) => {
-          console.log(`Processing field: ${key} = ${value} (type: ${typeof value})`);
-          
           // Skip user_role - it should not be editable
           if (key === 'user_role') {
-            console.log(`Skipping user_role - not editable: ${value}`);
             return;
           }
-          
+
           if (value !== undefined && value !== null && value !== '') {
             if (value instanceof File) {
-              console.log(`Adding File: ${key} = ${value.name} (${value.size} bytes)`);
               formData.append(key, value);
             } else {
-              console.log(`Adding String: ${key} = ${String(value)}`);
               formData.append(key, String(value));
             }
-          } else {
-            console.log(`Skipping empty field: ${key} = ${value}`);
           }
         });
 
-        // Debug: Log what's in FormData
-        console.log('=== FRONTEND DEBUG: Final FormData Contents ===');
-        for (let [key, value] of formData.entries()) {
-          console.log(`FormData: ${key} = ${value}`);
-        }
-
-        console.log('=== FRONTEND DEBUG: Sending FormData Request ===');
         updatedProfile = await apiClient.uploadFile<UserProfile>('/api/accounts/profile/', formData);
       } else {
-        console.log('=== FRONTEND DEBUG: JSON PATCH Creation ===');
-        
         // Filter out empty strings and undefined values for JSON updates too
         const filteredData: Partial<ProfileUpdateData> = {};
         Object.entries(data).forEach(([key, value]) => {
-          console.log(`Processing JSON field: ${key} = ${value} (type: ${typeof value})`);
           if (value !== undefined && value !== null && value !== '') {
             // Special handling for banner_image: if it's a string URL, don't include it in JSON updates
             // (it means it's already saved and we're not changing it)
             if (key === 'banner_image' && typeof value === 'string') {
-              console.log(`Skipping banner_image URL in JSON update: ${value}`);
               return;
             }
             // Skip user_role - it should not be editable
             if (key === 'user_role') {
-              console.log(`Skipping user_role - not editable: ${value}`);
               return;
             }
-            console.log(`Adding to JSON: ${key} = ${value}`);
             filteredData[key as keyof ProfileUpdateData] = value;
-          } else {
-            console.log(`Skipping empty JSON field: ${key} = ${value}`);
           }
         });
-        
-        console.log('=== FRONTEND DEBUG: Final JSON Data ===');
-        console.log('Filtered data for JSON PATCH:', JSON.stringify(filteredData, null, 2));
-        
-        console.log('=== FRONTEND DEBUG: Sending JSON PATCH Request ===');
+
         updatedProfile = await apiClient.patch<UserProfile>('/api/accounts/profile/', filteredData);
       }
-      
-      console.log('=== FRONTEND DEBUG: Profile Update Success ===');
-      console.log('Updated profile response:', updatedProfile);
-      
+
       // Refresh the full enhanced profile to get updated projects and posts
       await refreshProfile();
-      
-      console.log('=== FRONTEND DEBUG: Profile Update Complete ===');
+
       return updatedProfile;
     } catch (error) {
-      console.error('=== FRONTEND DEBUG: Profile Update Error ===');
-      console.error('Error object:', error);
-      console.error('Error message:', (error as any)?.message);
-      console.error('Error response:', (error as any)?.response);
-      console.error('Error response data:', (error as any)?.response?.data);
-      console.error('Error response status:', (error as any)?.response?.status);
+      console.error('Profile update error:', error);
       throw error;
     }
   };

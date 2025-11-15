@@ -40,16 +40,34 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }
   },
 };
 
-const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  private: { 
-    bg: 'rgba(54, 69, 79, 0.1)', 
-    text: 'var(--secondary-charcoal)', 
-    border: 'var(--secondary-charcoal)' 
+const APPROVAL_STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  pending: {
+    bg: 'rgba(251, 191, 36, 0.15)',
+    text: '#D97706',
+    border: '#F59E0B'
   },
-  university: { 
-    bg: 'rgba(119, 11, 11, 0.1)', 
-    text: 'var(--secondary-red)', 
-    border: 'var(--secondary-red)' 
+  approved: {
+    bg: 'rgba(16, 185, 129, 0.15)',
+    text: '#059669',
+    border: '#10B981'
+  },
+  rejected: {
+    bg: 'rgba(239, 68, 68, 0.15)',
+    text: '#DC2626',
+    border: '#EF4444'
+  },
+};
+
+const VISIBILITY_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  private: {
+    bg: 'rgba(54, 69, 79, 0.1)',
+    text: 'var(--secondary-charcoal)',
+    border: 'var(--secondary-charcoal)'
+  },
+  university: {
+    bg: 'rgba(119, 11, 11, 0.1)',
+    text: 'var(--secondary-red)',
+    border: 'var(--secondary-red)'
   },
   public: {
     bg: 'rgba(0, 0, 128, 0.12)',
@@ -186,11 +204,34 @@ export default function ProjectCard({ project, onUpdate, onDelete }: ProjectCard
                   }}>
               {VISIBILITY_ICONS[project.visibility]}
               <span className="ml-1">
-                {project.visibility === 'private' ? 'Private' : 
+                {project.visibility === 'private' ? 'Private' :
                  project.visibility === 'university' ? 'University' :
                  'Public'}
               </span>
             </span>
+            {/* Approval Status Badge - Show for pending or rejected */}
+            {project.approval_status && project.approval_status !== 'approved' && (
+              <span className="inline-flex items-center px-2 py-1 text-xs font-medium font-canva-sans rounded-full border backdrop-blur-sm"
+                    style={{
+                      backgroundColor: APPROVAL_STATUS_COLORS[project.approval_status].bg,
+                      color: APPROVAL_STATUS_COLORS[project.approval_status].text,
+                      borderColor: APPROVAL_STATUS_COLORS[project.approval_status].border
+                    }}>
+                {project.approval_status === 'pending' && (
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                {project.approval_status === 'rejected' && (
+                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                )}
+                <span>
+                  {project.approval_status === 'pending' ? 'Pending Review' : 'Rejected'}
+                </span>
+              </span>
+            )}
           </div>
 
           {/* Project Type Badge */}

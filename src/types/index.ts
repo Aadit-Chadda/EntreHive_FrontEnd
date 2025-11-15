@@ -13,10 +13,11 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  access: string;
-  refresh: string;
-  access_token_expiration: string;
-  refresh_token_expiration: string;
+  // With httpOnly cookies, tokens are not in response body (only in cookies)
+  access?: string;
+  refresh?: string;
+  access_token_expiration?: string;
+  refresh_token_expiration?: string;
   user: AuthUser;
 }
 
@@ -185,6 +186,9 @@ export interface ProjectData {
   pitch_url?: string;
   repo_url?: string;
   visibility: "private" | "university" | "public";
+  approval_status?: "pending" | "approved" | "rejected";
+  reviewed_at?: string;
+  rejection_reason?: string;
   created_at: string;
   updated_at: string;
   team_count: number;
@@ -432,6 +436,7 @@ export interface ProjectSummary {
   project_type: "startup" | "side_project" | "research" | "hackathon" | "course_project";
   status: "concept" | "mvp" | "launched";
   visibility: "private" | "university" | "public";
+  approval_status?: "pending" | "approved" | "rejected";
   preview_image?: string;
   banner_style: "gradient" | "image";
   banner_gradient: string;

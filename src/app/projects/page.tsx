@@ -25,6 +25,12 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 12; // Projects per page
+
   // Check for create query parameter and auto-open form
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -38,16 +44,30 @@ export default function ProjectsPage() {
   // Load projects from API
   useEffect(() => {
     loadProjects();
+  }, [filter, searchQuery, currentPage]);
+
+  // Reset to page 1 when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
   }, [filter, searchQuery]);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
 
   const loadProjects = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const params: Record<string, string> = {};
+
+      const params: Record<string, string | number> = {
+        page: currentPage,
+        page_size: pageSize,
+      };
+
       if (searchQuery) params.search = searchQuery;
-      
+
       if (filter !== 'all') {
         // Map filter to appropriate parameter
         if (['startup', 'side_project', 'research', 'hackathon', 'course_project'].includes(filter)) {
@@ -56,22 +76,26 @@ export default function ProjectsPage() {
           params.status = filter;
         }
       }
-      
+
       const response = await projectApi.getProjects(params);
       let filteredResults = response.results;
-      
+
       // Apply client-side filtering for user-specific options
       if (filter === 'my_projects') {
         filteredResults = response.results.filter(project => project.can_edit);
       } else if (filter === 'team_projects') {
         filteredResults = response.results.filter(project => project.is_team_member && !project.can_edit);
       }
-      
+
       // Ensure unique projects by ID to prevent duplicate keys
-      const uniqueProjects = filteredResults.filter((project, index, self) => 
+      const uniqueProjects = filteredResults.filter((project, index, self) =>
         project && project.id && self.findIndex(p => p.id === project.id) === index
       );
       setProjects(uniqueProjects);
+
+      // Update pagination info
+      setTotalCount(response.count);
+      setTotalPages(Math.ceil(response.count / pageSize));
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load projects';
       setError(errorMessage);
@@ -226,7 +250,7 @@ export default function ProjectsPage() {
                       <div className="flex items-center space-x-4">
                         <h1 className="text-2xl font-bold font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</h1>
                         <span className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
-                          {sortedProjects.length} project{sortedProjects.length !== 1 ? 's' : ''}
+                          {totalCount > 0 ? `${totalCount} project${totalCount !== 1 ? 's' : ''}` : `${sortedProjects.length} project${sortedProjects.length !== 1 ? 's' : ''}`}
                         </span>
                       </div>
                       <button
@@ -380,7 +404,125 @@ export default function ProjectsPage() {
                         );
                       })}
                     </div>
-                  ) : (
+                  ) : null}
+
+                  {/* Pagination Controls */}
+                  {!isLoading && !error && totalPages > 1 && (
+                    <div className="mt-8 flex items-center justify-between border-t pt-6" style={{ borderColor: 'var(--border)' }}>
+                      {/* Results info */}
+                      <div className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                        Showing <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                          {((currentPage - 1) * pageSize) + 1}
+                        </span> to <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                          {Math.min(currentPage * pageSize, totalCount)}
+                        </span> of <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
+                          {totalCount}
+                        </span> projects
+                      </div>
+
+                      {/* Page controls */}
+                      <div className="flex items-center space-x-2">
+                        {/* Previous button */}
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                          disabled={currentPage === 1}
+                          className="px-3 py-2 rounded-lg text-sm font-medium font-canva-sans transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: currentPage === 1 ? 'var(--hover-bg)' : 'var(--surface)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text-primary)',
+                            border: '1px solid'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (currentPage !== 1) {
+                              e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                              e.currentTarget.style.color = 'white';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (currentPage !== 1) {
+                              e.currentTarget.style.backgroundColor = 'var(--surface)';
+                              e.currentTarget.style.color = 'var(--text-primary)';
+                            }
+                          }}
+                        >
+                          Previous
+                        </button>
+
+                        {/* Page numbers */}
+                        <div className="flex items-center space-x-1">
+                          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            let pageNum;
+                            if (totalPages <= 5) {
+                              pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                              pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                              pageNum = totalPages - 4 + i;
+                            } else {
+                              pageNum = currentPage - 2 + i;
+                            }
+
+                            return (
+                              <button
+                                key={pageNum}
+                                onClick={() => setCurrentPage(pageNum)}
+                                className="w-10 h-10 rounded-lg text-sm font-medium font-canva-sans transition-all duration-200"
+                                style={{
+                                  backgroundColor: currentPage === pageNum ? 'var(--primary-orange)' : 'var(--surface)',
+                                  borderColor: 'var(--border)',
+                                  color: currentPage === pageNum ? 'white' : 'var(--text-primary)',
+                                  border: '1px solid'
+                                }}
+                                onMouseEnter={(e) => {
+                                  if (currentPage !== pageNum) {
+                                    e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                                  }
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (currentPage !== pageNum) {
+                                    e.currentTarget.style.backgroundColor = 'var(--surface)';
+                                  }
+                                }}
+                              >
+                                {pageNum}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Next button */}
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-2 rounded-lg text-sm font-medium font-canva-sans transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          style={{
+                            backgroundColor: currentPage === totalPages ? 'var(--hover-bg)' : 'var(--surface)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text-primary)',
+                            border: '1px solid'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (currentPage !== totalPages) {
+                              e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                              e.currentTarget.style.color = 'white';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (currentPage !== totalPages) {
+                              e.currentTarget.style.backgroundColor = 'var(--surface)';
+                              e.currentTarget.style.color = 'var(--text-primary)';
+                            }
+                          }}
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty state */}
+                  {!isLoading && !error && sortedProjects.length === 0 && (
                     <motion.div 
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}

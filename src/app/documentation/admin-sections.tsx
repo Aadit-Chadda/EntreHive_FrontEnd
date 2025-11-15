@@ -851,6 +851,596 @@ export function AdminFeatures() {
   );
 }
 
+export function ProjectApproval() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-primary-black mb-2">Project Approval System</h1>
+        <p className="text-lg text-secondary-charcoal">
+          Moderator-controlled project approval workflow with visibility controls
+        </p>
+      </div>
+
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-6">
+        <h3 className="text-xl font-bold text-gray-900 mb-3">✅ Approval Overview</h3>
+        <p className="text-gray-700 mb-4">
+          All new projects are created with "pending" approval status. Only admins can approve or reject projects via Django admin.
+          Projects are visible to team members regardless of approval status, but only approved projects appear to other users.
+        </p>
+        <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="bg-white rounded p-3 border border-yellow-200">
+            <div className="font-bold text-yellow-600 text-lg">Pending</div>
+            <div className="text-gray-600">Awaiting review</div>
+          </div>
+          <div className="bg-white rounded p-3 border border-green-200">
+            <div className="font-bold text-green-600 text-lg">Approved</div>
+            <div className="text-gray-600">Publicly visible</div>
+          </div>
+          <div className="bg-white rounded p-3 border border-red-200">
+            <div className="font-bold text-red-600 text-lg">Rejected</div>
+            <div className="text-gray-600">Not visible to public</div>
+          </div>
+        </div>
+      </div>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Approval Workflow</h2>
+
+        <div className="border-2 border-gray-200 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-primary-black mb-4">Complete Project Lifecycle</h3>
+
+          <div className="space-y-4">
+            {[
+              {
+                step: 1,
+                status: 'Creation',
+                badge: 'Pending',
+                badgeColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                description: 'User creates project via frontend form',
+                details: [
+                  'Project automatically set to approval_status="pending"',
+                  'Creator and team members can see project immediately',
+                  'Project NOT visible to other users yet',
+                  'Appears in Django admin "Projects" list with pending filter'
+                ],
+                visibility: 'Team members only'
+              },
+              {
+                step: 2,
+                status: 'Admin Review',
+                badge: 'Pending',
+                badgeColor: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                description: 'Admin reviews project in Django admin',
+                details: [
+                  'Admin navigates to /admin/projects/project/',
+                  'Filters by approval_status="pending" to see new projects',
+                  'Reviews project title, summary, content, and type',
+                  'Decides whether to approve or reject'
+                ],
+                visibility: 'Team members only'
+              },
+              {
+                step: 3,
+                status: 'Approval',
+                badge: 'Approved',
+                badgeColor: 'bg-green-100 text-green-800 border-green-300',
+                description: 'Admin approves project (bulk or individual)',
+                details: [
+                  'Admin selects project(s) and chooses "Approve selected projects" action',
+                  'approval_status set to "approved"',
+                  'reviewed_by set to admin user',
+                  'reviewed_at timestamp recorded',
+                  'rejection_reason cleared (if previously rejected)'
+                ],
+                visibility: 'Visible per visibility settings (private/university/public)'
+              },
+              {
+                step: 3,
+                status: 'Rejection (Alternative)',
+                badge: 'Rejected',
+                badgeColor: 'bg-red-100 text-red-800 border-red-300',
+                description: 'Admin rejects project with reason',
+                details: [
+                  'Admin selects project(s) and chooses "Reject selected projects" action',
+                  'approval_status set to "rejected"',
+                  'reviewed_by set to admin user',
+                  'reviewed_at timestamp recorded',
+                  'Admin should add rejection_reason in project detail page'
+                ],
+                visibility: 'Team members only (with rejection notice)'
+              }
+            ].map((workflow) => (
+              <div key={`${workflow.step}-${workflow.status}`} className="bg-gray-50 rounded-lg p-5 border-2 border-gray-200">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-primary-orange text-white rounded-full flex items-center justify-center font-bold">
+                      {workflow.step}
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-primary-black">{workflow.status}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{workflow.description}</p>
+                    </div>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full border text-xs font-bold ${workflow.badgeColor}`}>
+                    {workflow.badge}
+                  </div>
+                </div>
+
+                <div className="ml-11 space-y-2">
+                  <div>
+                    <strong className="text-xs text-gray-700">Details:</strong>
+                    <ul className="mt-1 space-y-1">
+                      {workflow.details.map((detail, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start">
+                          <span className="text-primary-orange mr-2">•</span>
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="pt-2 border-t border-gray-200">
+                    <strong className="text-xs text-gray-700">Visibility:</strong>
+                    <span className="ml-2 text-xs font-semibold text-blue-700">{workflow.visibility}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Admin Interface</h2>
+
+        <div className="space-y-4">
+          <div className="border-2 border-blue-200 rounded-lg p-5 bg-blue-50">
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">Django Admin - Projects List</h3>
+
+            <div className="space-y-3">
+              <div>
+                <strong className="text-blue-900">List Display Columns:</strong>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {['title', 'owner', 'project_type', 'status', 'visibility', 'approval_status', 'created_at', 'team_count'].map((col) => (
+                    <code key={col} className="text-xs bg-white border border-blue-200 px-2 py-1 rounded text-gray-700">
+                      {col}
+                    </code>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <strong className="text-blue-900">Available Filters:</strong>
+                <div className="grid grid-cols-3 gap-2 mt-2 text-sm">
+                  <div className="bg-white rounded p-2 border border-blue-200">
+                    <div className="font-semibold text-xs text-gray-700">Approval Status</div>
+                    <div className="text-xs text-gray-600 mt-1">pending / approved / rejected</div>
+                  </div>
+                  <div className="bg-white rounded p-2 border border-blue-200">
+                    <div className="font-semibold text-xs text-gray-700">Project Type</div>
+                    <div className="text-xs text-gray-600 mt-1">startup / side_project / research / etc.</div>
+                  </div>
+                  <div className="bg-white rounded p-2 border border-blue-200">
+                    <div className="font-semibold text-xs text-gray-700">Created Date</div>
+                    <div className="text-xs text-gray-600 mt-1">Today / Past 7 days / This month</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <strong className="text-blue-900">Search Fields:</strong>
+                <p className="text-sm text-gray-700 mt-1">
+                  Search by title, summary, owner username, or owner email
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-2 border-green-200 rounded-lg p-5 bg-green-50">
+            <h3 className="text-lg font-semibold text-green-900 mb-3">Bulk Actions</h3>
+
+            <div className="space-y-3">
+              <div className="bg-white border-2 border-green-300 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <span className="text-2xl">✅</span>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-green-900 mb-1">Approve Selected Projects</h4>
+                    <p className="text-sm text-gray-700 mb-3">
+                      Approve multiple projects at once with a single click
+                    </p>
+
+                    <div className="bg-gray-50 rounded p-3 mb-3">
+                      <strong className="text-xs text-gray-700">Actions Performed:</strong>
+                      <ul className="mt-2 space-y-1 text-xs text-gray-600">
+                        <li className="flex items-start">
+                          <span className="mr-2">1.</span>
+                          <span>Sets <code className="bg-white px-1 rounded">approval_status = "approved"</code></span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="mr-2">2.</span>
+                          <span>Records <code className="bg-white px-1 rounded">reviewed_by</code> (admin user)</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="mr-2">3.</span>
+                          <span>Sets <code className="bg-white px-1 rounded">reviewed_at</code> timestamp</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="mr-2">4.</span>
+                          <span>Clears any previous <code className="bg-white px-1 rounded">rejection_reason</code></span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-green-100 border border-green-300 rounded p-2">
+                      <p className="text-xs text-green-900">
+                        <strong>✨ Result:</strong> Projects become visible to users based on visibility settings (private/university/public)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white border-2 border-red-300 rounded-lg p-4">
+                <div className="flex items-start space-x-3">
+                  <span className="text-2xl">❌</span>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-red-900 mb-1">Reject Selected Projects</h4>
+                    <p className="text-sm text-gray-700 mb-3">
+                      Reject multiple projects (admin should add rejection reasons individually)
+                    </p>
+
+                    <div className="bg-gray-50 rounded p-3 mb-3">
+                      <strong className="text-xs text-gray-700">Actions Performed:</strong>
+                      <ul className="mt-2 space-y-1 text-xs text-gray-600">
+                        <li className="flex items-start">
+                          <span className="mr-2">1.</span>
+                          <span>Sets <code className="bg-white px-1 rounded">approval_status = "rejected"</code></span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="mr-2">2.</span>
+                          <span>Records <code className="bg-white px-1 rounded">reviewed_by</code> (admin user)</span>
+                        </li>
+                        <li className="flex items-start">
+                          <span className="mr-2">3.</span>
+                          <span>Sets <code className="bg-white px-1 rounded">reviewed_at</code> timestamp</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="bg-yellow-100 border border-yellow-400 rounded p-2">
+                      <p className="text-xs text-yellow-900">
+                        <strong>⚠️ Follow-up Required:</strong> Admin should edit each rejected project individually to add a rejection_reason explaining why it was rejected.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-2 border-purple-200 rounded-lg p-5 bg-purple-50">
+            <h3 className="text-lg font-semibold text-purple-900 mb-3">Project Detail Page</h3>
+
+            <div className="space-y-3 text-sm">
+              <p className="text-gray-700">
+                Click on any project in the list to access the detail/edit page with all fields organized into fieldsets:
+              </p>
+
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  {
+                    fieldset: 'Basic Information',
+                    fields: ['title', 'owner', 'project_type', 'status']
+                  },
+                  {
+                    fieldset: 'Content',
+                    fields: ['summary', 'pitch_deck_url', 'demo_url', 'github_url']
+                  },
+                  {
+                    fieldset: 'Categorization',
+                    fields: ['needs', 'categories', 'tags']
+                  },
+                  {
+                    fieldset: 'Team & Access',
+                    fields: ['team_members', 'visibility']
+                  },
+                  {
+                    fieldset: 'Moderation & Approval',
+                    fields: ['approval_status', 'reviewed_by', 'reviewed_at', 'rejection_reason']
+                  },
+                  {
+                    fieldset: 'Timestamps',
+                    fields: ['created_at', 'updated_at']
+                  }
+                ].map((fieldset) => (
+                  <div key={fieldset.fieldset} className="bg-white rounded p-3 border border-purple-200">
+                    <strong className="text-xs text-purple-900">{fieldset.fieldset}</strong>
+                    <div className="mt-2 space-y-0.5">
+                      {fieldset.fields.map((field) => (
+                        <div key={field} className="text-xs text-gray-600 flex items-center">
+                          <span className="w-1 h-1 bg-purple-600 rounded-full mr-2"></span>
+                          <code>{field}</code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-white border border-purple-300 rounded p-3 mt-3">
+                <strong className="text-xs text-purple-900">Moderation & Approval Section:</strong>
+                <p className="text-xs text-gray-700 mt-2 mb-3">
+                  This is where admins can manually change approval status and add rejection reasons.
+                </p>
+
+                <div className="bg-gray-50 rounded p-2">
+                  <ul className="space-y-1 text-xs text-gray-600">
+                    <li>• <strong>approval_status:</strong> Dropdown (pending/approved/rejected)</li>
+                    <li>• <strong>reviewed_by:</strong> Read-only (auto-set by bulk actions or manual save)</li>
+                    <li>• <strong>reviewed_at:</strong> Read-only (auto-set on status change)</li>
+                    <li>• <strong>rejection_reason:</strong> Text area (500 chars) - explain rejection to project owner</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Visibility Rules</h2>
+
+        <div className="border-2 border-gray-200 rounded-lg p-6 bg-gray-50">
+          <h3 className="text-lg font-semibold text-primary-black mb-4">How Approval Status Affects Visibility</h3>
+
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4">
+              <h4 className="font-bold text-yellow-900 mb-2">⏳ Pending Projects</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <strong className="text-yellow-900">Visible To:</strong>
+                  <ul className="mt-2 space-y-1 text-xs text-gray-700">
+                    <li>✓ Project owner</li>
+                    <li>✓ Team members</li>
+                    <li>✓ Django admins</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong className="text-yellow-900">NOT Visible To:</strong>
+                  <ul className="mt-2 space-y-1 text-xs text-gray-700">
+                    <li>✗ Other users</li>
+                    <li>✗ Public visitors</li>
+                    <li>✗ University members</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-3 bg-white rounded p-2 border border-yellow-300">
+                <p className="text-xs text-yellow-900">
+                  <strong>Frontend Display:</strong> ProjectCard shows yellow "Pending Review" badge for team members
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-green-50 border-2 border-green-400 rounded-lg p-4">
+              <h4 className="font-bold text-green-900 mb-2">✅ Approved Projects</h4>
+              <p className="text-sm text-gray-700 mb-3">
+                Visibility determined by project's <code className="bg-white px-1 rounded">visibility</code> field:
+              </p>
+
+              <div className="space-y-2">
+                {[
+                  {
+                    visibility: 'private',
+                    icon: '🔒',
+                    visibleTo: ['Project owner', 'Team members'],
+                    description: 'Only team can see, even after approval'
+                  },
+                  {
+                    visibility: 'university',
+                    icon: '🏫',
+                    visibleTo: ['Project owner', 'Team members', 'Same university users'],
+                    description: 'Visible to users from same university'
+                  },
+                  {
+                    visibility: 'public',
+                    icon: '🌍',
+                    visibleTo: ['Project owner', 'Team members', 'All authenticated users', 'Public visitors'],
+                    description: 'Visible to everyone, including unauthenticated users'
+                  }
+                ].map((rule) => (
+                  <div key={rule.visibility} className="bg-white rounded p-3 border border-green-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-xl">{rule.icon}</span>
+                      <code className="text-sm font-bold text-green-700 bg-green-100 px-2 py-1 rounded">
+                        {rule.visibility}
+                      </code>
+                      <span className="text-xs text-gray-600">{rule.description}</span>
+                    </div>
+                    <div className="ml-7">
+                      <strong className="text-xs text-gray-700">Visible to:</strong>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {rule.visibleTo.map((viewer) => (
+                          <span key={viewer} className="text-xs bg-green-100 px-2 py-0.5 rounded text-green-800">
+                            {viewer}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4">
+              <h4 className="font-bold text-red-900 mb-2">❌ Rejected Projects</h4>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <strong className="text-red-900">Visible To:</strong>
+                  <ul className="mt-2 space-y-1 text-xs text-gray-700">
+                    <li>✓ Project owner (sees rejection)</li>
+                    <li>✓ Team members (sees rejection)</li>
+                    <li>✓ Django admins</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong className="text-red-900">NOT Visible To:</strong>
+                  <ul className="mt-2 space-y-1 text-xs text-gray-700">
+                    <li>✗ Other users</li>
+                    <li>✗ Public visitors</li>
+                    <li>✗ University members</li>
+                  </ul>
+                </div>
+              </div>
+              <div className="mt-3 bg-white rounded p-2 border border-red-300">
+                <p className="text-xs text-red-900">
+                  <strong>Frontend Display:</strong> ProjectCard shows red "Rejected" badge with rejection_reason displayed to team members
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Common Admin Tasks</h2>
+
+        <div className="space-y-3">
+          {[
+            {
+              task: 'Review New Projects',
+              steps: [
+                'Navigate to /admin/projects/project/',
+                'Click "approval_status" filter → select "pending"',
+                'Review each project\'s content, type, and appropriateness',
+                'Select projects to approve',
+                'Choose "Approve selected projects" action → Click "Go"',
+                'Confirm approval in success message'
+              ]
+            },
+            {
+              task: 'Reject Inappropriate Project',
+              steps: [
+                'Find project in admin list (filter by pending if needed)',
+                'Select the project(s) to reject',
+                'Choose "Reject selected projects" action → Click "Go"',
+                'Click on project title to open detail page',
+                'Scroll to "Moderation & Approval" section',
+                'Enter clear rejection_reason explaining the issue',
+                'Click "Save" to save the rejection reason'
+              ]
+            },
+            {
+              task: 'View All Approved Projects',
+              steps: [
+                'Navigate to /admin/projects/project/',
+                'Click "approval_status" filter → select "approved"',
+                'Optionally filter by date, type, or visibility',
+                'Review list of all approved projects'
+              ]
+            },
+            {
+              task: 'Re-approve Previously Rejected Project',
+              steps: [
+                'Navigate to /admin/projects/project/',
+                'Click "approval_status" filter → select "rejected"',
+                'Find the project to re-approve',
+                'Click on project title to open detail page',
+                'Change "approval_status" dropdown to "approved"',
+                'Click "Save" (reviewed_by and reviewed_at will update automatically)'
+              ]
+            }
+          ].map((task, idx) => (
+            <div key={idx} className="border-2 border-gray-200 rounded-lg p-5 bg-gray-50">
+              <div className="flex items-start space-x-3 mb-3">
+                <div className="flex-shrink-0 w-7 h-7 bg-primary-orange text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  {idx + 1}
+                </div>
+                <h3 className="font-semibold text-primary-black text-lg">{task.task}</h3>
+              </div>
+
+              <div className="ml-10 space-y-2">
+                {task.steps.map((step, stepIdx) => (
+                  <div key={stepIdx} className="flex items-start text-sm">
+                    <span className="text-primary-orange mr-2 flex-shrink-0">{stepIdx + 1}.</span>
+                    <span className="text-gray-700">{step}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Implementation Details</h2>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <h3 className="font-semibold text-primary-black mb-3">Backend Files</h3>
+            <div className="space-y-2 text-sm">
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-blue-600">projects/models.py</code>
+                <p className="text-xs text-gray-600 mt-1">Project model with approval fields</p>
+              </div>
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-blue-600">projects/admin.py</code>
+                <p className="text-xs text-gray-600 mt-1">Admin interface & bulk actions</p>
+              </div>
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-blue-600">projects/views.py</code>
+                <p className="text-xs text-gray-600 mt-1">Approval-based visibility filtering</p>
+              </div>
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-blue-600">projects/serializers.py</code>
+                <p className="text-xs text-gray-600 mt-1">Read-only approval fields in API</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <h3 className="font-semibold text-primary-black mb-3">Frontend Files</h3>
+            <div className="space-y-2 text-sm">
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-purple-600">types/index.ts</code>
+                <p className="text-xs text-gray-600 mt-1">TypeScript interfaces for approval status</p>
+              </div>
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-purple-600">components/ProjectCard.tsx</code>
+                <p className="text-xs text-gray-600 mt-1">Approval status badge display</p>
+              </div>
+              <div>
+                <code className="text-xs bg-white px-2 py-1 rounded text-purple-600">lib/projects.ts</code>
+                <p className="text-xs text-gray-600 mt-1">API calls for fetching projects</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
+          <h3 className="font-semibold text-blue-900 mb-2">Database Schema</h3>
+          <div className="bg-white rounded p-3 border border-blue-200">
+            <div className="font-mono text-xs space-y-1 text-gray-700">
+              <div><span className="text-blue-600">approval_status:</span> CharField(max_length=20, choices=[pending, approved, rejected], default=pending)</div>
+              <div><span className="text-blue-600">reviewed_by:</span> ForeignKey(User, null=True, blank=True)</div>
+              <div><span className="text-blue-600">reviewed_at:</span> DateTimeField(null=True, blank=True)</div>
+              <div><span className="text-blue-600">rejection_reason:</span> TextField(max_length=500, blank=True)</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-primary-orange/10 border-l-4 border-primary-orange p-5 rounded-r-lg mt-8">
+        <h3 className="font-semibold text-primary-black mb-2">🔐 Security Note</h3>
+        <p className="text-sm text-gray-700">
+          Approval status cannot be changed through the API - it's only modifiable via Django admin interface.
+          This prevents users from self-approving their projects. The approval_status field is marked as
+          read-only in serializers to enforce this security measure.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function AdminContact() {
   return (
     <div className="space-y-6">

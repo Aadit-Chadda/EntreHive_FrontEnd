@@ -28,11 +28,12 @@ import {
   APIOverview, 
   APIDocs 
 } from './api-sections';
-import { 
-  FeedSystem, 
-  AdminOverview, 
-  AdminFeatures, 
-  AdminContact 
+import {
+  FeedSystem,
+  AdminOverview,
+  AdminFeatures,
+  AdminContact,
+  ProjectApproval
 } from './admin-sections';
 import {
   EmailSystem,
@@ -57,6 +58,14 @@ import {
   MessagingTypes,
   MessagingBestPractices
 } from './messaging-sections';
+import {
+  ManagementCommands
+} from './management-commands-sections';
+import {
+  SystemArchitecture,
+  AuthenticationSecurity
+} from './architecture-sections';
+import DocumentationSearch from './DocumentationSearch';
 
 interface Section {
   id: string;
@@ -72,7 +81,7 @@ export default function DocumentationPage() {
   const { user, profile, isLoading } = useAuth();
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<string>('frontend-overview');
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['dev']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['frontend', 'architecture', 'infrastructure', 'admin']));
 
   useEffect(() => {
     if (!isLoading) {
@@ -103,19 +112,53 @@ export default function DocumentationPage() {
 
   const sections: Section[] = [
     {
-      id: 'dev',
-      title: 'Development',
+      id: 'frontend',
+      title: 'Frontend',
       icon: CodeBracketIcon,
       subsections: [
         { id: 'frontend-overview', title: 'Frontend Overview' },
         { id: 'frontend-components', title: 'Components' },
-        { id: 'frontend-auth', title: 'Authentication' },
         { id: 'frontend-types', title: 'TypeScript Types' },
+      ]
+    },
+    {
+      id: 'backend',
+      title: 'Backend',
+      icon: ServerIcon,
+      subsections: [
         { id: 'backend-structure', title: 'Backend Structure' },
         { id: 'backend-tech-stack', title: 'Tech Stack' },
         { id: 'api-overview', title: 'API Overview' },
         { id: 'api-docs', title: 'API Documentation' },
+      ]
+    },
+    {
+      id: 'architecture',
+      title: 'Architecture & Security',
+      icon: ShieldCheckIcon,
+      subsections: [
+        { id: 'system-architecture', title: 'System Architecture' },
+        { id: 'authentication-security', title: 'Authentication & Security' },
+      ]
+    },
+    {
+      id: 'infrastructure',
+      title: 'Infrastructure',
+      icon: CommandLineIcon,
+      subsections: [
+        { id: 'management-commands', title: 'Management Commands' },
+      ]
+    },
+    {
+      id: 'admin',
+      title: 'Admin & Moderation',
+      icon: CogIcon,
+      subsections: [
+        { id: 'admin-overview', title: 'Admin Overview' },
         { id: 'feed-system', title: 'Feed System' },
+        { id: 'project-approval', title: 'Project Approval' },
+        { id: 'admin-features', title: 'Admin Features' },
+        { id: 'admin-contact', title: 'Contact Management' },
       ]
     },
     {
@@ -144,21 +187,11 @@ export default function DocumentationPage() {
       ]
     },
     {
-      id: 'admin',
-      title: 'Admin',
-      icon: ShieldCheckIcon,
-      subsections: [
-        { id: 'admin-overview', title: 'Admin Overview' },
-        { id: 'admin-features', title: 'Features & Capabilities' },
-        { id: 'admin-contact', title: 'Contact Management' },
-      ]
-    },
-    {
       id: 'investor-feed',
-      title: 'Investor Feed',
+      title: 'Investor Features',
       icon: CubeIcon,
       subsections: [
-        { id: 'investor-feed-overview', title: 'Overview' },
+        { id: 'investor-feed-overview', title: 'Investor Feed Overview' },
         { id: 'interest-management', title: 'Interest Management' },
         { id: 'feed-features', title: 'Feed Features' },
         { id: 'technical-implementation', title: 'Technical Details' },
@@ -211,11 +244,14 @@ export default function DocumentationPage() {
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-2 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg">
-              <ShieldCheckIcon className="h-5 w-5 text-red-600" />
-              <span className="text-sm font-medium text-red-600">
-                {profile?.is_superuser ? 'Superuser' : profile?.is_staff ? 'Staff' : 'Admin'}
-              </span>
+            <div className="flex items-center space-x-4">
+              <DocumentationSearch onResultClick={(sectionId) => setActiveSection(sectionId)} />
+              <div className="flex items-center space-x-2 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg">
+                <ShieldCheckIcon className="h-5 w-5 text-red-600" />
+                <span className="text-sm font-medium text-red-600">
+                  {profile?.is_superuser ? 'Superuser' : profile?.is_staff ? 'Staff' : 'Admin'}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -292,14 +328,15 @@ export default function DocumentationPage() {
 function DocumentationContent({ section }: { section: string }) {
   const renderContent = () => {
     switch (section) {
+      // Frontend
       case 'frontend-overview':
         return <FrontendOverview />;
       case 'frontend-components':
         return <FrontendComponents />;
-      case 'frontend-auth':
-        return <FrontendAuth />;
       case 'frontend-types':
         return <FrontendTypes />;
+
+      // Backend
       case 'backend-structure':
         return <BackendStructure />;
       case 'backend-tech-stack':
@@ -308,8 +345,30 @@ function DocumentationContent({ section }: { section: string }) {
         return <APIOverview />;
       case 'api-docs':
         return <APIDocs />;
+
+      // Architecture & Security
+      case 'system-architecture':
+        return <SystemArchitecture />;
+      case 'authentication-security':
+        return <AuthenticationSecurity />;
+
+      // Infrastructure
+      case 'management-commands':
+        return <ManagementCommands />;
+
+      // Admin & Moderation
+      case 'admin-overview':
+        return <AdminOverview />;
       case 'feed-system':
         return <FeedSystem />;
+      case 'project-approval':
+        return <ProjectApproval />;
+      case 'admin-features':
+        return <AdminFeatures />;
+      case 'admin-contact':
+        return <AdminContact />;
+
+      // Email System
       case 'email-system':
         return <EmailSystem />;
       case 'email-verification':
@@ -318,6 +377,8 @@ function DocumentationContent({ section }: { section: string }) {
         return <EmailTemplates />;
       case 'email-configuration':
         return <EmailConfiguration />;
+
+      // Messaging System
       case 'messaging-overview':
         return <MessagingOverview />;
       case 'conversation-system':
@@ -332,12 +393,8 @@ function DocumentationContent({ section }: { section: string }) {
         return <MessagingTypes />;
       case 'messaging-best-practices':
         return <MessagingBestPractices />;
-      case 'admin-overview':
-        return <AdminOverview />;
-      case 'admin-features':
-        return <AdminFeatures />;
-      case 'admin-contact':
-        return <AdminContact />;
+
+      // Investor Features
       case 'investor-feed-overview':
         return <InvestorFeedOverview />;
       case 'interest-management':
@@ -350,6 +407,7 @@ function DocumentationContent({ section }: { section: string }) {
         return <UserFlow />;
       case 'testing':
         return <Testing />;
+
       default:
         return <FrontendOverview />;
     }

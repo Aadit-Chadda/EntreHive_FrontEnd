@@ -35,9 +35,9 @@ export class AuthService {
     return apiClient.post('/api/auth/login/', { email, password });
   }
 
-  static async logout(refreshToken?: string): Promise<{ detail: string }> {
-    const refresh = refreshToken || localStorage.getItem('refresh_token');
-    return apiClient.post('/api/auth/logout/', { refresh });
+  static async logout(): Promise<{ detail: string }> {
+    // With httpOnly cookies, refresh token is sent automatically in cookies
+    return apiClient.post('/api/auth/logout/', {});
   }
 
   static async refreshToken(refreshToken: string): Promise<{ access: string; access_token_expiration: string }> {

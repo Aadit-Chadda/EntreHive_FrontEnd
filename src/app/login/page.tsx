@@ -49,9 +49,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: '#F5F5F5'}}>
+    <div className="h-screen overflow-y-auto flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 hexagon-pattern" style={{background: '#F5F5F5'}}>
       {/* Hexagonal background decoration */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {[...Array(12)].map((_, i) => (
           <div
             key={i}

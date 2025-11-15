@@ -9,21 +9,18 @@ export interface ApiError {
 
 export class ApiClient {
   private baseUrl: string;
-  
+
   constructor(baseUrl = API_BASE_URL) {
     this.baseUrl = baseUrl;
   }
 
   private getAuthHeaders(): Record<string, string> {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    // Tokens are now in httpOnly cookies, sent automatically with requests
+    // No need to add Authorization header manually
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-    
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-    
+
     return headers;
   }
 
@@ -42,24 +39,10 @@ export class ApiClient {
         details: errorData,
       };
 
-      // Handle token refresh for 401 errors
+      // Handle 401 errors - with httpOnly cookies, backend handles refresh automatically
+      // If we get 401, it means the refresh token also expired, so logout
       if (response.status === 401 && typeof window !== 'undefined') {
-        const refreshToken = localStorage.getItem('refresh_token');
-        if (refreshToken) {
-          try {
-            const refreshed = await this.refreshToken(refreshToken);
-            if (refreshed) {
-              // Retry the original request
-              return this.handleResponse(response);
-            }
-          } catch {
-            // Refresh failed, logout user
-            this.logout();
-          }
-        } else {
-          // No refresh token, logout user
-          this.logout();
-        }
+        this.logout();
       }
 
       throw error;
@@ -74,9 +57,14 @@ export class ApiClient {
 
   private logout() {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      // Don't redirect if already on login or signup pages (prevents infinite reload loop)
+      const currentPath = window.location.pathname;
+      const publicPages = ['/login', '/signup', '/forgot-password'];
+
+      if (!publicPages.includes(currentPath)) {
+        // Cookies are cleared by backend, just redirect to login
+        window.location.href = '/login';
+      }
     }
   }
 
@@ -84,6 +72,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
+      credentials: 'include', // Send cookies with request
     });
     return this.handleResponse<T>(response);
   }
@@ -92,6 +81,7 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
+      credentials: 'include', // Send cookies with request
       body: data ? JSON.stringify(data) : undefined,
     });
     return this.handleResponse<T>(response);
@@ -101,6 +91,17 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers: this.getAuthHeaders(),
+      credentials: 'include', // Send cookies with request
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return this.handleResponse<T>(response);
+  }
+
+  async put<T>(endpoint: string, data?: unknown): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      credentials: 'include', // Send cookies with request
       body: data ? JSON.stringify(data) : undefined,
     });
     return this.handleResponse<T>(response);
@@ -110,60 +111,27 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
+      credentials: 'include', // Send cookies with request
     });
     return this.handleResponse<T>(response);
   }
 
   async uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    const headers: Record<string, string> = {};
-    
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
-      headers,
-      credentials: 'include',
+      credentials: 'include', // Send cookies with request
       body: formData,
     });
     return this.handleResponse<T>(response);
   }
 
   async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-    const headers: Record<string, string> = {};
-    
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
-    }
-
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
-      headers,
+      credentials: 'include', // Send cookies with request
       body: formData,
     });
     return this.handleResponse<T>(response);
-  }
-
-  private async refreshToken(refreshToken: string): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/auth/token/refresh/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('access_token', data.access);
-        return true;
-      }
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-    }
-    return false;
   }
 }
 

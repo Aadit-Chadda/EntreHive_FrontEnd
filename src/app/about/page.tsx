@@ -174,48 +174,48 @@ export default function About() {
           <div className="mt-10">
             <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 lg:grid-cols-3">
               <LazyLoad animationType="fade-left" delay={100}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-6 px-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 left-6 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300 rounded-lg"
                          style={{backgroundColor: 'var(--primary-orange)'}}>
                       <span className="text-2xl">🎓</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>University-Focused</p>
+                    <p className="mt-2 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>University-Focused</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-                    Built specifically for university environments, understanding the unique needs 
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                    Built specifically for university environments, understanding the unique needs
                     of students and faculty in the entrepreneurial journey.
                   </dd>
                 </div>
               </LazyLoad>
 
               <LazyLoad animationType="fade-right" delay={200}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-6 px-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 left-6 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300 rounded-lg"
                          style={{backgroundColor: 'var(--accent-pine)'}}>
                       <span className="text-2xl">🤝</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Peer-to-Peer</p>
+                    <p className="mt-2 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Peer-to-Peer</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-                    Direct connections between students, removing traditional barriers and hierarchies 
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                    Direct connections between students, removing traditional barriers and hierarchies
                     to enable authentic collaboration and learning.
                   </dd>
                 </div>
               </LazyLoad>
 
               <LazyLoad animationType="fade-left" delay={300}>
-                <div className="relative group hover-lift p-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
+                <div className="relative group hover-lift pt-10 pb-6 px-6 bg-white rounded-xl shadow-lg border-2 border-transparent hover:border-orange-200 transition-all duration-300">
                   <dt>
-                    <div className="absolute -top-4 -left-4 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300"
+                    <div className="absolute -top-4 left-6 flex items-center justify-center h-16 w-16 text-white group-hover:scale-110 transition-transform duration-300 rounded-lg"
                          style={{backgroundColor: 'var(--accent-terracotta)'}}>
                       <span className="text-2xl">🚀</span>
                     </div>
-                    <p className="ml-4 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Innovation-Driven</p>
+                    <p className="mt-2 text-xl leading-6 font-semibold font-roca-two" style={{color: 'var(--secondary-charcoal)'}}>Innovation-Driven</p>
                   </dt>
-                  <dd className="mt-4 ml-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
-                    Focused on turning ideas into reality through practical experience, real-world 
+                  <dd className="mt-4 text-base font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>
+                    Focused on turning ideas into reality through practical experience, real-world
                     applications, and hands-on entrepreneurial learning.
                   </dd>
                 </div>

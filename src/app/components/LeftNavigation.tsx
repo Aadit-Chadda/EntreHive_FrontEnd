@@ -24,6 +24,13 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
     { id: 'profile', label: 'Profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', href: '/profile' },
   ];
 
+  // Admin-only navigation items
+  const isAdmin = profile?.is_staff || profile?.is_superuser;
+  const adminItems = isAdmin ? [
+    { id: 'documentation', label: 'Documentation', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', href: '/documentation' },
+    { id: 'admin', label: 'Admin Panel', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', href: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/admin`, external: true },
+  ] : [];
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -69,8 +76,8 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 onClick={() => setActiveItem(item.id)}
                 className={`
                   group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
-                  ${activeItem === item.id 
-                    ? 'shadow-lg transform scale-105' 
+                  ${activeItem === item.id
+                    ? 'shadow-lg transform scale-105'
                     : 'hover:scale-102'
                   }
                 `}
@@ -111,6 +118,120 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 )}
               </Link>
             ))}
+
+            {/* Admin Section */}
+            {(profile?.is_staff || profile?.is_superuser) && (
+              <>
+                <div className="border-t my-4" style={{borderColor: 'var(--border)'}}></div>
+
+                {/* Staff/Admin Badge */}
+                <div className="mx-4 mb-3 px-3 py-2 rounded-lg flex items-center space-x-2 shadow-sm" style={{
+                  background: profile?.is_superuser
+                    ? 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)'
+                    : 'linear-gradient(135deg, #004E89 0%, #1A659E 100%)',
+                }}>
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="text-xs font-bold text-white font-canva-sans tracking-wide">
+                    {profile?.is_superuser ? 'ADMIN' : 'STAFF'}
+                  </span>
+                </div>
+
+                {adminItems.length > 0 && (
+                  <>
+                    {adminItems.map((item) => (
+                      item.external ? (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative hover:scale-102"
+                          style={{
+                            backgroundColor: 'transparent',
+                            color: 'var(--text-secondary)',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                            e.currentTarget.style.transform = 'scale(1.02)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.transform = 'scale(1)';
+                          }}
+                        >
+                          <svg
+                            className="mr-3 h-5 w-5 transition-all duration-300 group-hover:scale-110"
+                            style={{color: 'var(--text-muted)'}}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d={item.icon} />
+                          </svg>
+                          <span className="truncate">{item.label}</span>
+                          <svg className="ml-auto h-4 w-4" style={{color: 'var(--text-muted)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => setActiveItem(item.id)}
+                          className={`
+                            group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
+                            ${activeItem === item.id
+                              ? 'shadow-lg transform scale-105'
+                              : 'hover:scale-102'
+                            }
+                          `}
+                          style={{
+                            backgroundColor: activeItem === item.id ? 'var(--active-bg)' : 'transparent',
+                            color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-secondary)',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (activeItem !== item.id) {
+                              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                              e.currentTarget.style.transform = 'scale(1.02)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeItem !== item.id) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.transform = 'scale(1)';
+                            }
+                          }}
+                        >
+                          <svg
+                            className={`mr-3 h-5 w-5 transition-all duration-300 group-hover:scale-110 ${activeItem === item.id ? 'animate-pulse' : ''}`}
+                            style={{
+                              color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-muted)'
+                            }}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d={item.icon} />
+                          </svg>
+                          <span className="truncate">{item.label}</span>
+                          {activeItem === item.id && (
+                            <div className="absolute right-2 w-2 h-2 rounded-full animate-ping" style={{backgroundColor: 'var(--primary-orange)'}}></div>
+                          )}
+                        </Link>
+                      )
+                    ))}
+                  </>
+                )}
+              </>
+            )}
           </nav>
 
           {/* Theme Toggle & User Info */}
@@ -251,6 +372,116 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
                 {item.label}
               </Link>
             ))}
+
+            {/* Admin Section */}
+            {(profile?.is_staff || profile?.is_superuser) && (
+              <>
+                <div className="border-t my-4" style={{borderColor: 'var(--border)'}}></div>
+
+                {/* Staff/Admin Badge */}
+                <div className="mx-4 mb-3 px-3 py-2 rounded-lg flex items-center space-x-2 shadow-sm" style={{
+                  background: profile?.is_superuser
+                    ? 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)'
+                    : 'linear-gradient(135deg, #004E89 0%, #1A659E 100%)',
+                }}>
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                  <span className="text-xs font-bold text-white font-canva-sans tracking-wide">
+                    {profile?.is_superuser ? 'ADMIN' : 'STAFF'}
+                  </span>
+                </div>
+
+                {adminItems.length > 0 && (
+                  <>
+                    <div className="px-4 py-2">
+                      <span className="text-xs font-semibold font-canva-sans" style={{color: 'var(--text-muted)'}}>
+                        ADMIN TOOLS
+                      </span>
+                    </div>
+                    {adminItems.map((item) => (
+                      item.external ? (
+                        <a
+                          key={item.id}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setShowMobileNav(false)}
+                          className="group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-200"
+                          style={{
+                            backgroundColor: 'transparent',
+                            color: 'var(--text-secondary)'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          <svg
+                            className="mr-3 h-5 w-5"
+                            style={{color: 'var(--text-muted)'}}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d={item.icon} />
+                          </svg>
+                          {item.label}
+                          <svg className="ml-auto h-4 w-4" style={{color: 'var(--text-muted)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.id}
+                          href={item.href}
+                          onClick={() => {
+                            setActiveItem(item.id);
+                            setShowMobileNav(false);
+                          }}
+                          className="group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-200"
+                          style={{
+                            backgroundColor: activeItem === item.id ? 'var(--active-bg)' : 'transparent',
+                            color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-secondary)'
+                          }}
+                          onMouseEnter={(e) => {
+                            if (activeItem !== item.id) {
+                              e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (activeItem !== item.id) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
+                        >
+                          <svg
+                            className="mr-3 h-5 w-5"
+                            style={{
+                              color: activeItem === item.id ? 'var(--primary-orange)' : 'var(--text-muted)'
+                            }}
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d={item.icon} />
+                          </svg>
+                          {item.label}
+                        </Link>
+                      )
+                    ))}
+                  </>
+                )}
+              </>
+            )}
           </nav>
 
           {/* Theme Toggle */}

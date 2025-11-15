@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -67,27 +69,46 @@ const Navigation = () => {
 
           {/* Auth Buttons - Right Side */}
           <div className="hidden md:flex items-center space-x-4 flex-shrink-0">
-            <Link
-              href="/login"
-              className="text-gray-700 font-canva-sans px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
-              style={{'color': 'var(--secondary-charcoal)'}}
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="relative text-white px-6 py-2.5 rounded-xl text-sm font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 transform group overflow-hidden"
-              style={{'background': 'var(--primary-orange)'}}
-            >
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
-              <span className="relative flex items-center space-x-1">
-                <span>Join Now</span>
-                <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-              </span>
-              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/feed"
+                className="relative text-white px-6 py-2.5 rounded-xl text-sm font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 transform group overflow-hidden"
+                style={{'background': 'var(--primary-orange)'}}
+              >
+                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
+                <span className="relative flex items-center space-x-1">
+                  <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
+                  </svg>
+                  <span>Go Back to Feed</span>
+                </span>
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-gray-700 font-canva-sans px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:scale-105"
+                  style={{'color': 'var(--secondary-charcoal)'}}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="relative text-white px-6 py-2.5 rounded-xl text-sm font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 transform group overflow-hidden"
+                  style={{'background': 'var(--primary-orange)'}}
+                >
+                  <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
+                  <span className="relative flex items-center space-x-1">
+                    <span>Join Now</span>
+                    <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -169,32 +190,50 @@ const Navigation = () => {
               Explore Projects
             </Link>
             <div className="pt-4 pb-3 border-t border-gray-200">
-              <div className="flex items-center space-x-3">
+              {isAuthenticated ? (
                 <Link
-                  href="/login"
-                  className="text-gray-700 font-canva-sans block px-3 py-2 rounded-md text-base font-medium"
-                  style={{'color': 'var(--secondary-charcoal)'}}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  href="/signup"
-                  className="relative text-white block px-4 py-2.5 rounded-xl text-base font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform group overflow-hidden"
+                  href="/feed"
+                  className="relative text-white block mx-3 px-4 py-2.5 rounded-xl text-base font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform group overflow-hidden"
                   style={{'background': 'var(--primary-orange)'}}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
                   <span className="relative flex items-center justify-center space-x-1">
-                    <span>🐝</span>
-                    <span>Join the Hive</span>
-                    <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" />
                     </svg>
+                    <span>Go Back to Feed</span>
                   </span>
                   <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
                 </Link>
-              </div>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <Link
+                    href="/login"
+                    className="text-gray-700 font-canva-sans block px-3 py-2 rounded-md text-base font-medium"
+                    style={{'color': 'var(--secondary-charcoal)'}}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="relative text-white block px-4 py-2.5 rounded-xl text-base font-semibold font-canva-sans transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 transform group overflow-hidden"
+                    style={{'background': 'var(--primary-orange)'}}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{'background': 'var(--accent-terracotta)'}}></span>
+                    <span className="relative flex items-center justify-center space-x-1">
+                      <span>🐝</span>
+                      <span>Join the Hive</span>
+                      <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </span>
+                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-all duration-300" style={{'background': 'var(--primary-orange)'}}></div>
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

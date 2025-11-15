@@ -451,6 +451,260 @@ export function AdminOverview() {
       </div>
 
       <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Admin Role Types</h2>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="border-2 border-purple-300 rounded-lg p-5 bg-purple-50">
+            <div className="flex items-center space-x-2 mb-3">
+              <span className="text-2xl">👑</span>
+              <h3 className="text-xl font-bold text-purple-900">Superuser</h3>
+            </div>
+            <p className="text-sm text-purple-800 mb-4">
+              Full system control with unrestricted access to all aspects of the application.
+            </p>
+            <div className="space-y-2">
+              <div className="bg-white rounded p-3 border border-purple-200">
+                <h4 className="text-xs font-semibold text-purple-900 mb-2">Capabilities:</h4>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">✓</span>
+                    <span>Can control everything in the system</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">✓</span>
+                    <span>Create, read, update, and delete any data</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">✓</span>
+                    <span>Grant or revoke superuser and staff status</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">✓</span>
+                    <span>Create and manage permission groups</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-purple-600 mr-2">✓</span>
+                    <span>Access to all Django admin features</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-purple-100 rounded p-2 border border-purple-300">
+                <p className="text-xs text-purple-900">
+                  <strong>Use Case:</strong> System administrators and technical leads
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-2 border-blue-300 rounded-lg p-5 bg-blue-50">
+            <div className="flex items-center space-x-2 mb-3">
+              <span className="text-2xl">🛡️</span>
+              <h3 className="text-xl font-bold text-blue-900">Staff</h3>
+            </div>
+            <p className="text-sm text-blue-800 mb-4">
+              Gets specific accesses based on assigned permission groups and roles.
+            </p>
+            <div className="space-y-2">
+              <div className="bg-white rounded p-3 border border-blue-200">
+                <h4 className="text-xs font-semibold text-blue-900 mb-2">Capabilities:</h4>
+                <ul className="space-y-1 text-xs text-gray-700">
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">✓</span>
+                    <span>Selective access to specific modules</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">✓</span>
+                    <span>Can only perform granted actions</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">✓</span>
+                    <span>Permissions controlled by superusers</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">✓</span>
+                    <span>Access limited by group memberships</span>
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-blue-600 mr-2">✓</span>
+                    <span>Cannot modify user roles by default</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-blue-100 rounded p-2 border border-blue-300">
+                <p className="text-xs text-blue-900">
+                  <strong>Use Case:</strong> Team members who need admin access to specific features
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">Admin Groups</h2>
+
+        <p className="text-gray-700 mb-4">
+          EntreHive organizes administrative permissions using Django's group system. Staff members are assigned to groups based on their responsibilities.
+        </p>
+
+        <div className="grid gap-4">
+          {[
+            {
+              group: 'Content Moderation',
+              icon: '📝',
+              color: 'border-orange-200 bg-orange-50',
+              purpose: 'Manage and moderate user-generated content',
+              permissions: [
+                'View, edit, and delete posts',
+                'View, edit, and delete comments',
+                'Moderate reported content',
+                'Manage content flags and reports'
+              ]
+            },
+            {
+              group: 'Contact Management',
+              icon: '📧',
+              color: 'border-blue-200 bg-blue-50',
+              purpose: 'Handle contact inquiries and user communications',
+              permissions: [
+                'View contact inquiries',
+                'Update inquiry status',
+                'Add admin notes to inquiries',
+                'Assign inquiries to staff members'
+              ]
+            },
+            {
+              group: 'User Management',
+              icon: '👤',
+              color: 'border-green-200 bg-green-50',
+              purpose: 'Manage user accounts and profiles',
+              permissions: [
+                'View user accounts',
+                'Edit user profiles',
+                'Activate/deactivate accounts',
+                'Manage user verification status'
+              ]
+            },
+            {
+              group: 'Analytics & Reporting',
+              icon: '📊',
+              color: 'border-purple-200 bg-purple-50',
+              purpose: 'Access system analytics and generate reports',
+              permissions: [
+                'View analytics dashboards',
+                'Generate reports',
+                'Access user interaction data',
+                'Export data for analysis'
+              ]
+            },
+            {
+              group: 'Email Management',
+              icon: '✉️',
+              color: 'border-pink-200 bg-pink-50',
+              purpose: 'Manage email templates and communications',
+              permissions: [
+                'View and edit email templates',
+                'Send bulk emails',
+                'Manage email verification settings',
+                'View email logs and delivery status'
+              ]
+            },
+            {
+              group: 'Feed Management',
+              icon: '🔄',
+              color: 'border-indigo-200 bg-indigo-50',
+              purpose: 'Manage content feed settings and algorithms',
+              permissions: [
+                'Configure feed weights',
+                'Manage trending topics',
+                'Clear feed caches',
+                'View and edit content scores'
+              ]
+            },
+            {
+              group: 'Partnership Management',
+              icon: '🤝',
+              color: 'border-teal-200 bg-teal-50',
+              purpose: 'Handle partnership inquiries and relationships',
+              permissions: [
+                'View partnership inquiries',
+                'Manage university partnerships',
+                'Handle investor relations',
+                'Update partnership status'
+              ]
+            }
+          ].map((group) => (
+            <div key={group.group} className={`border-2 ${group.color} rounded-lg p-5`}>
+              <div className="flex items-start space-x-3 mb-3">
+                <span className="text-3xl">{group.icon}</span>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-primary-black">{group.group}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{group.purpose}</p>
+                </div>
+              </div>
+
+              <div className="ml-11">
+                <h4 className="text-xs font-semibold text-gray-700 mb-2">Group Permissions:</h4>
+                <ul className="space-y-1">
+                  {group.permissions.map((permission, idx) => (
+                    <li key={idx} className="flex items-start text-xs text-gray-600">
+                      <span className="text-primary-orange mr-2">•</span>
+                      <span>{permission}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="text-2xl font-bold text-primary-black mb-4">User Permissions</h2>
+
+        <div className="bg-red-50 border-2 border-red-500 rounded-lg p-6">
+          <div className="flex items-start space-x-3 mb-4">
+            <span className="text-3xl">⚠️</span>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-red-900 mb-2">SECURITY WARNING: User Permission Management</h3>
+              <p className="text-sm text-red-800 mb-4">
+                The user permission management feature is <strong>extremely dangerous</strong> and should be granted with <strong>extreme caution</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-4 border-2 border-red-400 mb-4">
+            <h4 className="font-semibold text-red-900 mb-3">⚡ Users with permission to modify user permissions can:</h4>
+            <ul className="space-y-2 text-sm text-gray-800">
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2 font-bold">✗</span>
+                <span><strong>Grant superuser and staff access</strong> to any account, including their own</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2 font-bold">✗</span>
+                <span><strong>Assign administrative privileges</strong> to unauthorized users</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2 font-bold">✗</span>
+                <span><strong>Grant random accesses to everyone</strong>, potentially compromising system security</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2 font-bold">✗</span>
+                <span><strong>Bypass security controls</strong> by granting themselves unrestricted access</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-red-100 rounded-lg p-4 border border-red-400">
+            <h4 className="font-semibold text-red-900 mb-2">🛡️ Recommendation:</h4>
+            <p className="text-sm text-red-900">
+              <strong>Only superusers should have access to user permission management.</strong> Never grant this permission to regular staff members unless absolutely necessary and with proper oversight. Always maintain an audit trail of permission changes.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
         <h2 className="text-2xl font-bold text-primary-black mb-4">Admin Capabilities</h2>
         
         <div className="grid gap-4">

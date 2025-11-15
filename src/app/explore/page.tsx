@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles, MessageSquare, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import { ThemeToggle, useTheme } from '../components/ThemeProvider';
 import { api } from '@/lib/api';
@@ -235,140 +236,8 @@ export default function ExplorePage() {
 
           {/* Main Layout */}
           <div className="flex min-h-screen">
-            {/* Left Navigation - Sticky for Explore */}
-            <div className="hidden lg:flex lg:w-64 xl:w-72 lg:flex-shrink-0 sticky top-0 h-screen">
-              <div className="w-full h-full flex flex-col relative overflow-hidden" style={{backgroundColor: 'var(--surface)', borderRight: '1px solid var(--border)'}}>
-                {/* Hexagon decorative background */}
-                <div className="absolute inset-0 opacity-10 pointer-events-none">
-                  <div className="hexagon-pattern h-full w-full"></div>
-        </div>
-
-                {/* Floating hexagons */}
-                <div className="absolute top-20 right-4 w-6 h-6 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--primary-orange)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '0s'}}></div>
-                <div className="absolute top-40 left-2 w-4 h-4 opacity-15 animate-hexagon-float" style={{backgroundColor: 'var(--accent-pine)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '2s'}}></div>
-                <div className="absolute bottom-32 right-2 w-5 h-5 opacity-25 animate-hexagon-float" style={{backgroundColor: 'var(--accent-terracotta)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '4s'}}></div>
-                <div className="absolute top-1/2 left-4 w-3 h-3 opacity-20 animate-hexagon-float" style={{backgroundColor: 'var(--secondary-taupe)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '1s'}}></div>
-                <div className="absolute bottom-20 left-8 w-4 h-4 opacity-30 animate-hexagon-float" style={{backgroundColor: 'var(--accent-navy)', clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', animationDelay: '3s'}}></div>
-                
-                {/* Logo - Fixed at top */}
-                <div className="flex-shrink-0 px-6 py-4 relative z-10" style={{borderBottom: '1px solid var(--border)'}}>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
-                      <Image
-                        src="/Logoblacktransparent.png"
-                        alt="EntreHive Logo"
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-contain p-1"
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-xl font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
-                      <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>Student Network</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Scrollable Navigation */}
-                <nav className="flex-1 px-4 py-6 space-y-2 relative z-10 overflow-y-auto scrollbar-hide">
-                  {[
-                    { id: 'home', label: 'Home', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', href: '/feed' },
-                    { id: 'explore', label: 'Explore', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z', href: '/explore' },
-                    { id: 'projects', label: 'Projects', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10', href: '/projects' },
-                    { id: 'inbox', label: 'Inbox', icon: 'M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4', href: '/inbox' },
-                    { id: 'profile', label: 'Profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z', href: '/profile' },
-                  ].map((item) => (
-                    <Link
-                      key={item.id}
-                      href={item.href}
-                      className={`
-                        group flex items-center px-4 py-3 rounded-xl text-sm font-medium font-canva-sans transition-all duration-300 relative
-                        ${item.id === 'explore'
-                          ? 'shadow-lg transform scale-105' 
-                          : 'hover:text-gray-900 dark:hover:text-white hover:scale-102'
-                        }
-                      `}
-                      style={{
-                        backgroundColor: item.id === 'explore' ? 'var(--active-bg)' : 'transparent',
-                        color: item.id === 'explore' ? 'var(--primary-orange)' : 'var(--text-secondary)',
-                      }}
-                      onMouseEnter={(e) => {
-                        if (item.id !== 'explore') {
-                          e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
-                          e.currentTarget.style.transform = 'scale(1.02)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (item.id !== 'explore') {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.transform = 'scale(1)';
-                        }
-                      }}
-                    >
-                      <svg
-                        className={`mr-3 h-5 w-5 transition-all duration-300 group-hover:scale-110 ${item.id === 'explore' ? 'animate-pulse' : ''}`}
-                        style={{
-                          color: item.id === 'explore' ? 'var(--primary-orange)' : 'var(--text-muted)'
-                        }}
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                        <path d={item.icon} />
-                      </svg>
-                      <span className="truncate">{item.label}</span>
-                      {item.id === 'explore' && (
-                        <div className="absolute right-2 w-2 h-2 rounded-full animate-ping" style={{backgroundColor: 'var(--primary-orange)'}}></div>
-                      )}
-                    </Link>
-                  ))}
-                </nav>
-
-                {/* User Profile - Fixed at bottom */}
-                <div className="flex-shrink-0 p-4 space-y-4 relative z-10" style={{borderTop: '1px solid var(--border)'}}>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
-                    <ThemeToggle />
-                  </div>
-                  
-                  <Link 
-                    href="/profile" 
-                    className="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 cursor-pointer group hover:scale-105" 
-                    style={{backgroundColor: 'var(--hover-bg)'}}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--active-bg)';
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--hover-bg)';
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shadow-md transition-all duration-300 group-hover:shadow-lg" style={{background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))'}}>
-                      <span className="text-white font-semibold text-sm font-roca-two">
-                        {user?.username?.[0]?.toUpperCase() || 'U'}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium font-canva-sans truncate" style={{color: 'var(--text-primary)'}}>
-                        {user?.username || 'User'}
-                      </p>
-                      <p className="text-xs font-canva-sans truncate" style={{color: 'var(--text-secondary)'}}>
-                        @{user?.username || 'username'}
-                      </p>
-                    </div>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg className="w-4 h-4" style={{color: 'var(--text-muted)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
+            {/* Left Navigation */}
+            <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
 
             {/* Main Content Area - Instagram Style Explore */}
             <motion.div 

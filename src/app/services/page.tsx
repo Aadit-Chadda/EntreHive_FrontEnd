@@ -9,70 +9,70 @@ export default function Services() {
       icon: "🤝",
       color: "var(--primary-orange)",
       features: [
-        "Cross-disciplinary team matching",
-        "Project management tools",
-        "Real-time collaboration spaces",
-        "Skill-based team recommendations"
+        "Create and join student projects",
+        "Connect with peers across disciplines",
+        "Share ideas and collaborate",
+        "Build diverse project teams"
       ]
     },
     {
       title: "Mentorship Network",
-      description: "Connect with experienced faculty, alumni, and industry professionals who can guide your entrepreneurial journey.",
+      description: "Connect with experienced faculty and peers who can guide your entrepreneurial journey.",
       icon: "🎯",
       color: "var(--accent-pine)",
       features: [
-        "1-on-1 mentorship matching",
-        "Group mentoring sessions",
-        "Industry expert connections",
-        "Progress tracking and feedback"
+        "Connect with faculty mentors",
+        "Peer-to-peer guidance",
+        "Share knowledge and experience",
+        "Learn from the community"
       ]
     },
     {
       title: "Funding Opportunities",
-      description: "Access funding from university grants, faculty investors, and peer-to-peer investment networks within your institution.",
+      description: "Discover and connect with potential funding sources within your university ecosystem.",
       icon: "💰",
       color: "var(--accent-terracotta)",
       features: [
-        "University grant database",
-        "Peer investment pools",
-        "Faculty angel networks",
-        "Pitch deck development tools"
+        "Explore funding opportunities",
+        "Connect with potential investors",
+        "Showcase your projects",
+        "Build investor relationships"
       ]
     },
     {
       title: "Skill Development",
-      description: "Build real-world skills through hands-on projects, workshops, and practical experience with startup environments.",
+      description: "Build real-world skills through hands-on projects and collaboration with peers.",
       icon: "📚",
       color: "var(--accent-navy)",
       features: [
-        "Interactive workshops",
-        "Real project experience",
-        "Skill assessment tools",
-        "Certification programs"
+        "Learn by doing real projects",
+        "Develop practical skills",
+        "Gain entrepreneurial experience",
+        "Collaborate and grow"
       ]
     },
     {
       title: "Resource Sharing",
-      description: "Access university resources, tools, and services needed to bring your entrepreneurial ideas to life.",
+      description: "Share and discover resources, knowledge, and services within your university community.",
       icon: "🛠️",
       color: "var(--secondary-red)",
       features: [
-        "University facility access",
-        "Software and tool licenses",
-        "Equipment sharing",
-        "Legal and business support"
+        "Share resources with peers",
+        "Discover available services",
+        "Connect service providers",
+        "Community knowledge sharing"
       ]
     },
     {
       title: "Network Building",
-      description: "Build lasting professional relationships with fellow entrepreneurs, investors, and service providers.",
+      description: "Build lasting professional relationships with fellow student entrepreneurs and faculty.",
       icon: "🌐",
       color: "var(--primary-orange)",
       features: [
-        "Professional networking events",
-        "Alumni connections",
-        "Industry partnerships",
-        "Global university network"
+        "Connect with student entrepreneurs",
+        "Build your professional network",
+        "Engage with faculty members",
+        "Grow your university connections"
       ]
     }
   ];
@@ -416,86 +416,6 @@ export default function Services() {
                     <span className="font-canva-sans" style={{color: 'var(--secondary-taupe)'}}>Build industry partnerships through student connections</span>
                   </li>
                 </ul>
-              </div>
-            </LazyLoad>
-          </div>
-        </div>
-      </section>
-
-      {/* Success Stories Preview */}
-      <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <LazyLoad animationType="fade-up">
-            <div className="text-center mb-12">
-              <h2 className="text-base font-semibold font-canva-sans tracking-wide uppercase" style={{color: 'var(--primary-orange)'}}>
-                Success Stories
-              </h2>
-              <p className="mt-2 text-3xl leading-8 font-extrabold font-roca-two tracking-tight sm:text-4xl"
-                 style={{color: 'var(--secondary-charcoal)'}}>
-                Real Results from Real Students
-              </p>
-              <p className="mt-4 max-w-2xl text-xl font-canva-sans mx-auto"
-                 style={{color: 'var(--secondary-taupe)'}}>
-                See how our services help turn entrepreneurial dreams into successful ventures
-              </p>
-            </div>
-          </LazyLoad>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <LazyLoad animationType="scale" delay={100}>
-              <div className="rounded-lg p-6 hover-lift hover:shadow-lg transition-all duration-300 group border-2" style={{
-                backgroundColor: 'var(--neutral-light-orange)',
-                borderColor: 'var(--primary-orange)'
-              }}>
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" style={{backgroundColor: 'var(--primary-orange)'}}>
-                    <span className="text-white text-2xl">📱</span>
-                  </div>
-                  <h3 className="text-lg font-bold font-roca-two mb-2 group-hover:scale-105 transition-all duration-300" style={{color: 'var(--secondary-charcoal)'}}>EcoTrack App</h3>
-                  <p className="font-canva-sans text-sm mb-4" style={{color: 'var(--secondary-taupe)'}}>
-                    Students from CS and Environmental Science collaborated to create a carbon footprint tracking app, 
-                    securing $50K in university funding.
-                  </p>
-                  <div className="text-xs font-medium font-canva-sans" style={{color: 'var(--primary-orange)'}}>MIT • 6 months to launch</div>
-                </div>
-              </div>
-            </LazyLoad>
-
-            <LazyLoad animationType="scale" delay={200}>
-              <div className="rounded-lg p-6 hover-lift hover:shadow-lg transition-all duration-300 group border-2" style={{
-                backgroundColor: 'rgba(33, 79, 56, 0.1)',
-                borderColor: 'var(--accent-pine)'
-              }}>
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" style={{backgroundColor: 'var(--accent-pine)'}}>
-                    <span className="text-white text-2xl">🏥</span>
-                  </div>
-                  <h3 className="text-lg font-bold font-roca-two mb-2 group-hover:scale-105 transition-all duration-300" style={{color: 'var(--secondary-charcoal)'}}>MedAssist</h3>
-                  <p className="font-canva-sans text-sm mb-4" style={{color: 'var(--secondary-taupe)'}}>
-                    Pre-med and engineering students developed a patient monitoring system, 
-                    now being tested in the university hospital.
-                  </p>
-                  <div className="text-xs font-medium font-canva-sans" style={{color: 'var(--accent-pine)'}}>Stanford • 8 months to pilot</div>
-                </div>
-              </div>
-            </LazyLoad>
-
-            <LazyLoad animationType="scale" delay={300}>
-              <div className="rounded-lg p-6 hover-lift hover:shadow-lg transition-all duration-300 group border-2" style={{
-                backgroundColor: 'rgba(231, 159, 116, 0.1)',
-                borderColor: 'var(--accent-terracotta)'
-              }}>
-                <div className="text-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300" style={{backgroundColor: 'var(--accent-terracotta)'}}>
-                    <span className="text-white text-2xl">🎓</span>
-                  </div>
-                  <h3 className="text-lg font-bold font-roca-two mb-2 group-hover:scale-105 transition-all duration-300" style={{color: 'var(--secondary-charcoal)'}}>StudyBuddy</h3>
-                  <p className="font-canva-sans text-sm mb-4" style={{color: 'var(--secondary-taupe)'}}>
-                    A peer tutoring platform that connected over 2,000 students, 
-                    founded by a sophomore with faculty mentorship.
-                  </p>
-                  <div className="text-xs font-medium font-canva-sans" style={{color: 'var(--accent-terracotta)'}}>Harvard • 4 months to scale</div>
-                </div>
               </div>
             </LazyLoad>
           </div>

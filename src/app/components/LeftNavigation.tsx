@@ -72,6 +72,13 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
             {navItems.map((item) => (
               <Link
                 key={item.id}
+                id={
+                  item.id === 'projects' ? 'projects-nav' :
+                  item.id === 'profile' ? 'profile-nav' :
+                  item.id === 'explore' ? 'explore-nav' :
+                  item.id === 'inbox' ? 'inbox-nav' :
+                  undefined
+                }
                 href={item.href}
                 onClick={() => setActiveItem(item.id)}
                 className={`
@@ -240,9 +247,10 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
               <span className="text-sm font-medium font-canva-sans" style={{color: 'var(--text-secondary)'}}>Theme</span>
               <ThemeToggle />
             </div>
-            
-            <Link 
-              href="/profile" 
+
+            <Link
+              id="profile-menu"
+              href="/profile"
               className="flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 cursor-pointer group hover:scale-105" 
               style={{backgroundColor: 'var(--hover-bg)'}}
               onMouseEnter={(e) => {

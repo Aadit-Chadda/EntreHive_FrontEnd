@@ -41,11 +41,12 @@ export default function FeedTabs() {
   return (
     <div className="space-y-8">
       {/* Tab Navigation with Enhanced Design */}
-      <motion.div 
+      <motion.div
+        id="feed-tabs"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="relative rounded-3xl shadow-lg border backdrop-blur-sm p-2" 
+        className="relative rounded-3xl shadow-lg border backdrop-blur-sm p-2"
         style={{
           backgroundColor: 'var(--surface)',
           borderColor: 'var(--border)',

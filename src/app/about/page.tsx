@@ -341,11 +341,11 @@ export default function About() {
       </section>
 
       {/* No Hierarchy Section */}
-      <section className="relative py-24 gradient-hive overflow-hidden">
+      <section className="relative py-24 overflow-hidden" style={{background: 'linear-gradient(135deg, #214F38 0%, #36454F 50%, #1a3d2e 100%)'}}>
         {/* Hexagonal background pattern */}
         <div className="absolute inset-0">
           {[...Array(8)].map((_, i) => (
-            <div 
+            <div
               key={i}
               className="hexagon absolute animate-hexagon-float"
               style={{
@@ -358,15 +358,15 @@ export default function About() {
             />
           ))}
         </div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-extrabold font-roca-two text-white mb-6">
-              Here&apos;s the Catch — <span style={{color: 'var(--primary-orange)'}}>No Hierarchy</span>
+              Here&apos;s the Catch — <span style={{color: '#F3AC3B'}}>No Hierarchy</span>
             </h2>
-            <p className="text-xl font-canva-sans text-white max-w-4xl mx-auto leading-relaxed opacity-90">
-              Your role isn&apos;t limited by your title. Whether you&apos;re a student, professor, or faculty member — 
+            <p className="text-xl font-canva-sans text-white max-w-4xl mx-auto leading-relaxed opacity-95">
+              Your role isn&apos;t limited by your title. Whether you&apos;re a student, professor, or faculty member —
               you can be an entrepreneur, an investor, a mentor, or someone offering services.
             </p>
           </div>
@@ -375,7 +375,7 @@ export default function About() {
           <div className="text-center mb-16">
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 animate-glow border-4"
                  style={{
-                   backgroundColor: 'var(--primary-orange)',
+                   backgroundColor: '#F3AC3B',
                    borderColor: 'white'
                  }}>
               <span className="text-4xl">💡</span>
@@ -383,18 +383,18 @@ export default function About() {
             <h3 className="text-3xl font-bold font-roca-two text-white mb-6">
               What matters is your{' '}
               <span className="relative">
-                <span style={{color: 'var(--primary-orange)'}}>idea</span>
-                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: 'var(--primary-orange)'}}></div>
+                <span style={{color: '#F3AC3B'}}>idea</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: '#F3AC3B'}}></div>
               </span>
               , your{' '}
               <span className="relative">
-                <span style={{color: 'var(--primary-orange)'}}>interest</span>
-                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: 'var(--primary-orange)'}}></div>
+                <span style={{color: '#F3AC3B'}}>interest</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: '#F3AC3B'}}></div>
               </span>
               , or your{' '}
               <span className="relative">
-                <span style={{color: 'var(--primary-orange)'}}>expertise</span>
-                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: 'var(--primary-orange)'}}></div>
+                <span style={{color: '#F3AC3B'}}>expertise</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 rounded" style={{backgroundColor: '#F3AC3B'}}></div>
               </span>
             </h3>
             <p className="text-2xl font-bold font-canva-sans text-white">
@@ -491,7 +491,7 @@ export default function About() {
 
           {/* Bottom Message */}
           <div className="text-center mt-16">
-            <div className="inline-flex items-center space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-full px-8 py-4 border-2" style={{borderColor: 'var(--primary-orange)'}}>
+            <div className="inline-flex items-center space-x-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-full px-8 py-4 border-2" style={{borderColor: '#F3AC3B'}}>
               <span className="text-2xl">🌟</span>
               <span className="text-white font-medium font-canva-sans">Ideas over titles. Impact over hierarchy.</span>
               <span className="text-2xl">🚀</span>

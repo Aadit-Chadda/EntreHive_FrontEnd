@@ -13,11 +13,13 @@ import RightSidebar from '../components/RightSidebar';
 import FloatingComposer from '../components/FloatingComposer';
 import { ThemeToggle, useTheme } from '../components/ThemeProvider';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTour, shouldShowTour } from '@/contexts/TourContext';
 
 export default function Feed() {
   const { user, profile } = useAuth();
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { startFeedTour } = useTour();
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
@@ -28,6 +30,18 @@ export default function Feed() {
       router.push('/investors');
     }
   }, [user, router]);
+
+  // Auto-trigger tour for first-time users
+  useEffect(() => {
+    if (user && profile && shouldShowTour('feed')) {
+      // Small delay to let the page render completely
+      const timer = setTimeout(() => {
+        startFeedTour();
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, profile, startFeedTour]);
 
   // Handle scroll to top visibility
   useEffect(() => {
@@ -110,14 +124,14 @@ export default function Feed() {
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
 
           {/* Main Content Area with Better Spacing */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
             className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80"
           >
             {/* Main Feed with Improved Spacing */}
-            <div className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
+            <div id="feed-section" className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
               <div className="max-w-2xl mx-auto">
                 <FeedTabs />
               </div>

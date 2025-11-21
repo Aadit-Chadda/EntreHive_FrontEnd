@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import LazyLoad from './components/LazyLoad';
 import CookieConsent from './components/CookieConsent';
+import AppPreview from './components/AppPreview';
 
 export default function Home() {
   return (
@@ -232,6 +233,31 @@ export default function Home() {
               </LazyLoad>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* App Preview Section - VSCode Style */}
+      <section className="bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <LazyLoad animationType="fade-up">
+            <div className="text-center mb-12">
+              <h2 className="text-base font-semibold font-canva-sans tracking-wide uppercase" style={{color: 'var(--primary-orange)'}}>
+                See It In Action
+              </h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold font-roca-two tracking-tight sm:text-4xl"
+                 style={{color: 'var(--secondary-charcoal)'}}>
+                Experience the EntreHive Platform
+              </p>
+              <p className="mt-4 max-w-2xl text-xl font-canva-sans mx-auto"
+                 style={{color: 'var(--secondary-taupe)'}}>
+                Get a sneak peek at how entrepreneurs connect, collaborate, and build the future together
+              </p>
+            </div>
+          </LazyLoad>
+
+          <LazyLoad animationType="scale" delay={200}>
+            <AppPreview />
+          </LazyLoad>
         </div>
       </section>
 
@@ -540,7 +566,7 @@ export default function Home() {
                   Universities Connected
                 </dt>
                 <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
-                    style={{color: 'var(--primary-white)'}}>25+</dd>
+                    style={{color: 'var(--primary-white)'}}>2</dd>
               </div>
               <div className="flex flex-col mt-10 sm:mt-0 group hover-lift">
                 <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans transition-colors duration-300"
@@ -548,7 +574,7 @@ export default function Home() {
                   Active Projects
                 </dt>
                 <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
-                    style={{color: 'var(--primary-white)'}}>150+</dd>
+                    style={{color: 'var(--primary-white)'}}>30+</dd>
               </div>
               <div className="flex flex-col mt-10 sm:mt-0 group hover-lift">
                 <dt className="order-2 mt-2 text-lg leading-6 font-medium font-canva-sans transition-colors duration-300"
@@ -556,7 +582,7 @@ export default function Home() {
                   Student Entrepreneurs
                 </dt>
                 <dd className="order-1 text-5xl font-extrabold font-roca-two group-hover:scale-110 transition-transform duration-300"
-                    style={{color: 'var(--primary-white)'}}>1000+</dd>
+                    style={{color: 'var(--primary-white)'}}>100+</dd>
               </div>
             </dl>
           </LazyLoad>

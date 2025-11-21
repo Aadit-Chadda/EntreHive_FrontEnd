@@ -11,6 +11,7 @@ import { ThemeProvider } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
+import { useTour, shouldShowTour } from '@/contexts/TourContext';
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
 import { ApiError, apiClient } from '@/lib/api';
 import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
@@ -22,6 +23,7 @@ import VerificationWarningBanner from '../components/VerificationWarningBanner';
 export default function ProfilePage() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
   const router = useRouter();
+  const { startProfileTour } = useTour();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showMobileNav, setShowMobileNav] = useState(false);
 
@@ -41,6 +43,16 @@ export default function ProfilePage() {
       router.push('/investors/profile');
     }
   }, [user, router]);
+
+  // Auto-trigger tour for first-time users on profile page
+  useEffect(() => {
+    if (user && profile && shouldShowTour('profile')) {
+      const timer = setTimeout(() => {
+        startProfileTour();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [user, profile, startProfileTour]);
 
   // Form state for editing
   const [formData, setFormData] = useState<ProfileUpdateData>({
@@ -420,11 +432,12 @@ export default function ProfilePage() {
               )}
 
               {/* Profile Header */}
-              <motion.div 
+              <motion.div
+                id="profile-header"
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="rounded-xl overflow-hidden mb-8" 
+                className="rounded-xl overflow-hidden mb-8"
                 style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
               >
                 {/* Profile Banner */}
@@ -506,6 +519,7 @@ export default function ProfilePage() {
                       <AnimatePresence>
                         {!isEditing && (
                           <motion.button
+                            id="edit-profile-btn"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 20 }}

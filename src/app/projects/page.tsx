@@ -12,10 +12,12 @@ import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ProjectData } from '@/types';
 import { projectApi } from '@/lib/api';
+import { useTour, shouldShowTour } from '@/contexts/TourContext';
 
 export default function ProjectsPage() {
   const router = useRouter();
   const { resolvedTheme } = useTheme();
+  const { startProjectsTour } = useTour();
   const [projects, setProjects] = useState<ProjectData[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -55,6 +57,16 @@ export default function ProjectsPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
+
+  // Auto-trigger tour for first-time users on projects page
+  useEffect(() => {
+    if (!isLoading && shouldShowTour('projects')) {
+      const timer = setTimeout(() => {
+        startProjectsTour();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, startProjectsTour]);
 
   const loadProjects = async () => {
     try {
@@ -241,7 +253,7 @@ export default function ProjectsPage() {
           {/* Main Content Area - Takes remaining space */}
           <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex">
             {/* Main Projects Content - Takes maximum available space */}
-            <div className="flex-1 min-w-0 max-w-none">
+            <div id="projects-section" className="flex-1 min-w-0 max-w-none">
               <div className="h-screen overflow-y-auto" style={{backgroundColor: 'var(--background)'}}>
                 {/* Header */}
                 <div className="sticky top-0 z-10" style={{backgroundColor: 'var(--surface)', borderBottom: '1px solid var(--border)'}}>
@@ -254,6 +266,7 @@ export default function ProjectsPage() {
                         </span>
                       </div>
                       <button
+                        id="create-project-btn"
                         onClick={() => setShowCreateForm(true)}
                         className="hidden lg:flex items-center space-x-2 px-4 py-2 text-white rounded-lg font-semibold font-canva-sans transition-all duration-300 shadow-lg"
                         style={{backgroundColor: 'var(--primary-orange)'}}

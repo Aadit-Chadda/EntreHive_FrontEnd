@@ -5,6 +5,7 @@ import ConditionalLayout from "./components/ConditionalLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { ToastProvider } from "@/contexts/ToastContext";
+import { TourProvider } from "@/contexts/TourContext";
 
 // Official EntreHive Fonts
 const rocaTwo = Inter({
@@ -53,9 +54,11 @@ export default function RootLayout({
         <ThemeProvider>
           <ToastProvider>
             <AuthProvider>
-              <ConditionalLayout>
-                {children}
-              </ConditionalLayout>
+              <TourProvider>
+                <ConditionalLayout>
+                  {children}
+                </ConditionalLayout>
+              </TourProvider>
             </AuthProvider>
           </ToastProvider>
         </ThemeProvider>

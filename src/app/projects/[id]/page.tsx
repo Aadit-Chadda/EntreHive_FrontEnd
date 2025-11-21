@@ -15,13 +15,15 @@ import { Palette, Image as ImageIcon, UploadCloud } from 'lucide-react';
 import { PROJECT_BANNER_GRADIENTS, getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 import type { ProjectBannerStyle } from '@/lib/projectBranding';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTour, shouldShowTour } from '@/contexts/TourContext';
 
 export default function ProjectDetailsPage() {
   const { user } = useAuth();
   const params = useParams();
   const router = useRouter();
+  const { startProjectDetailsTour } = useTour();
   const projectId = params.id as string;
-  
+
   const [project, setProject] = useState<ProjectData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +47,16 @@ export default function ProjectDetailsPage() {
       loadProject();
     }
   }, [projectId]);
+
+  // Auto-trigger tour for first-time users on their own project details page
+  useEffect(() => {
+    if (!isLoading && project && project.can_edit && shouldShowTour('project-details')) {
+      const timer = setTimeout(() => {
+        startProjectDetailsTour();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, project, startProjectDetailsTour]);
 
   const loadProject = async () => {
     try {
@@ -400,6 +412,7 @@ export default function ProjectDetailsPage() {
                           <div className="flex items-center space-x-2">
                             {/* Edit Button */}
                             <button
+                              id="edit-project-btn"
                               onClick={() => router.push(`/projects/${project.id}/edit`)}
                               className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors"
                               style={{
@@ -415,9 +428,10 @@ export default function ProjectDetailsPage() {
                               </svg>
                               Edit Project
                             </button>
-                            
+
                             {/* Delete Button */}
                             <button
+                              id="delete-project-btn"
                               onClick={() => setShowDeleteConfirm(true)}
                               className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors"
                               style={{
@@ -443,6 +457,7 @@ export default function ProjectDetailsPage() {
                     <div className="max-w-6xl mx-auto space-y-8">
                       {/* Project Header Card */}
                       <motion.div
+                        id="project-header"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.1 }}
@@ -636,6 +651,7 @@ export default function ProjectDetailsPage() {
                                   Manage Team
                                 </button>
                                 <button
+                                  id="invite-section"
                                   onClick={() => setShowInvitations(true)}
                                   className="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors"
                                   style={{
@@ -999,6 +1015,7 @@ export default function ProjectDetailsPage() {
                         <div className="space-y-8">
                           {/* Team Members */}
                           <div
+                            id="team-members-section"
                             className="rounded-2xl shadow-sm border p-8"
                             style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                           >

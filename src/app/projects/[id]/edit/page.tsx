@@ -366,7 +366,7 @@ export default function EditProjectPage() {
             />
 
             {/* Main Content Area */}
-            <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex">
+            <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex">
               <div className="flex-1 min-w-0 max-w-none">
                 <div className="h-screen overflow-y-auto" style={{ backgroundColor: 'var(--background)' }}>
                   {/* Header */}

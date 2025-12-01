@@ -244,7 +244,7 @@ export default function ExplorePage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-80 flex"
+              className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex"
             >
               {/* Main Explore Content */}
               <div className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">

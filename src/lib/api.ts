@@ -60,8 +60,9 @@ export class ApiClient {
       // Don't redirect if already on login or signup pages (prevents infinite reload loop)
       const currentPath = window.location.pathname;
       const publicPages = ['/login', '/signup', '/forgot-password'];
+      const isPublicPage = publicPages.includes(currentPath) || currentPath.startsWith('/reset-password');
 
-      if (!publicPages.includes(currentPath)) {
+      if (!isPublicPage) {
         // Cookies are cleared by backend, just redirect to login
         window.location.href = '/login';
       }

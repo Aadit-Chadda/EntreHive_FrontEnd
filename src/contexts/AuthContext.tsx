@@ -46,7 +46,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
     // Only check auth if not on a public page
-    if (!publicPages.includes(currentPath)) {
+    const isPublicPage = publicPages.includes(currentPath) || currentPath.startsWith('/reset-password');
+    if (!isPublicPage) {
       checkAuthStatus();
     } else {
       // On public pages, just set loading to false
@@ -110,22 +111,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       setUser(updatedUser);
 
-      // Handle return URL redirect with validation to prevent open redirect attacks
+      // Handle return URL redirect with strict validation to prevent open redirect attacks
       const urlParams = new URLSearchParams(window.location.search);
       const returnUrl = urlParams.get('returnUrl');
 
       // Whitelist of allowed return URL paths
       const allowedPaths = ['/feed', '/profile', '/projects', '/explore', '/settings', '/notifications', '/inbox', '/investors', '/bookmarks', '/posts'];
 
-      // Validate return URL: must start with /, not start with //, and match allowed paths
-      const isValidReturnUrl = returnUrl &&
-        returnUrl.startsWith('/') &&
-        !returnUrl.startsWith('//') && // Prevent protocol-relative URLs like //evil.com
-        allowedPaths.some(path => returnUrl.startsWith(path));
+      // Strict validation function to prevent open redirect attacks
+      const validateReturnUrl = (url: string | null): string | null => {
+        if (!url) return null;
 
-      if (isValidReturnUrl) {
-        // Safe to redirect to the original page user was trying to access
-        router.push(decodeURIComponent(returnUrl));
+        try {
+          // Parse URL to extract just the pathname - this prevents attacks like:
+          // /feed?redirectTo=http://evil.com or /feed@evil.com
+          const parsedUrl = new URL(url, window.location.origin);
+
+          // Only allow same-origin URLs
+          if (parsedUrl.origin !== window.location.origin) return null;
+
+          // Check against exact allowed paths or paths starting with allowed prefix + /
+          const isAllowed = allowedPaths.some(
+            path => parsedUrl.pathname === path || parsedUrl.pathname.startsWith(path + '/')
+          );
+
+          // Return only the pathname (no external query params that could contain URLs)
+          return isAllowed ? parsedUrl.pathname : null;
+        } catch {
+          // Invalid URL format
+          return null;
+        }
+      };
+
+      const validatedUrl = validateReturnUrl(returnUrl);
+
+      if (validatedUrl) {
+        // Safe to redirect to the validated path
+        router.push(validatedUrl);
       } else {
         // Default redirect based on user role
         if (profileData.user_role === 'investor') {

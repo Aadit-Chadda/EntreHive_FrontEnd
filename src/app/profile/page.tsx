@@ -392,7 +392,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-80"
+            className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-72 xl:mr-80"
           >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* Status Messages */}

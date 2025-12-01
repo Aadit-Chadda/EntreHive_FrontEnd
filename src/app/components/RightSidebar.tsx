@@ -199,7 +199,7 @@ export default function RightSidebar({ className = '' }: RightSidebarProps) {
   };
 
   return (
-    <div className={`w-80 h-screen sticky top-0 flex flex-col ${className}`}>
+    <div className={`w-72 xl:w-80 h-screen sticky top-0 flex flex-col ${className}`}>
       {/* Header with Time, Date, and User Menu */}
       <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
         {/* User Menu Dropdown */}

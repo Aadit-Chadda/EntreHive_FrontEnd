@@ -411,17 +411,37 @@ p, .body-text {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-/* Social app layout utilities */
+/* Social app layout utilities - mobile first */
 .social-grid-xl {
-  display: grid;
-  grid-template-columns: 15% 70% 15%;
+  display: flex;
+  flex-direction: column;
   gap: 0;
 }
 
 .social-grid-lg {
-  display: grid;
-  grid-template-columns: 30% 70%;
+  display: flex;
+  flex-direction: column;
   gap: 0;
+}
+
+@media (min-width: 768px) {
+  .social-grid-lg {
+    display: grid;
+    grid-template-columns: 30% 70%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .social-grid-xl {
+    display: grid;
+    grid-template-columns: 20% 60% 20%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .social-grid-xl {
+    grid-template-columns: 15% 70% 15%;
+  }
 }
 
 /* Line clamp utility */

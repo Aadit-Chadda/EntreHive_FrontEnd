@@ -31,17 +31,12 @@ const PROTECTED_ROUTES = [
 const AUTH_ROUTES = ['/login', '/signup'];
 
 export function middleware(request: NextRequest) {
-  // TEMPORARILY DISABLED FOR DEBUGGING
-  // Allow all requests to proceed
-  // Client-side ProtectedRoute will handle protection
-  return NextResponse.next();
-
-  /* ORIGINAL CODE - RE-ENABLE AFTER DEBUGGING:
   const { pathname } = request.nextUrl;
   const accessTokenCookie = request.cookies.get('access')?.value;
   const isProtectedRoute = PROTECTED_ROUTES.some(route => pathname.startsWith(route));
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
+  // Protect routes that require authentication
   if (isProtectedRoute) {
     if (!accessTokenCookie) {
       const loginUrl = new URL('/login', request.url);
@@ -51,13 +46,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Redirect authenticated users away from auth pages
   if (isAuthRoute && accessTokenCookie) {
     const dashboardUrl = new URL('/feed', request.url);
     return NextResponse.redirect(dashboardUrl);
   }
 
   return NextResponse.next();
-  */
 }
 
 /**

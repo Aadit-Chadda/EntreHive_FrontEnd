@@ -23,13 +23,6 @@ export default function NotificationsPage() {
   const [hasMore, setHasMore] = useState(false);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
-  // Redirect investors to their dedicated notifications page
-  useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push('/investors/notifications');
-    }
-  }, [user, router]);
-
   useEffect(() => {
     fetchNotifications(1, true);
   }, [filter]);

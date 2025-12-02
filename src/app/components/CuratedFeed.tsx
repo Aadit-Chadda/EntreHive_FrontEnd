@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, RefreshCw, AlertCircle, Settings, TrendingUp, Home, University, Globe } from 'lucide-react';
+import { Loader2, RefreshCw, AlertCircle, Settings, TrendingUp, Home, University, Globe, Briefcase } from 'lucide-react';
 import Image from 'next/image';
 import PostComposerNew from './PostComposerNew';
 import PostCardNew from './PostCardNew';
@@ -11,9 +11,10 @@ import ProjectCard from './ProjectCard';
 import CreateProjectCard from './CreateProjectCard';
 import { FeedItem, FeedResponse, PostData, ProjectData } from '@/types';
 import { feedApi } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CuratedFeedProps {
-  feedType?: 'home' | 'university' | 'public';
+  feedType?: 'home' | 'university' | 'public' | 'projects';
   showComposer?: boolean;
   showCreateProjectCard?: boolean;
 }
@@ -24,6 +25,9 @@ export default function CuratedFeed({
   showCreateProjectCard = true
 }: CuratedFeedProps) {
   const router = useRouter();
+  const { user } = useAuth();
+  const isInvestor = user?.user_role === 'investor';
+
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -43,27 +47,68 @@ export default function CuratedFeed({
       setError(null);
 
       let response: FeedResponse;
-      
-      switch (feedType) {
-        case 'university':
-          response = await feedApi.getUniversityFeed({
-            page: pageNum,
-            page_size: 15
-          });
-          break;
-        case 'public':
-          response = await feedApi.getPublicFeed({
-            page: pageNum,
-            page_size: 15
-          });
-          break;
-        case 'home':
-        default:
-          response = await feedApi.getHomeFeed({
-            page: pageNum,
-            page_size: 15
-          });
-          break;
+
+      // Investors use dedicated investor feed API
+      if (isInvestor) {
+        switch (feedType) {
+          case 'public':
+            response = await feedApi.getInvestorFeed({
+              page: pageNum,
+              page_size: 15,
+              feed_type: 'public'
+            });
+            break;
+          case 'projects':
+            response = await feedApi.getInvestorFeed({
+              page: pageNum,
+              page_size: 15,
+              content_type: 'project'
+            });
+            break;
+          case 'home':
+          default:
+            response = await feedApi.getInvestorFeed({
+              page: pageNum,
+              page_size: 15
+            });
+            break;
+        }
+      } else {
+        // Regular users (students, professors) use standard feed APIs
+        switch (feedType) {
+          case 'university':
+            response = await feedApi.getUniversityFeed({
+              page: pageNum,
+              page_size: 15
+            });
+            break;
+          case 'public':
+            response = await feedApi.getPublicFeed({
+              page: pageNum,
+              page_size: 15
+            });
+            break;
+          case 'projects':
+            // For projects feed, get home feed and filter to projects only
+            const projectsResponse = await feedApi.getHomeFeed({
+              page: pageNum,
+              page_size: 30 // Request more items since we're filtering
+            });
+            response = {
+              ...projectsResponse,
+              results: (projectsResponse.results || []).filter(
+                item => item.content_type === 'project'
+              )
+            };
+            break;
+          case 'home':
+          default:
+            response = await feedApi.getHomeFeed({
+              page: pageNum,
+              page_size: 15
+            });
+            break;
+        }
       }
 
       const newItems = response.results || [];
@@ -86,7 +131,7 @@ export default function CuratedFeed({
       setLoadingMore(false);
       setRefreshing(false);
     }
-  }, [feedType]);
+  }, [feedType, isInvestor]);
 
   useEffect(() => {
     loadFeed(1, false);
@@ -167,6 +212,8 @@ export default function CuratedFeed({
         return <University className="w-5 h-5" />;
       case 'public':
         return <Globe className="w-5 h-5" />;
+      case 'projects':
+        return <Briefcase className="w-5 h-5" />;
       default:
         return <Home className="w-5 h-5" />;
     }
@@ -178,6 +225,8 @@ export default function CuratedFeed({
         return 'University Feed';
       case 'public':
         return 'Global Feed';
+      case 'projects':
+        return 'Projects Feed';
       default:
         return 'Your Feed';
     }

@@ -35,13 +35,6 @@ export default function ProjectDetailsPage() {
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
 
-  // Redirect investors to investor-specific project page
-  useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push(`/investors/projects/${projectId}`);
-    }
-  }, [user, projectId, router]);
-
   useEffect(() => {
     if (projectId) {
       loadProject();

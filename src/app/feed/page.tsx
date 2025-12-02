@@ -24,13 +24,6 @@ export default function Feed() {
   const [showFloatingComposer, setShowFloatingComposer] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
 
-  // Redirect investors to their dedicated feed
-  useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push('/investors');
-    }
-  }, [user, router]);
-
   // Auto-trigger tour for first-time users
   useEffect(() => {
     if (user && profile && shouldShowTour('feed')) {
@@ -103,19 +96,24 @@ export default function Feed() {
             <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
           </motion.div>
 
-          <motion.button
-            whileHover={{ scale: 1.05, rotate: 180 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowFloatingComposer(true)}
-            className="p-2 text-white rounded-lg transition-all duration-200 shadow-md"
-            style={{backgroundColor: 'var(--primary-orange)'}}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-orange)'}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-          </motion.button>
+          {/* Hide compose button for investors - they can only discover, not post */}
+          {user?.user_role !== 'investor' ? (
+            <motion.button
+              whileHover={{ scale: 1.05, rotate: 180 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowFloatingComposer(true)}
+              className="p-2 text-white rounded-lg transition-all duration-200 shadow-md"
+              style={{backgroundColor: 'var(--primary-orange)'}}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-orange)'}
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+            </motion.button>
+          ) : (
+            <div className="w-10" /> /* Spacer to maintain layout for investors */
+          )}
         </motion.div>
 
         {/* Main Layout */}
@@ -164,11 +162,13 @@ export default function Feed() {
           )}
         </AnimatePresence>
 
-        {/* Floating Composer Modal */}
-        <FloatingComposer 
-          isOpen={showFloatingComposer}
-          onClose={() => setShowFloatingComposer(false)}
-        />
+        {/* Floating Composer Modal - Hidden for investors */}
+        {user?.user_role !== 'investor' && (
+          <FloatingComposer
+            isOpen={showFloatingComposer}
+            onClose={() => setShowFloatingComposer(false)}
+          />
+        )}
 
         {/* Overlay for mobile panels */}
         <AnimatePresence>

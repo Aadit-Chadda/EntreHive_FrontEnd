@@ -556,6 +556,48 @@ export const feedApi = {
       updated_at: string;
     }>>(`/api/trending/${query ? `?${query}` : ''}`);
   },
+
+  // Get investor-specific curated feed
+  getInvestorFeed: async (params?: {
+    page?: number;
+    page_size?: number;
+    feed_type?: 'home' | 'public';
+    content_type?: 'project';
+    topics?: string[];
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          if (Array.isArray(value)) {
+            value.forEach(v => queryParams.append(key, v));
+          } else {
+            queryParams.append(key, value.toString());
+          }
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<{
+      results: Array<{
+        content_type: 'post' | 'project';
+        content_id: string;
+        score: number;
+        content: PostData | ProjectData;
+        user_interactions: string[];
+        viewed: boolean;
+        clicked: boolean;
+        liked: boolean;
+      }>;
+      count: number;
+      page: number;
+      page_size: number;
+      has_next: boolean;
+      has_previous: boolean;
+      next: string | null;
+      previous: string | null;
+    }>(`/api/feed/investor/${query ? `?${query}` : ''}`);
+  },
 };
 
 // Messaging API

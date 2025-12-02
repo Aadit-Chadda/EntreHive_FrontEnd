@@ -62,7 +62,7 @@ export default function LeftNavigation({ showMobileNav, setShowMobileNav }: Left
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-xl font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
-                <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>Student Network</span>
+                <span className="text-xs font-canva-sans" style={{color: 'var(--text-secondary)'}}>{user?.user_role === 'investor' ? 'Investor Network' : 'Student Network'}</span>
               </div>
             </div>
           </div>

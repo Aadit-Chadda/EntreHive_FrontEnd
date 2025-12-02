@@ -149,12 +149,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Safe to redirect to the validated path
         router.push(validatedUrl);
       } else {
-        // Default redirect based on user role
-        if (profileData.user_role === 'investor') {
-          router.push('/investors');
-        } else {
-          router.push('/feed');
-        }
+        // Default redirect to feed for all users
+        router.push('/feed');
       }
     } catch (error) {
       setIsLoading(false);

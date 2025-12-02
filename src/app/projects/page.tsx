@@ -13,9 +13,12 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { ProjectData } from '@/types';
 import { projectApi } from '@/lib/api';
 import { useTour, shouldShowTour } from '@/contexts/TourContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProjectsPage() {
   const router = useRouter();
+  const { user } = useAuth();
+  const isInvestor = user?.user_role === 'investor';
   const { resolvedTheme } = useTheme();
   const { startProjectsTour } = useTour();
   const [projects, setProjects] = useState<ProjectData[]>([]);
@@ -265,27 +268,30 @@ export default function ProjectsPage() {
                           {totalCount > 0 ? `${totalCount} project${totalCount !== 1 ? 's' : ''}` : `${sortedProjects.length} project${sortedProjects.length !== 1 ? 's' : ''}`}
                         </span>
                       </div>
-                      <button
-                        id="create-project-btn"
-                        onClick={() => setShowCreateForm(true)}
-                        className="hidden lg:flex items-center space-x-2 px-4 py-2 text-white rounded-lg font-semibold font-canva-sans transition-all duration-300 shadow-lg"
-                        style={{backgroundColor: 'var(--primary-orange)'}}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                          e.currentTarget.style.boxShadow = '0 6px 20px rgba(243, 172, 59, 0.3)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(243, 172, 59, 0.2)';
-                        }}
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span>New Project</span>
-                      </button>
+                      {/* Hide New Project button for investors */}
+                      {!isInvestor && (
+                        <button
+                          id="create-project-btn"
+                          onClick={() => setShowCreateForm(true)}
+                          className="hidden lg:flex items-center space-x-2 px-4 py-2 text-white rounded-lg font-semibold font-canva-sans transition-all duration-300 shadow-lg"
+                          style={{backgroundColor: 'var(--primary-orange)'}}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--accent-terracotta)';
+                            e.currentTarget.style.transform = 'translateY(-2px)';
+                            e.currentTarget.style.boxShadow = '0 6px 20px rgba(243, 172, 59, 0.3)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'var(--primary-orange)';
+                            e.currentTarget.style.transform = 'translateY(0)';
+                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(243, 172, 59, 0.2)';
+                          }}
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                          <span>New Project</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -570,10 +576,11 @@ export default function ProjectsPage() {
                         className="mt-1 text-sm font-canva-sans" 
                         style={{color: 'var(--text-secondary)'}}
                       >
-                        {searchQuery ? 'Try adjusting your search or filters.' : 'Get started by creating your first project.'}
+                        {searchQuery ? 'Try adjusting your search or filters.' : (isInvestor ? 'No projects available to discover yet.' : 'Get started by creating your first project.')}
                       </motion.p>
-                      {!searchQuery && (
-                        <motion.div 
+                      {/* Hide New Project button for investors */}
+                      {!searchQuery && !isInvestor && (
+                        <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.3, delay: 0.4 }}

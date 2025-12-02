@@ -37,12 +37,33 @@ export default function ProfilePage() {
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
 
-  // Redirect investors to their dedicated profile page
+  // Investment interests state (for investors only)
+  const [editingInterests, setEditingInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [savingInterests, setSavingInterests] = useState(false);
+
+  // Available investment interest categories
+  const availableInterests = [
+    { id: 'AI', label: 'AI', icon: '🤖' },
+    { id: 'Web Dev', label: 'Web Dev', icon: '💻' },
+    { id: 'Fintech', label: 'Fintech', icon: '💰' },
+    { id: 'Robotics', label: 'Robotics', icon: '🤖' },
+    { id: 'Biotech', label: 'Biotech', icon: '🧬' },
+    { id: 'Climate', label: 'Climate', icon: '🌍' },
+    { id: 'Hardware', label: 'Hardware', icon: '⚙️' },
+    { id: 'SaaS', label: 'SaaS', icon: '☁️' },
+    { id: 'EdTech', label: 'EdTech', icon: '📚' },
+    { id: 'HealthTech', label: 'HealthTech', icon: '🏥' },
+    { id: 'Social Impact', label: 'Social Impact', icon: '💝' },
+    { id: 'Gaming', label: 'Gaming', icon: '🎮' },
+  ];
+
+  // Initialize interests from profile (for investors)
   useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push('/investors/profile');
+    if (profile?.interests) {
+      setSelectedInterests(profile.interests);
     }
-  }, [user, router]);
+  }, [profile]);
 
   // Auto-trigger tour for first-time users on profile page
   useEffect(() => {
@@ -53,6 +74,30 @@ export default function ProfilePage() {
       return () => clearTimeout(timer);
     }
   }, [user, profile, startProfileTour]);
+
+  // Investment interests handlers
+  const handleSaveInterests = async () => {
+    setSavingInterests(true);
+    try {
+      await apiClient.put('/api/feed/investor/interests/', { interests: selectedInterests });
+      await refreshProfile();
+      setEditingInterests(false);
+      setSuccess('Investment interests updated successfully!');
+    } catch (error) {
+      console.error('Error updating interests:', error);
+      setError('Failed to update interests');
+    } finally {
+      setSavingInterests(false);
+    }
+  };
+
+  const toggleInterest = (interestId: string) => {
+    setSelectedInterests(prev =>
+      prev.includes(interestId)
+        ? prev.filter(id => id !== interestId)
+        : [...prev, interestId]
+    );
+  };
 
   // Form state for editing
   const [formData, setFormData] = useState<ProfileUpdateData>({
@@ -1083,12 +1128,116 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {/* Content Tabs */}
-              <motion.div 
+              {/* Investment Interests Section - Investors Only */}
+              {profile?.user_role === 'investor' && (
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.15 }}
+                  className="rounded-xl p-6 mb-8"
+                  style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">🎯</span>
+                      <h2 className="text-xl font-bold font-roca-two" style={{ color: 'var(--text-primary)' }}>
+                        Investment Interests
+                      </h2>
+                    </div>
+                    <button
+                      onClick={() => setEditingInterests(!editingInterests)}
+                      className="flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold font-canva-sans border transition-all duration-200 hover:scale-105"
+                      style={{ borderColor: 'var(--border)', color: 'var(--text-primary)', background: 'var(--hover-bg)' }}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                      <span>{editingInterests ? 'Cancel' : 'Edit'}</span>
+                    </button>
+                  </div>
+
+                  <p className="text-sm font-canva-sans mb-4" style={{ color: 'var(--text-secondary)' }}>
+                    Your interests help us show you relevant projects in the Projects feed
+                  </p>
+
+                  {!editingInterests ? (
+                    <div className="flex flex-wrap gap-2">
+                      {profile.interests && profile.interests.length > 0 ? (
+                        profile.interests.map((interest: string) => {
+                          const interestData = availableInterests.find(i => i.id === interest);
+                          return (
+                            <div
+                              key={interest}
+                              className="px-4 py-2 rounded-lg border-2 font-medium text-sm flex items-center space-x-2"
+                              style={{ borderColor: 'var(--accent-pine)', background: 'rgba(111, 136, 122, 0.1)', color: 'var(--text-primary)' }}
+                            >
+                              <span>{interestData?.icon || '🎯'}</span>
+                              <span>{interest}</span>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-base font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                          No interests selected. Click Edit to add your investment interests.
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {availableInterests.map((interest) => (
+                          <button
+                            key={interest.id}
+                            type="button"
+                            onClick={() => toggleInterest(interest.id)}
+                            className={`px-4 py-2.5 rounded-lg border-2 font-medium text-sm transition-all duration-200 flex items-center justify-center space-x-2 ${
+                              selectedInterests.includes(interest.id)
+                                ? 'text-white'
+                                : 'hover:opacity-80'
+                            }`}
+                            style={{
+                              borderColor: selectedInterests.includes(interest.id) ? 'var(--accent-pine)' : 'var(--border)',
+                              background: selectedInterests.includes(interest.id) ? 'var(--accent-pine)' : 'var(--hover-bg)',
+                              color: selectedInterests.includes(interest.id) ? 'white' : 'var(--text-primary)'
+                            }}
+                          >
+                            <span>{interest.icon}</span>
+                            <span>{interest.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex justify-end space-x-3 pt-2">
+                        <button
+                          onClick={() => {
+                            setSelectedInterests(profile?.interests || []);
+                            setEditingInterests(false);
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold font-canva-sans transition-all duration-200"
+                          style={{ color: 'var(--text-secondary)' }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleSaveInterests}
+                          disabled={savingInterests}
+                          className="px-6 py-2 rounded-lg font-semibold font-canva-sans text-white transition-all duration-200 hover:scale-105"
+                          style={{ background: savingInterests ? 'var(--border)' : 'var(--accent-pine)' }}
+                        >
+                          {savingInterests ? 'Saving...' : 'Save Changes'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* Content Tabs - Hidden for investors (they don't create posts/projects) */}
+              {profile?.user_role !== 'investor' && (
+              <motion.div
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="rounded-xl overflow-hidden" 
+                className="rounded-xl overflow-hidden"
                 style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
               >
                 {/* Tab Headers */}
@@ -1351,6 +1500,7 @@ export default function ProfilePage() {
                   </AnimatePresence>
                 </div>
               </motion.div>
+              )}
             </div>
           </motion.div>
 

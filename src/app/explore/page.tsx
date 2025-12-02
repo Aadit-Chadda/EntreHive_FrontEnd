@@ -100,13 +100,6 @@ export default function ExplorePage() {
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('recent');
 
-  // Redirect investors to their dedicated dashboard
-  useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push('/investors');
-    }
-  }, [user, router]);
-
   // Handle scroll to top visibility
   useEffect(() => {
     const handleScroll = () => {

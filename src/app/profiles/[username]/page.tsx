@@ -90,13 +90,6 @@ export default function PublicProfilePage() {
   const [sendingMessage, setSendingMessage] = useState(false);
   const router = useRouter();
 
-  // Redirect investors to investor-specific profile page
-  useEffect(() => {
-    if (user && user.user_role === 'investor') {
-      router.push(`/investors/profiles/${username}`);
-    }
-  }, [user, username, router]);
-
   useEffect(() => {
     const fetchProfile = async () => {
       try {

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { projectApi } from '@/lib/api';
 import { ProjectCreateData } from '@/types';
 import { PROJECT_BANNER_GRADIENTS, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
-import { Palette } from 'lucide-react';
+import { Palette, ImageIcon, UploadCloud } from 'lucide-react';
 
 interface ProjectCreateFormProps {
   onSuccess?: (project: any) => void;
@@ -16,8 +16,6 @@ const PROJECT_TYPES = [
   { value: 'startup', label: 'Startup' },
   { value: 'side_project', label: 'Side Project' },
   { value: 'research', label: 'Research' },
-  { value: 'hackathon', label: 'Hackathon' },
-  { value: 'course_project', label: 'Course Project' },
 ];
 
 const PROJECT_STATUS = [
@@ -64,6 +62,15 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
 
   const [categoryInput, setCategoryInput] = useState('');
   const [tagInput, setTagInput] = useState('');
+  const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
+  const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!bannerImageFile) return;
+    const objectUrl = URL.createObjectURL(bannerImageFile);
+    setBannerImagePreview(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [bannerImageFile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -97,10 +104,11 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
   };
 
   const handleAddTag = () => {
-    if (tagInput.trim() && !formData.tags?.includes(tagInput.trim())) {
+    const normalizedTag = tagInput.trim().toLowerCase();
+    if (normalizedTag && !formData.tags?.includes(normalizedTag)) {
       setFormData(prev => ({
         ...prev,
-        tags: [...(prev.tags || []), tagInput.trim()]
+        tags: [...(prev.tags || []), normalizedTag]
       }));
       setTagInput('');
     }
@@ -116,9 +124,30 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
   const handleBannerGradientSelect = (gradientId: string) => {
     setFormData(prev => ({
       ...prev,
-      banner_style: 'gradient',
       banner_gradient: gradientId,
     }));
+  };
+
+  const handleBannerStyleChange = (style: 'gradient' | 'image') => {
+    setFormData(prev => ({ ...prev, banner_style: style }));
+    if (style === 'gradient') {
+      setBannerImageFile(null);
+      setBannerImagePreview(null);
+    }
+  };
+
+  const handleBannerImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setBannerImageFile(file);
+      setFormData(prev => ({ ...prev, banner_style: 'image' }));
+    }
+  };
+
+  const handleClearBannerImage = () => {
+    setBannerImageFile(null);
+    setBannerImagePreview(null);
+    setFormData(prev => ({ ...prev, banner_style: 'gradient' }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,13 +165,22 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
         repo_url: formData.repo_url?.trim() || undefined,
       };
 
-      const project = await projectApi.createProject(cleanData);
-      
+      let project = await projectApi.createProject(cleanData);
+
       // Ensure the project has a valid ID before proceeding
       if (!project || !project.id) {
         throw new Error('Invalid project response from server');
       }
-      
+
+      // Upload banner image if selected
+      if ((formData.banner_style || 'gradient') === 'image' && bannerImageFile) {
+        const uploadData = new FormData();
+        uploadData.append('banner_style', 'image');
+        uploadData.append('banner_gradient', formData.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
+        uploadData.append('banner_image', bannerImageFile);
+        project = await projectApi.updateProjectBannerImage(project.id, uploadData);
+      }
+
       if (onSuccess) {
         onSuccess(project);
       } else {
@@ -343,35 +381,110 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                 Banner Appearance
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Pick a branded gradient for your project banner. You can upload a custom image later from the project page.
+                Pick a branded gradient or upload your own banner image.
               </p>
             </div>
+            {bannerImagePreview && formData.banner_style === 'image' && (
+              <button
+                type="button"
+                onClick={handleClearBannerImage}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-colors"
+                style={{
+                  backgroundColor: 'rgba(119, 11, 11, 0.12)',
+                  color: 'var(--secondary-red)',
+                  border: '1px solid rgba(119, 11, 11, 0.25)'
+                }}
+              >
+                Remove Uploaded Image
+              </button>
+            )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {PROJECT_BANNER_GRADIENTS.map((option) => {
-              const isActive = option.id === (formData.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
-              return (
-                <button
-                  type="button"
-                  key={option.id}
-                  onClick={() => handleBannerGradientSelect(option.id)}
-                  className={`w-full text-left rounded-2xl border transition-transform ${isActive ? 'ring-2 ring-amber-500 scale-[1.01]' : ''}`}
-                  style={{ borderColor: isActive ? 'rgba(243, 172, 59, 0.6)' : 'var(--border)' }}
-                >
-                  <div className="h-24 rounded-t-2xl" style={{ background: option.gradient }}></div>
-                  <div className="p-4 space-y-1">
-                    <p className="font-semibold text-gray-900 dark:text-white">
-                      {option.name}
-                    </p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {option.description}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+          <div className="flex gap-3 flex-wrap mb-4" role="tablist">
+            <button
+              type="button"
+              onClick={() => handleBannerStyleChange('gradient')}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                (formData.banner_style || 'gradient') === 'gradient' ? 'text-white' : ''
+              }`}
+              style={(formData.banner_style || 'gradient') === 'gradient'
+                ? { backgroundColor: 'var(--accent-navy, #1e3a5f)' }
+                : { backgroundColor: 'var(--surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
+            >
+              <Palette className="w-4 h-4" />
+              Gradient
+            </button>
+            <button
+              type="button"
+              onClick={() => handleBannerStyleChange('image')}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                (formData.banner_style || 'gradient') === 'image' ? 'text-white' : ''
+              }`}
+              style={(formData.banner_style || 'gradient') === 'image'
+                ? { backgroundColor: 'var(--primary-orange)' }
+                : { backgroundColor: 'var(--surface)', color: 'var(--text-secondary)', border: '1px solid var(--border)' }}
+            >
+              <ImageIcon className="w-4 h-4" />
+              Image
+            </button>
           </div>
+
+          {(formData.banner_style || 'gradient') === 'gradient' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {PROJECT_BANNER_GRADIENTS.map((option) => {
+                const isActive = option.id === (formData.banner_gradient || DEFAULT_PROJECT_BANNER_GRADIENT);
+                return (
+                  <button
+                    type="button"
+                    key={option.id}
+                    onClick={() => handleBannerGradientSelect(option.id)}
+                    className={`w-full text-left rounded-2xl border transition-transform ${isActive ? 'ring-2 ring-amber-500 scale-[1.01]' : ''}`}
+                    style={{ borderColor: isActive ? 'rgba(243, 172, 59, 0.6)' : 'var(--border)' }}
+                  >
+                    <div className="h-24 rounded-t-2xl" style={{ background: option.gradient }}></div>
+                    <div className="p-4 space-y-1">
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {option.name}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {option.description}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {(formData.banner_style || 'gradient') === 'image' && (
+            <div className="space-y-4">
+              <div
+                className="rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-3 px-6 py-8 text-center"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                {bannerImagePreview ? (
+                  <div className="w-full max-w-md overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border)' }}>
+                    <img src={bannerImagePreview} alt="Banner preview" className="w-full h-40 object-cover" />
+                  </div>
+                ) : (
+                  <ImageIcon className="w-16 h-16" style={{ color: 'var(--text-secondary)' }} />
+                )}
+                <div className="space-y-2">
+                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    Upload a high-resolution image (JPG, PNG, or WebP recommended).
+                  </p>
+                  <label
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg cursor-pointer transition-colors text-white"
+                    style={{ backgroundColor: 'var(--primary-orange)' }}
+                  >
+                    <UploadCloud className="w-4 h-4" />
+                    Choose Image
+                    <input type="file" accept="image/*" className="hidden" onChange={handleBannerImageChange} />
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Project Needs */}

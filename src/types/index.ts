@@ -116,7 +116,7 @@ export type ProjectNeed = "design" | "dev" | "marketing" | "research" | "funding
 export type CTAType = "join_team" | "offer_help" | "apply" | "register" | "feedback";
 
 // Zod schemas
-export const ProjectType = z.enum(["startup", "side_project", "research", "hackathon", "course_project"]);
+export const ProjectType = z.enum(["startup", "side_project", "research"]);
 
 export const ProjectStatus = z.enum(["concept", "mvp", "launched"]);
 

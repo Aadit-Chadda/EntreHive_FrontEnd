@@ -235,8 +235,6 @@ export default function EditProjectPage() {
     { value: 'startup', label: 'Startup' },
     { value: 'side_project', label: 'Side Project' },
     { value: 'research', label: 'Research' },
-    { value: 'hackathon', label: 'Hackathon' },
-    { value: 'course_project', label: 'Course Project' },
   ];
 
   const PROJECT_STATUS = [

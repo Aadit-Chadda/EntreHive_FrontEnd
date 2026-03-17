@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { projectApi } from '@/lib/api';
 
 interface RightExploreProps {
   showRightPanel: boolean;
@@ -58,14 +59,11 @@ export default function RightExplore({ showRightPanel }: RightExploreProps) {
     },
   ];
 
-  const categories = [
-    { id: 'ai', name: 'AI', color: 'rgba(231, 159, 116, 0.2)', textColor: 'var(--accent-terracotta)' },
-    { id: 'design', name: 'Design', color: 'rgba(33, 79, 56, 0.2)', textColor: 'var(--accent-pine)' },
-    { id: 'research', name: 'Research', color: 'rgba(243, 172, 59, 0.2)', textColor: 'var(--primary-orange)' },
-    { id: 'startups', name: 'Startups', color: 'rgba(138, 107, 83, 0.2)', textColor: 'var(--secondary-taupe)' },
-    { id: 'fintech', name: 'FinTech', color: 'rgba(119, 11, 11, 0.2)', textColor: 'var(--secondary-red)' },
-    { id: 'climate', name: 'Climate', color: 'rgba(0, 0, 128, 0.2)', textColor: 'var(--accent-navy)' },
-  ];
+  const [categories, setCategories] = useState<{ id: number; name: string; slug: string }[]>([]);
+
+  useEffect(() => {
+    projectApi.getCategories().then(setCategories).catch(() => {});
+  }, []);
 
   return (
     <div className="h-full flex flex-col" style={{backgroundColor: 'var(--surface)', borderLeft: '1px solid var(--border)'}}>
@@ -113,14 +111,14 @@ export default function RightExplore({ showRightPanel }: RightExploreProps) {
             {categories.map((category, index) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
+                onClick={() => setSelectedCategory(selectedCategory === category.slug ? null : category.slug)}
                 className={`px-4 py-2 rounded-full text-sm font-medium font-canva-sans transition-all duration-300 hover:scale-105 hover:shadow-md transform ${
-                  selectedCategory === category.id ? 'scale-105 shadow-lg' : ''
+                  selectedCategory === category.slug ? 'scale-105 shadow-lg' : ''
                 }`}
                 style={{
-                  backgroundColor: category.color,
-                  color: category.textColor,
-                  border: selectedCategory === category.id ? '2px solid var(--primary-orange)' : 'none',
+                  backgroundColor: 'rgba(243, 172, 59, 0.15)',
+                  color: 'var(--primary-orange)',
+                  border: selectedCategory === category.slug ? '2px solid var(--primary-orange)' : 'none',
                   animationDelay: `${index * 100}ms`
                 }}
               >

@@ -178,6 +178,11 @@ export const projectApi = {
     return apiClient.get<ProjectData>(`/api/projects/${projectId}/`);
   },
 
+  // Get admin-managed categories
+  getCategories: async () => {
+    return apiClient.get<{ id: number; name: string; slug: string }[]>('/api/projects/categories/');
+  },
+
   // Create a new project
   createProject: async (data: ProjectCreateData) => {
     return apiClient.post<ProjectData>('/api/projects/', data);

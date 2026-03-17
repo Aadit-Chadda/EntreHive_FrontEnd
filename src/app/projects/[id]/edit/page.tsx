@@ -44,6 +44,12 @@ export default function EditProjectPage() {
   const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(null);
 
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [availableCategories, setAvailableCategories] = useState<{ id: number; name: string; slug: string }[]>([]);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    projectApi.getCategories().then(setAvailableCategories).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (projectId) {
@@ -757,24 +763,79 @@ export default function EditProjectPage() {
                             {/* Categories */}
                             <div>
                               <label
-                                htmlFor="categories"
                                 className="block text-sm font-medium mb-2"
                                 style={{ color: 'var(--text-secondary)' }}
                               >
                                 Categories
                               </label>
-                              <input
-                                type="text"
-                                id="categories"
-                                value={formData.categories?.join(', ') || ''}
-                                onChange={(e) => handleArrayInputChange('categories', e.target.value)}
-                                placeholder="e.g., AI, EdTech, FinTech"
-                                className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]"
-                                style={{ borderColor: 'var(--border)' }}
-                              />
-                              <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                                Separate multiple categories with commas
-                              </p>
+                              {formData.categories && formData.categories.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                  {formData.categories.map(category => (
+                                    <span
+                                      key={category}
+                                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-full"
+                                      style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--text-primary)' }}
+                                    >
+                                      {category}
+                                      <button
+                                        type="button"
+                                        onClick={() => handleInputChange('categories', (formData.categories || []).filter(c => c !== category))}
+                                        className="ml-2 focus:outline-none"
+                                        style={{ color: 'var(--text-secondary)' }}
+                                      >
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      </button>
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                                  className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-left flex justify-between items-center"
+                                  style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)', color: 'var(--text-primary)' }}
+                                >
+                                  <span style={{ color: formData.categories?.length ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                                    {formData.categories?.length
+                                      ? `${formData.categories.length} selected`
+                                      : 'Select categories...'}
+                                  </span>
+                                  <svg className={`w-4 h-4 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+                                {categoryDropdownOpen && (
+                                  <div className="absolute z-10 w-full mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                                    {availableCategories.map(cat => (
+                                      <label
+                                        key={cat.id}
+                                        className="flex items-center px-4 py-2 cursor-pointer hover:opacity-80"
+                                        style={{ color: 'var(--text-primary)' }}
+                                      >
+                                        <input
+                                          type="checkbox"
+                                          checked={formData.categories?.includes(cat.name) || false}
+                                          onChange={() => {
+                                            const current = formData.categories || [];
+                                            const updated = current.includes(cat.name)
+                                              ? current.filter(c => c !== cat.name)
+                                              : [...current, cat.name];
+                                            handleInputChange('categories', updated);
+                                          }}
+                                          className="h-4 w-4 rounded accent-[var(--primary)]"
+                                        />
+                                        <span className="ml-3 text-sm">{cat.name}</span>
+                                      </label>
+                                    ))}
+                                    {availableCategories.length === 0 && (
+                                      <p className="px-4 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>No categories available</p>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
                             </div>
 
                             {/* Tags */}

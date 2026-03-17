@@ -60,10 +60,15 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
     visibility: 'private',
   });
 
-  const [categoryInput, setCategoryInput] = useState('');
   const [tagInput, setTagInput] = useState('');
   const [bannerImageFile, setBannerImageFile] = useState<File | null>(null);
   const [bannerImagePreview, setBannerImagePreview] = useState<string | null>(null);
+  const [availableCategories, setAvailableCategories] = useState<{ id: number; name: string; slug: string }[]>([]);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    projectApi.getCategories().then(setAvailableCategories).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!bannerImageFile) return;
@@ -86,14 +91,13 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
     }));
   };
 
-  const handleAddCategory = () => {
-    if (categoryInput.trim() && !formData.categories?.includes(categoryInput.trim())) {
-      setFormData(prev => ({
-        ...prev,
-        categories: [...(prev.categories || []), categoryInput.trim()]
-      }));
-      setCategoryInput('');
-    }
+  const handleToggleCategory = (categoryName: string) => {
+    setFormData(prev => ({
+      ...prev,
+      categories: prev.categories?.includes(categoryName)
+        ? prev.categories.filter(c => c !== categoryName)
+        : [...(prev.categories || []), categoryName]
+    }));
   };
 
   const handleRemoveCategory = (category: string) => {
@@ -528,42 +532,64 @@ export default function ProjectCreateForm({ onSuccess, onCancel }: ProjectCreate
                   <label className="block text-sm font-medium text-gray-900 mb-2">
                     Categories
                   </label>
-                  <p className="text-xs text-gray-600 mb-3">Add broad categories like "AI", "EdTech", &quot;FinTech&quot;, etc.</p>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {formData.categories?.map(category => (
-                      <span
-                        key={category}
-                        className="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
-                      >
-                        {category}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCategory(category)}
-                          className="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none"
+                  <p className="text-xs text-gray-600 mb-3">Select categories that best describe your project</p>
+                  {formData.categories && formData.categories.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {formData.categories.map(category => (
+                        <span
+                          key={category}
+                          className="inline-flex items-center px-3 py-2 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"
                         >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      value={categoryInput}
-                      onChange={(e) => setCategoryInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
-                      placeholder="Add category (e.g., AI, EdTech)"
-                    />
+                          {category}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCategory(category)}
+                            className="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <div className="relative">
                     <button
                       type="button"
-                      onClick={handleAddCategory}
-                      className="px-6 py-2 bg-blue-600 text-white font-medium rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 text-left flex justify-between items-center"
                     >
-                      Add
+                      <span className={formData.categories?.length ? 'text-gray-900' : 'text-gray-500'}>
+                        {formData.categories?.length
+                          ? `${formData.categories.length} selected`
+                          : 'Select categories...'}
+                      </span>
+                      <svg className={`w-4 h-4 transition-transform ${categoryDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </button>
+                    {categoryDropdownOpen && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {availableCategories.map(cat => (
+                          <label
+                            key={cat.id}
+                            className="flex items-center px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.categories?.includes(cat.name) || false}
+                              onChange={() => handleToggleCategory(cat.name)}
+                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 rounded"
+                            />
+                            <span className="ml-3 text-sm text-gray-900">{cat.name}</span>
+                          </label>
+                        ))}
+                        {availableCategories.length === 0 && (
+                          <p className="px-4 py-2 text-sm text-gray-500">No categories available</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
 

@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
 import { useTour, shouldShowTour } from '@/contexts/TourContext';
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
-import { ApiError, apiClient } from '@/lib/api';
+import { ApiError, apiClient, projectApi } from '@/lib/api';
 import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT, PROFILE_BANNER_GRADIENTS } from '@/lib/profileBranding';
 import type { ProfileBannerStyle } from '@/lib/profileBranding';
@@ -42,21 +42,14 @@ export default function ProfilePage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [savingInterests, setSavingInterests] = useState(false);
 
-  // Available investment interest categories
-  const availableInterests = [
-    { id: 'AI', label: 'AI', icon: '🤖' },
-    { id: 'Web Dev', label: 'Web Dev', icon: '💻' },
-    { id: 'Fintech', label: 'Fintech', icon: '💰' },
-    { id: 'Robotics', label: 'Robotics', icon: '🤖' },
-    { id: 'Biotech', label: 'Biotech', icon: '🧬' },
-    { id: 'Climate', label: 'Climate', icon: '🌍' },
-    { id: 'Hardware', label: 'Hardware', icon: '⚙️' },
-    { id: 'SaaS', label: 'SaaS', icon: '☁️' },
-    { id: 'EdTech', label: 'EdTech', icon: '📚' },
-    { id: 'HealthTech', label: 'HealthTech', icon: '🏥' },
-    { id: 'Social Impact', label: 'Social Impact', icon: '💝' },
-    { id: 'Gaming', label: 'Gaming', icon: '🎮' },
-  ];
+  // Available investment interest categories (fetched from admin-managed categories)
+  const [availableInterests, setAvailableInterests] = useState<{ id: string; label: string }[]>([]);
+
+  useEffect(() => {
+    projectApi.getCategories()
+      .then(cats => setAvailableInterests(cats.map(c => ({ id: c.name, label: c.name }))))
+      .catch(() => {});
+  }, []);
 
   // Initialize interests from profile (for investors)
   useEffect(() => {
@@ -1164,14 +1157,12 @@ export default function ProfilePage() {
                     <div className="flex flex-wrap gap-2">
                       {profile.interests && profile.interests.length > 0 ? (
                         profile.interests.map((interest: string) => {
-                          const interestData = availableInterests.find(i => i.id === interest);
                           return (
                             <div
                               key={interest}
                               className="px-4 py-2 rounded-lg border-2 font-medium text-sm flex items-center space-x-2"
                               style={{ borderColor: 'var(--accent-pine)', background: 'rgba(111, 136, 122, 0.1)', color: 'var(--text-primary)' }}
                             >
-                              <span>{interestData?.icon || '🎯'}</span>
                               <span>{interest}</span>
                             </div>
                           );
@@ -1201,7 +1192,6 @@ export default function ProfilePage() {
                               color: selectedInterests.includes(interest.id) ? 'white' : 'var(--text-primary)'
                             }}
                           >
-                            <span>{interest.icon}</span>
                             <span>{interest.label}</span>
                           </button>
                         ))}

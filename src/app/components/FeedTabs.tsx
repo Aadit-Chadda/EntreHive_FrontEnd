@@ -71,22 +71,22 @@ export default function FeedTabs() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<FeedType>('home');
 
-  // Investors can only discover - they cannot post or create projects
-  const isInvestor = user?.user_role === 'investor';
+  // Investors and mentors can only discover - they cannot post or create projects
+  const isInvestorOrMentor = user?.user_role === 'investor' || user?.user_role === 'mentor';
   const isProfessor = user?.user_role === 'professor';
 
   // Build tabs based on user role
   // - Investors: Home, Global, Projects (no University - they're not tied to universities)
   // - Professors: All base tabs + Projects
   // - Others: Base tabs only (Home, University, Global)
-  const feedTabs = isInvestor
+  const feedTabs = isInvestorOrMentor
     ? investorTabs
     : (isProfessor ? [...baseFeedTabs, projectsTab] : baseFeedTabs);
 
   return (
     <div className="space-y-6">
       {/* Investor Header - Only for investors */}
-      {isInvestor && (
+      {isInvestorOrMentor && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ export default function FeedTabs() {
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold font-roca-two" style={{ color: 'var(--text-primary)' }}>
-            EntreHive <span style={{ color: 'var(--primary-orange)' }}>Investor</span>
+            EntreHive <span style={{ color: 'var(--primary-orange)' }}>{user?.user_role === 'mentor' ? 'Mentor' : 'Investor'}</span>
           </h1>
         </motion.div>
       )}
@@ -110,7 +110,7 @@ export default function FeedTabs() {
         id="feed-tabs"
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4, delay: isInvestor ? 0.1 : 0 }}
+        transition={{ duration: 0.4, delay: isInvestorOrMentor ? 0.1 : 0 }}
         className="relative rounded-3xl shadow-lg border backdrop-blur-sm p-2"
         style={{
           backgroundColor: 'var(--surface)',
@@ -205,8 +205,8 @@ export default function FeedTabs() {
       >
         <CuratedFeed
           feedType={activeTab}
-          showComposer={activeTab === 'home' && !isInvestor}
-          showCreateProjectCard={activeTab === 'home' && !isInvestor}
+          showComposer={activeTab === 'home' && !isInvestorOrMentor}
+          showCreateProjectCard={activeTab === 'home' && !isInvestorOrMentor}
         />
       </motion.div>
     </div>

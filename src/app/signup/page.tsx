@@ -133,14 +133,14 @@ export default function SignUp() {
         verified: false,
         university: null,
         checking: false,
-        error: formData.userRole !== 'investor' 
+        error: !['investor', 'mentor'].includes(formData.userRole)
           ? (apiError.message || 'Sorry, you are not eligible at the moment! This application is available only to students from partner universities.')
           : '',
         message: ''
       });
-      
-      // Set email error for non-investors only
-      if (formData.userRole !== 'investor') {
+
+      // Set email error for non-investors/non-mentors only
+      if (!['investor', 'mentor'].includes(formData.userRole)) {
         setFieldErrors(prev => ({ 
           ...prev, 
           email: apiError.message || 'University verification failed' 
@@ -193,7 +193,7 @@ export default function SignUp() {
       }
       
       // Check university verification for students and professors
-      if (formData.userRole !== 'investor' && !universityVerification.verified) {
+      if (!['investor', 'mentor'].includes(formData.userRole) && !universityVerification.verified) {
         setError('Please use your institutional email address to verify your university affiliation');
         return;
       }
@@ -366,6 +366,7 @@ export default function SignUp() {
                       <option value="student">🎓 Student</option>
                       <option value="professor">👨‍🏫 Professor</option>
                       <option value="investor">💼 Investor</option>
+                      <option value="mentor">💡 Mentor</option>
                     </select>
                   </div>
                   <p className="mt-1 text-xs font-canva-sans" style={{color: '#8a6b53'}}>
@@ -472,7 +473,7 @@ export default function SignUp() {
                 <div className="group">
                   <label htmlFor="email" className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                     Email Address *
-                    {formData.userRole !== 'investor' && (
+                    {!['investor', 'mentor'].includes(formData.userRole) && (
                       <span className="text-xs ml-2" style={{color: '#8a6b53'}}>
                         (Use your institutional email)
                       </span>
@@ -506,7 +507,7 @@ export default function SignUp() {
                         color: '#36454F',
 
                       }}
-                      placeholder={formData.userRole === 'investor' ? "your.email@company.com" : "john.doe@university.edu"}
+                      placeholder={['investor', 'mentor'].includes(formData.userRole) ? "your.email@company.com" : "john.doe@university.edu"}
                       value={formData.email}
                       onChange={handleChange}
                       onBlur={(e) => checkEmailAvailability(e.target.value)}
@@ -529,14 +530,14 @@ export default function SignUp() {
                   </div>
                   
                   
-                  {universityVerification.verified && formData.userRole === 'investor' && (
+                  {universityVerification.verified && ['investor', 'mentor'].includes(formData.userRole) && (
                     <div className="mt-2 p-3 rounded-lg border" style={{backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: '#3B82F6'}}>
                       <div className="flex items-center">
                         <svg className="h-4 w-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <p className="text-sm font-medium text-blue-700">
-                          Investor account - University verification not required
+                          {formData.userRole === 'investor' ? 'Investor' : 'Mentor'} account - University verification not required
                         </p>
                       </div>
                     </div>
@@ -546,7 +547,7 @@ export default function SignUp() {
                     <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{fieldErrors.email}</p>
                   )}
 
-                  {universityVerification.error && !fieldErrors.email && formData.userRole !== 'investor' && (
+                  {universityVerification.error && !fieldErrors.email && !['investor', 'mentor'].includes(formData.userRole) && (
                     <p className="mt-1 text-sm font-canva-sans" style={{color: '#E74C3C'}}>{universityVerification.error}</p>
                   )}
                 </div>
@@ -654,7 +655,7 @@ export default function SignUp() {
             {step === 2 && (
               <div className="space-y-6 animate-fade-in-up">
                 {/* University Information Display */}
-                {formData.userRole !== 'investor' && universityVerification.verified && universityVerification.university && (
+                {!['investor', 'mentor'].includes(formData.userRole) && universityVerification.verified && universityVerification.university && (
                   <div className="group">
                     <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Verified University
@@ -677,7 +678,7 @@ export default function SignUp() {
                   </div>
                 )}
                 
-                {formData.userRole === 'investor' && (
+                {['investor', 'mentor'].includes(formData.userRole) && (
                   <div className="group">
                     <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: '#36454F'}}>
                       Account Type
@@ -689,7 +690,7 @@ export default function SignUp() {
                         </svg>
                         <div>
                           <p className="text-lg font-semibold font-canva-sans text-blue-700">
-                            💼 Investor Account
+                            {formData.userRole === 'investor' ? '💼 Investor' : '💡 Mentor'} Account
                           </p>
                           <p className="text-sm font-canva-sans text-blue-600">
                             No university affiliation required
@@ -728,11 +729,11 @@ export default function SignUp() {
                   </div>
                 </div>
 
-                {/* Investor Interests (only for investors) */}
-                {formData.userRole === 'investor' && (
+                {/* Interests (for investors and mentors) */}
+                {['investor', 'mentor'].includes(formData.userRole) && (
                   <div className="group">
                     <label className="block text-sm font-medium font-canva-sans mb-3" style={{color: '#36454F'}}>
-                      Investment Interests (Select all that apply)
+                      {formData.userRole === 'investor' ? 'Investment' : 'Mentorship'} Interests (Select all that apply)
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       {[
@@ -797,7 +798,8 @@ export default function SignUp() {
 Examples:
 • Student: Computer Science major interested in AI and startup development
 • Professor: AI researcher focused on machine learning applications in healthcare
-• Investor: Early-stage investor focused on edtech and fintech startups"
+• Investor: Early-stage investor focused on edtech and fintech startups
+• Mentor: Industry expert helping students with product development and go-to-market strategies"
                       value={formData.bio}
                       onChange={handleChange}
                     />

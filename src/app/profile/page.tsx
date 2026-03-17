@@ -973,7 +973,7 @@ export default function ProfilePage() {
                         </>
                       )}
 
-                      {formData.user_role === 'investor' && (
+                      {(formData.user_role === 'investor' || formData.user_role === 'mentor') && (
                         <>
                           <div>
                             <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Company/Fund</label>
@@ -1128,8 +1128,8 @@ export default function ProfilePage() {
                 </div>
               </motion.div>
 
-              {/* Investment Interests Section - Investors Only */}
-              {profile?.user_role === 'investor' && (
+              {/* Investment Interests Section - Investors and Mentors */}
+              {(profile?.user_role === 'investor' || profile?.user_role === 'mentor') && (
                 <motion.div
                   initial={{ scale: 0.95, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}

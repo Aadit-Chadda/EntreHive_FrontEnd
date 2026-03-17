@@ -96,8 +96,8 @@ export default function Feed() {
             <span className="font-bold text-lg font-roca-two" style={{color: 'var(--text-primary)'}}>EntreHive</span>
           </motion.div>
 
-          {/* Hide compose button for investors - they can only discover, not post */}
-          {user?.user_role !== 'investor' ? (
+          {/* Hide compose button for investors/mentors - they can only discover, not post */}
+          {(user?.user_role !== 'investor' && user?.user_role !== 'mentor') ? (
             <motion.button
               whileHover={{ scale: 1.05, rotate: 180 }}
               whileTap={{ scale: 0.95 }}
@@ -112,7 +112,7 @@ export default function Feed() {
               </svg>
             </motion.button>
           ) : (
-            <div className="w-10" /> /* Spacer to maintain layout for investors */
+            <div className="w-10" /> /* Spacer to maintain layout for investors/mentors */
           )}
         </motion.div>
 
@@ -162,8 +162,8 @@ export default function Feed() {
           )}
         </AnimatePresence>
 
-        {/* Floating Composer Modal - Hidden for investors */}
-        {user?.user_role !== 'investor' && (
+        {/* Floating Composer Modal - Hidden for investors/mentors */}
+        {(user?.user_role !== 'investor' && user?.user_role !== 'mentor') && (
           <FloatingComposer
             isOpen={showFloatingComposer}
             onClose={() => setShowFloatingComposer(false)}

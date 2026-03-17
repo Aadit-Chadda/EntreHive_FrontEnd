@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Backend API types
-export type UserRole = "student" | "professor" | "investor";
+export type UserRole = "student" | "professor" | "investor" | "mentor";
 
 export interface AuthUser {
   pk: number;

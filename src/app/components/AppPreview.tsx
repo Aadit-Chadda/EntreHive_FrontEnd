@@ -40,7 +40,7 @@ export default function AppPreview() {
         </div>
 
         {/* App Content */}
-        <div className="bg-white" style={{ height: '650px', minHeight: '500px' }}>
+        <div style={{ height: '650px', minHeight: '500px', backgroundColor: 'var(--background)' }}>
           <div className="flex h-full">
             {/* Left Navigation - Hidden on mobile */}
             <div className="hidden md:flex w-48 lg:w-64 border-r flex-col" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--surface)' }}>
@@ -60,7 +60,7 @@ export default function AppPreview() {
               {/* Navigation Items */}
               <nav className="flex-1 p-2 lg:p-4 space-y-1 lg:space-y-2">
                 <div className="px-2 lg:px-4 py-2 lg:py-3 rounded-lg flex items-center space-x-2 lg:space-x-3 transition-all"
-                     style={{ backgroundColor: 'var(--neutral-light-orange)', color: 'var(--primary-orange)' }}>
+                     style={{ backgroundColor: 'var(--active-bg)', color: 'var(--primary-orange)' }}>
                   <Home className="w-4 lg:w-5 h-4 lg:h-5" />
                   <span className="font-medium text-xs lg:text-sm">Feed</span>
                 </div>
@@ -99,7 +99,7 @@ export default function AppPreview() {
               <div className="h-full overflow-y-auto">
                 {/* Feed Header */}
                 <div className="sticky top-0 z-10 px-3 lg:px-6 py-3 lg:py-4 border-b backdrop-blur-lg"
-                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderColor: 'var(--border)' }}>
+                     style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                   <div className="flex items-center space-x-2 lg:space-x-4">
                     <button className="px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg text-xs lg:text-sm font-medium"
                             style={{ backgroundColor: 'var(--primary-orange)', color: 'white' }}>
@@ -163,7 +163,7 @@ export default function AppPreview() {
                               <span className="font-semibold text-sm lg:text-base truncate" style={{ color: 'var(--text-primary)' }}>Tom Chen</span>
                               <span className="text-xs lg:text-sm whitespace-nowrap" style={{ color: 'var(--text-muted)' }}>3h ago</span>
                             </div>
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--neutral-light-orange)', color: 'var(--primary-orange)' }}>Project</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'var(--active-bg)', color: 'var(--primary-orange)' }}>Project</span>
                           </div>
                         </div>
                       </div>
@@ -284,7 +284,7 @@ export default function AppPreview() {
 
                 <div className="space-y-2">
                   <div className="p-3 rounded-lg border"
-                       style={{ backgroundColor: 'var(--neutral-light-orange)', borderColor: 'var(--primary-orange)' }}>
+                       style={{ backgroundColor: 'var(--active-bg)', borderColor: 'var(--primary-orange)' }}>
                     <div className="flex items-start space-x-2">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
                            style={{ backgroundColor: 'var(--accent-pine)' }}>

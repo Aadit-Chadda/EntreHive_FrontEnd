@@ -16,7 +16,7 @@ export const tokenStorage = {
   setTokens(access: string, refresh: string): void {
     localStorage.setItem(ACCESS_TOKEN_KEY, access);
     localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
-    document.cookie = `${AUTH_FLAG_COOKIE}=true; path=/; max-age=${60 * 60 * 24}; SameSite=Strict`;
+    document.cookie = `${AUTH_FLAG_COOKIE}=true; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
   },
 
   clearTokens(): void {
@@ -27,5 +27,16 @@ export const tokenStorage = {
 
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  },
+
+  syncState(): void {
+    if (typeof window === 'undefined') return;
+    const hasToken = !!this.getAccessToken();
+    const hasCookie = document.cookie.includes(`${AUTH_FLAG_COOKIE}=true`);
+    if (!hasToken && hasCookie) {
+      document.cookie = `${AUTH_FLAG_COOKIE}=; path=/; max-age=0`;
+    } else if (hasToken && !hasCookie) {
+      document.cookie = `${AUTH_FLAG_COOKIE}=true; path=/; max-age=${60 * 60 * 24}; SameSite=Lax`;
+    }
   },
 };

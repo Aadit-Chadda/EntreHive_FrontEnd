@@ -40,6 +40,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = !!user;
 
   useEffect(() => {
+    // Always sync cookie/localStorage state to prevent desync issues
+    tokenStorage.syncState();
+
     // Skip auth check on public pages to prevent reload loops
     const publicPages = ['/login', '/signup', '/forgot-password', '/', '/about', '/services'];
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -56,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthStatus = async () => {
     if (!tokenStorage.isAuthenticated()) {
+      tokenStorage.clearTokens(); // Clear stale cookie to prevent redirect loops
       setIsLoading(false);
       return;
     }
@@ -145,18 +149,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const validatedUrl = validateReturnUrl(returnUrl);
 
-      if (validatedUrl) {
-        // Safe to redirect to the validated path
-        router.push(validatedUrl);
-      } else {
-        // Default redirect to feed for all users
-        router.push('/feed');
-      }
+      // Use window.location.href for a full page navigation instead of router.push().
+      // This guarantees the middleware sees the is_authenticated cookie on a fresh
+      // HTTP request, avoiding the race condition where router.push() soft navigation
+      // + React re-renders from setIsLoading(false) could cancel the navigation.
+      window.location.href = validatedUrl || '/feed';
     } catch (error) {
       setIsLoading(false);
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 

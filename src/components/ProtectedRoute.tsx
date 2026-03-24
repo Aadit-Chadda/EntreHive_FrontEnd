@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { tokenStorage } from '@/lib/tokenStorage';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -46,6 +47,8 @@ export default function ProtectedRoute({ children, fallback }: ProtectedRoutePro
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
+      // Clear any stale cookie so middleware won't redirect /login back to /feed
+      tokenStorage.clearTokens();
       // Redirect to login with return URL parameter
       const returnUrl = encodeURIComponent(pathname);
       router.push(`/login?returnUrl=${returnUrl}`);

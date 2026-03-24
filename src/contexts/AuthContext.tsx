@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/lib/api';
+import { tokenStorage } from '@/lib/tokenStorage';
 import { AuthUser, LoginResponse, UserProfile, EnhancedUserProfile, ProfileUpdateData } from '@/types';
 
 interface AuthContextType {
@@ -36,8 +37,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // With httpOnly cookies, we can't check localStorage
-  // Authentication is determined by whether we have user data
   const isAuthenticated = !!user;
 
   useEffect(() => {
@@ -56,13 +55,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const checkAuthStatus = async () => {
+    if (!tokenStorage.isAuthenticated()) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // With httpOnly cookies, tokens are sent automatically with requests
-      // Try to get user profile - if successful, user is authenticated
       const profileData = await apiClient.get<EnhancedUserProfile>('/api/accounts/profile/me/');
       setProfile(profileData);
 
-      // Create AuthUser from profile data
       const authUser: AuthUser = {
         pk: profileData.id,
         username: profileData.username,
@@ -73,12 +74,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       };
       setUser(authUser);
     } catch (error) {
-      // If profile fetch fails (401), user is not authenticated
-      // Don't log error for expected 401 responses
       if (error && typeof error === 'object' && 'status' in error && error.status !== 401) {
         console.error('Auth check failed:', error);
       }
-      // Clear user state if not authenticated
+      tokenStorage.clearTokens();
       setUser(null);
       setProfile(null);
     } finally {
@@ -94,10 +93,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         password,
       });
 
-      // Tokens are now stored in httpOnly cookies automatically by the backend
-      // No need to manually store them in localStorage
+      // Store tokens from response body
+      if (response.access && response.refresh) {
+        tokenStorage.setTokens(response.access, response.refresh);
+      }
 
-      // Set user data
       setUser(response.user);
 
       // Get full profile data
@@ -162,23 +162,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      // Call backend logout to clear httpOnly cookies
-      await apiClient.post('/api/auth/logout/', {});
-
-      // Only clear state and redirect if server logout succeeded
+      const refreshToken = tokenStorage.getRefreshToken();
+      await apiClient.post('/api/auth/logout/', { refresh: refreshToken });
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+    } finally {
+      tokenStorage.clearTokens();
       setUser(null);
       setProfile(null);
-
-      // Redirect to login
       router.push('/login');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      // Don't clear state if server logout failed - session still active
-      // Show error to user
-      if (typeof window !== 'undefined') {
-        alert('Logout failed. Please try again or close your browser to end your session.');
-      }
-      throw error;
     }
   };
 

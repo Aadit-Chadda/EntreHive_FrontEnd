@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AuthService, validatePassword, validateEmail, validateUsername } from '@/lib/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserRole, RegistrationData } from '@/types';
 import { ApiError, apiClient } from '@/lib/api';
 
 export default function SignUp() {
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     firstName: '',
@@ -237,15 +239,20 @@ export default function SignUp() {
       };
 
       await AuthService.register(registrationData);
-      
-      // Show success message and redirect to login
       setError('');
-      router.push('/login?message=Registration successful! Please log in to continue.');
-      
+
+      // Auto-login after successful registration
+      try {
+        await login(formData.email, formData.password);
+      } catch {
+        // Registration succeeded but auto-login failed — redirect to login
+        router.push('/login?message=Registration successful! Please log in to continue.');
+      }
+
     } catch (err) {
       const apiError = err as ApiError;
       console.error('Registration error:', apiError);
-      
+
       // Handle field-specific errors
       if (apiError.details) {
         const newFieldErrors: Record<string, string> = {};
@@ -256,7 +263,7 @@ export default function SignUp() {
         });
         setFieldErrors(newFieldErrors);
       }
-      
+
       // Set general error message
       setError(apiError.message || 'Registration failed. Please check your information and try again.');
     } finally {

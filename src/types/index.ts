@@ -13,9 +13,8 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  // With httpOnly cookies, tokens are not in response body (only in cookies)
-  access?: string;
-  refresh?: string;
+  access: string;
+  refresh: string;
   access_token_expiration?: string;
   refresh_token_expiration?: string;
   user: AuthUser;

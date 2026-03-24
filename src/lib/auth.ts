@@ -1,4 +1,5 @@
 import { apiClient } from './api';
+import { tokenStorage } from './tokenStorage';
 import { LoginResponse, RegistrationData, UserProfile } from '@/types';
 
 export interface PasswordResetData {
@@ -36,12 +37,19 @@ export class AuthService {
   }
 
   static async logout(): Promise<{ detail: string }> {
-    // With httpOnly cookies, refresh token is sent automatically in cookies
-    return apiClient.post('/api/auth/logout/', {});
+    const refreshToken = tokenStorage.getRefreshToken();
+    return apiClient.post('/api/auth/logout/', { refresh: refreshToken });
   }
 
-  static async refreshToken(refreshToken: string): Promise<{ access: string; access_token_expiration: string }> {
-    return apiClient.post('/api/auth/token/refresh/', { refresh: refreshToken });
+  static async refreshToken(): Promise<{ access: string; refresh?: string; access_token_expiration?: string }> {
+    const refreshToken = tokenStorage.getRefreshToken();
+    if (!refreshToken) throw new Error('No refresh token available');
+    const response = await apiClient.post<{ access: string; refresh?: string; access_token_expiration?: string }>(
+      '/api/auth/token/refresh/',
+      { refresh: refreshToken }
+    );
+    tokenStorage.setTokens(response.access, response.refresh || refreshToken);
+    return response;
   }
 
   static async requestPasswordReset(data: PasswordResetData): Promise<{ detail: string }> {

@@ -1,4 +1,6 @@
 // API configuration and utilities
+import { tokenStorage } from './tokenStorage';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface ApiError {
@@ -9,19 +11,59 @@ export interface ApiError {
 
 export class ApiClient {
   private baseUrl: string;
+  private isRefreshing = false;
+  private refreshPromise: Promise<string> | null = null;
 
   constructor(baseUrl = API_BASE_URL) {
     this.baseUrl = baseUrl;
   }
 
   private getAuthHeaders(): Record<string, string> {
-    // Tokens are now in httpOnly cookies, sent automatically with requests
-    // No need to add Authorization header manually
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-
+    const token = tokenStorage.getAccessToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     return headers;
+  }
+
+  private getAuthHeaderOnly(): Record<string, string> {
+    const headers: Record<string, string> = {};
+    const token = tokenStorage.getAccessToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  }
+
+  private async refreshAccessToken(): Promise<string> {
+    const refreshToken = tokenStorage.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token');
+    }
+
+    const response = await fetch(`${this.baseUrl}/api/auth/token/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      tokenStorage.clearTokens();
+      throw new Error('Refresh failed');
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      tokenStorage.clearTokens();
+      throw new Error('Invalid refresh response');
+    }
+    tokenStorage.setTokens(data.access, data.refresh || refreshToken);
+    return data.access;
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
@@ -39,12 +81,6 @@ export class ApiClient {
         details: errorData,
       };
 
-      // Handle 401 errors - with httpOnly cookies, backend handles refresh automatically
-      // If we get 401, it means the refresh token also expired, so logout
-      if (response.status === 401 && typeof window !== 'undefined') {
-        this.logout();
-      }
-
       throw error;
     }
 
@@ -55,15 +91,45 @@ export class ApiClient {
     }
   }
 
-  private logout() {
+  private async handleResponseWithRetry<T>(
+    response: Response,
+    retryFn: () => Promise<Response>
+  ): Promise<T> {
+    if (response.status === 401 && tokenStorage.getRefreshToken()) {
+      if (!this.isRefreshing) {
+        this.isRefreshing = true;
+        this.refreshPromise = this.refreshAccessToken().finally(() => {
+          this.isRefreshing = false;
+          this.refreshPromise = null;
+        });
+      }
+
+      try {
+        await this.refreshPromise;
+        const retryResponse = await retryFn();
+        return this.handleResponse<T>(retryResponse);
+      } catch {
+        this.forceLogout();
+        throw { message: 'Session expired', status: 401 } as ApiError;
+      }
+    }
+
+    if (response.status === 401) {
+      this.forceLogout();
+    }
+
+    return this.handleResponse<T>(response);
+  }
+
+  private forceLogout() {
     if (typeof window !== 'undefined') {
-      // Don't redirect if already on login or signup pages (prevents infinite reload loop)
       const currentPath = window.location.pathname;
       const publicPages = ['/login', '/signup', '/forgot-password'];
       const isPublicPage = publicPages.includes(currentPath) || currentPath.startsWith('/reset-password');
 
+      tokenStorage.clearTokens();
+
       if (!isPublicPage) {
-        // Cookies are cleared by backend, just redirect to login
         window.location.href = '/login';
       }
     }
@@ -73,66 +139,101 @@ export class ApiClient {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'GET',
       headers: this.getAuthHeaders(),
-      credentials: 'include', // Send cookies with request
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'GET',
+        headers: this.getAuthHeaders(),
+      })
+    );
   }
 
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
-      credentials: 'include', // Send cookies with request
       body: data ? JSON.stringify(data) : undefined,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: data ? JSON.stringify(data) : undefined,
+      })
+    );
   }
 
   async patch<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
       headers: this.getAuthHeaders(),
-      credentials: 'include', // Send cookies with request
       body: data ? JSON.stringify(data) : undefined,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'PATCH',
+        headers: this.getAuthHeaders(),
+        body: data ? JSON.stringify(data) : undefined,
+      })
+    );
   }
 
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PUT',
       headers: this.getAuthHeaders(),
-      credentials: 'include', // Send cookies with request
       body: data ? JSON.stringify(data) : undefined,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: data ? JSON.stringify(data) : undefined,
+      })
+    );
   }
 
   async delete<T>(endpoint: string): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'DELETE',
       headers: this.getAuthHeaders(),
-      credentials: 'include', // Send cookies with request
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+      })
+    );
   }
 
   async uploadFile<T>(endpoint: string, formData: FormData): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'PATCH',
-      credentials: 'include', // Send cookies with request
+      headers: this.getAuthHeaderOnly(),
       body: formData,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'PATCH',
+        headers: this.getAuthHeaderOnly(),
+        body: formData,
+      })
+    );
   }
 
   async postFormData<T>(endpoint: string, formData: FormData): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: 'POST',
-      credentials: 'include', // Send cookies with request
+      headers: this.getAuthHeaderOnly(),
       body: formData,
     });
-    return this.handleResponse<T>(response);
+    return this.handleResponseWithRetry<T>(response, () =>
+      fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'POST',
+        headers: this.getAuthHeaderOnly(),
+        body: formData,
+      })
+    );
   }
 }
 

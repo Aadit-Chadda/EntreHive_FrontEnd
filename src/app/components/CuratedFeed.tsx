@@ -114,7 +114,11 @@ export default function CuratedFeed({
       const newItems = response.results || [];
       
       if (append) {
-        setFeedItems(prev => [...(prev || []), ...newItems]);
+        setFeedItems(prev => {
+          const existingKeys = new Set((prev || []).map(i => `${i.content_type}-${i.content_id}`));
+          const unique = newItems.filter((i: any) => !existingKeys.has(`${i.content_type}-${i.content_id}`));
+          return [...(prev || []), ...unique];
+        });
       } else {
         setFeedItems(newItems);
       }

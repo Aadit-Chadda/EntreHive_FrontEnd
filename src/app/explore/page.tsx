@@ -389,7 +389,11 @@ export default function ExplorePage() {
     try {
       const nextPage = explorePage + 1;
       const data = await feedApi.getPublicFeed({ page: nextPage, page_size: 20 });
-      setExploreFeed(prev => [...prev, ...(data.results || [])]);
+      setExploreFeed(prev => {
+        const existingKeys = new Set(prev.map(i => `${i.content_type}-${i.content_id}`));
+        const unique = (data.results || []).filter((i: FeedItem) => !existingKeys.has(`${i.content_type}-${i.content_id}`));
+        return [...prev, ...unique];
+      });
       setExploreHasMore(data.has_next);
       setExplorePage(nextPage);
     } catch (err) {

@@ -704,6 +704,60 @@ export const feedApi = {
       previous: string | null;
     }>(`/api/feed/investor/${query ? `?${query}` : ''}`);
   },
+
+  // Composite explore feed (page 1 includes trending, categories, suggested users)
+  getExploreFeed: async (params?: { page?: number; page_size?: number }) => {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined) {
+          queryParams.append(key, value.toString());
+        }
+      });
+    }
+    const query = queryParams.toString();
+    return apiClient.get<{
+      feed: {
+        results: Array<{
+          content_type: 'post' | 'project';
+          content_id: string;
+          score: number;
+          content: PostData | ProjectData;
+          user_interactions: string[];
+          viewed: boolean;
+          clicked: boolean;
+          liked: boolean;
+        }>;
+        count: number;
+        page: number;
+        page_size: number;
+        has_next: boolean;
+        has_previous: boolean;
+      };
+      trending_topics?: Array<{
+        topic: string;
+        mention_count: number;
+        universities: string[];
+      }>;
+      categories?: Array<{
+        id: number;
+        name: string;
+        slug: string;
+      }>;
+      suggested_users?: Array<{
+        id: number;
+        username: string;
+        full_name: string;
+        user_role: string;
+        profile_picture?: string;
+        bio?: string;
+        university_name?: string;
+        followers_count: number;
+        following_count: number;
+        is_following: boolean;
+      }>;
+    }>(`/api/explore/feed/${query ? `?${query}` : ''}`);
+  },
 };
 
 // Messaging API

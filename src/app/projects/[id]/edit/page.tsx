@@ -46,6 +46,7 @@ export default function EditProjectPage() {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [availableCategories, setAvailableCategories] = useState<{ id: number; name: string; slug: string }[]>([]);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     projectApi.getCategories().then(setAvailableCategories).catch(() => {});
@@ -847,17 +848,63 @@ export default function EditProjectPage() {
                               >
                                 Tags
                               </label>
+                              {formData.tags && formData.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                  {formData.tags.map(tag => (
+                                    <span
+                                      key={tag}
+                                      className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-full"
+                                      style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--text-primary)' }}
+                                    >
+                                      {tag}
+                                      <button
+                                        type="button"
+                                        onClick={() => handleInputChange('tags', (formData.tags || []).filter(t => t !== tag))}
+                                        className="ml-2 focus:outline-none"
+                                        style={{ color: 'var(--text-secondary)' }}
+                                      >
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      </button>
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                               <input
                                 type="text"
                                 id="tags"
-                                value={formData.tags?.join(', ') || ''}
-                                onChange={(e) => handleArrayInputChange('tags', e.target.value)}
-                                placeholder="e.g., machine-learning, mobile-app, social-impact"
+                                value={tagInput}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  if (val.endsWith(',')) {
+                                    const newTag = val.slice(0, -1).trim();
+                                    if (newTag && !(formData.tags || []).includes(newTag)) {
+                                      handleInputChange('tags', [...(formData.tags || []), newTag]);
+                                    }
+                                    setTagInput('');
+                                  } else {
+                                    setTagInput(val);
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const newTag = tagInput.trim();
+                                    if (newTag && !(formData.tags || []).includes(newTag)) {
+                                      handleInputChange('tags', [...(formData.tags || []), newTag]);
+                                    }
+                                    setTagInput('');
+                                  } else if (e.key === 'Backspace' && !tagInput && formData.tags && formData.tags.length > 0) {
+                                    handleInputChange('tags', formData.tags.slice(0, -1));
+                                  }
+                                }}
+                                placeholder="Type a tag and press Enter or comma"
                                 className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-secondary)]"
                                 style={{ borderColor: 'var(--border)' }}
                               />
                               <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                                Separate multiple tags with commas
+                                Press Enter or comma to add a tag
                               </p>
                             </div>
                           </div>

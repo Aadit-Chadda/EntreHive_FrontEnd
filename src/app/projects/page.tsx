@@ -7,6 +7,7 @@ import Image from 'next/image';
 import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import ProjectCard from '../components/ProjectCard';
+import { ProjectsGridSkeleton } from '../components/LoadingSkeletons';
 import ProjectCreateForm from '../components/ProjectCreateForm';
 import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -382,9 +383,7 @@ export default function ProjectsPage() {
 
                   {/* Loading State */}
                   {isLoading ? (
-                    <div className="flex justify-center items-center py-12">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{borderColor: 'var(--primary-orange)'}}></div>
-                    </div>
+                    <ProjectsGridSkeleton />
                   ) : error ? (
                     <div className="text-center py-12">
                       <div className="mb-4 font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</div>

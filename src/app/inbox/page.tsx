@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import ConditionalLayout from '../components/ConditionalLayout';
 import { apiService } from '@/lib/api';
+import { InboxSkeleton } from '../components/LoadingSkeletons';
 import { GroupConversation, ProjectViewRequest } from '@/types';
 
 interface Conversation {
@@ -164,31 +165,8 @@ export default function InboxPage() {
     return 'Unknown User';
   };
 
-  // Loading Skeleton Component
-  const LoadingSkeleton = () => (
-    <div className="divide-y animate-pulse" style={{ borderColor: 'var(--border)' }}>
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="p-4">
-          <div className="flex items-start gap-4">
-            {/* Avatar skeleton */}
-            <div className="w-12 h-12 rounded-full" style={{ background: 'var(--hover-bg)' }} />
-
-            {/* Content skeleton */}
-            <div className="flex-1 space-y-3">
-              <div className="flex justify-between">
-                <div className="space-y-2">
-                  <div className="h-4 w-32 rounded" style={{ background: 'var(--hover-bg)' }} />
-                  <div className="h-3 w-20 rounded" style={{ background: 'var(--hover-bg)' }} />
-                </div>
-                <div className="h-3 w-16 rounded" style={{ background: 'var(--hover-bg)' }} />
-              </div>
-              <div className="h-4 w-full rounded" style={{ background: 'var(--hover-bg)' }} />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  // Loading Skeleton Component - uses shared InboxSkeleton
+  const LoadingSkeleton = () => <InboxSkeleton />;
 
   // Error State Component
   const ErrorState = ({ message, onRetry }: { message: string; onRetry: () => void }) => (

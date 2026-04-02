@@ -16,6 +16,7 @@ import RightSidebar from '../components/RightSidebar';
 import { useTheme } from '../components/ThemeProvider';
 import { api, feedApi } from '@/lib/api';
 import { HashtagContent } from '../components/PostCardNew';
+import { ExplorePageSkeleton } from '../components/LoadingSkeletons';
 
 /* ─── Types ────────────────────────────────────────────────────────────── */
 
@@ -98,50 +99,6 @@ interface SearchResults {
 }
 
 type SearchType = 'all' | 'users' | 'posts' | 'projects' | 'hashtags';
-
-/* ─── Skeleton Components ──────────────────────────────────────────────── */
-
-function PillSkeleton({ count = 6 }: { count?: number }) {
-  return (
-    <div className="flex gap-2 overflow-hidden">
-      {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          className="h-8 rounded-full animate-pulse shrink-0"
-          style={{ width: `${60 + Math.random() * 40}px`, backgroundColor: 'var(--hover-bg)' }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function UserCardSkeleton() {
-  return (
-    <div className="flex gap-4 overflow-hidden py-2">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="shrink-0 w-28 rounded-2xl animate-pulse"
-          style={{ height: 160, backgroundColor: 'var(--hover-bg)' }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function GridSkeleton() {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {Array.from({ length: 9 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-2xl animate-pulse"
-          style={{ height: 280, backgroundColor: 'var(--hover-bg)' }}
-        />
-      ))}
-    </div>
-  );
-}
 
 /* ─── Card Components ──────────────────────────────────────────────────── */
 
@@ -783,12 +740,7 @@ export default function ExplorePage() {
                       exit={{ opacity: 0 }}
                     >
                       {exploreLoading ? (
-                        <div className="space-y-6">
-                          <PillSkeleton />
-                          <PillSkeleton count={5} />
-                          <UserCardSkeleton />
-                          <GridSkeleton />
-                        </div>
+                        <ExplorePageSkeleton />
                       ) : (
                         <div className="space-y-6">
 

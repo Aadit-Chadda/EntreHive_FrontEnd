@@ -19,6 +19,7 @@ import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT, PROFILE_BANN
 import type { ProfileBannerStyle } from '@/lib/profileBranding';
 import { Palette, Image as ImageIcon, Edit3 } from 'lucide-react';
 import VerificationWarningBanner from '../components/VerificationWarningBanner';
+import { ProfilePageSkeleton } from '../components/LoadingSkeletons';
 
 export default function ProfilePage() {
   const { user, profile, updateProfile, refreshProfile } = useAuth();
@@ -374,12 +375,18 @@ export default function ProfilePage() {
   if (!profile || !user) {
     return (
       <ProtectedRoute>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <div className="animate-pulse">
-            <div className="bg-gray-300 h-8 w-48 rounded mb-4"></div>
-            <div className="bg-gray-300 h-64 rounded"></div>
+        <ThemeProvider>
+          <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+            <div className="flex">
+              <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
+              <div className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-72 xl:mr-80">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                  <ProfilePageSkeleton />
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </ThemeProvider>
       </ProtectedRoute>
     );
   }

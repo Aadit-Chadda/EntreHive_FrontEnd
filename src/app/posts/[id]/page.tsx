@@ -22,6 +22,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '../../components/LeftNavigation';
 import RightSidebar from '../../components/RightSidebar';
 import { ThemeProvider } from '../../components/ThemeProvider';
+import { PostDetailSkeleton } from '../../components/LoadingSkeletons';
 
 interface PostDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -230,11 +231,8 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
     return (
       <ProtectedRoute>
         <ThemeProvider>
-          <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
-            <div className="flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
-              <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--primary)' }} />
-              <span>Loading post...</span>
-            </div>
+          <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+            <PostDetailSkeleton />
           </div>
         </ThemeProvider>
       </ProtectedRoute>

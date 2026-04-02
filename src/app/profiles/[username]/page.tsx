@@ -12,6 +12,7 @@ import { api, messagingApi } from '@/lib/api';
 import { EnhancedUserProfile, PostSummary, ProjectSummary } from '@/types';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib/profileBranding';
 import { HashtagContent } from '../../components/PostCardNew';
+import { PublicProfileSkeleton } from '../../components/LoadingSkeletons';
 
 // Simple post display component for PostSummary
 const PostSummaryCard = ({ post, router }: { post: PostSummary; router: ReturnType<typeof useRouter> }) => (
@@ -184,9 +185,7 @@ export default function PublicProfilePage() {
           <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
           <div className="flex-1 min-w-0 pt-16 lg:pt-0">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{borderColor: 'var(--primary-orange)'}}></div>
-              </div>
+              <PublicProfileSkeleton />
             </div>
           </div>
         </div>

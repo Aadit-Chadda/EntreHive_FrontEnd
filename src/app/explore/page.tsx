@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -228,7 +228,7 @@ function ExploreProjectCard({ project }: { project: any }) {
 
 /* ─── Main Page ────────────────────────────────────────────────────────── */
 
-export default function ExplorePage() {
+function ExplorePageContent() {
   const { user } = useAuth();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
@@ -973,5 +973,13 @@ export default function ExplorePage() {
         </AnimatePresence>
       </div>
     </ProtectedRoute>
+  );
+}
+
+export default function ExplorePage() {
+  return (
+    <Suspense>
+      <ExplorePageContent />
+    </Suspense>
   );
 }

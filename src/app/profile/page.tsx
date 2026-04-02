@@ -430,7 +430,7 @@ export default function ProfilePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-72 xl:mr-80"
+            className="flex-1 min-w-0 pt-16 lg:pt-0 lg:mr-72 xl:mr-80 overflow-hidden"
           >
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
               {/* Status Messages */}
@@ -479,7 +479,7 @@ export default function ProfilePage() {
                 style={{backgroundColor: 'var(--surface)', border: '1px solid var(--border)'}}
               >
                 {/* Profile Banner */}
-                <div className="h-48 relative">
+                <div className="h-32 sm:h-48 relative">
                   {profile?.banner_style === 'image' && profile?.banner_image ? (
                     <>
                       <img
@@ -526,9 +526,9 @@ export default function ProfilePage() {
                 {/* Profile Info */}
                 <div className="relative px-6 pb-6">
                   {/* Avatar */}
-                  <div className="flex items-end justify-between -mt-16 mb-4">
+                  <div className="flex items-end justify-between -mt-12 sm:-mt-16 mb-4">
                     <div className="relative">
-                      <div className="w-32 h-32 rounded-full border-4 overflow-hidden" style={{borderColor: 'var(--surface)', backgroundColor: 'var(--surface)'}}>
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 overflow-hidden" style={{borderColor: 'var(--surface)', backgroundColor: 'var(--surface)'}}>
                         {profile.profile_picture ? (
                           <img
                             src={profile.profile_picture}
@@ -536,7 +536,7 @@ export default function ProfilePage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-4xl font-bold" style={{color: 'var(--text-muted)', backgroundColor: 'var(--hover-bg)'}}>
+                          <div className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold" style={{color: 'var(--text-muted)', backgroundColor: 'var(--hover-bg)'}}>
                             {profile.first_name?.[0]?.toUpperCase() || profile.username?.[0]?.toUpperCase()}
                           </div>
                         )}

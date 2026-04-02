@@ -57,7 +57,7 @@ export default function Feed() {
     <ProtectedRoute>
       <div className="min-h-screen transition-all duration-300 ease-in-out" style={{backgroundColor: 'var(--background)'}}>
         {/* Mobile Header */}
-        <motion.div 
+        <motion.div
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.3 }}
@@ -126,7 +126,7 @@ export default function Feed() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80"
+            className="flex-1 min-w-0 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 overflow-hidden"
           >
             {/* Main Feed with Improved Spacing */}
             <div id="feed-section" className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
@@ -152,7 +152,7 @@ export default function Feed() {
               whileHover={{ scale: 1.1, y: -2 }}
               whileTap={{ scale: 0.9 }}
               onClick={scrollToTop}
-              className="fixed bottom-6 left-6 z-50 w-12 h-12 text-white rounded-full shadow-xl transition-all duration-200 backdrop-blur-sm"
+              className="fixed bottom-20 sm:bottom-6 left-4 sm:left-6 lg:left-[17rem] xl:left-[19rem] z-50 w-12 h-12 text-white rounded-full shadow-xl transition-all duration-200 backdrop-blur-sm"
               style={{backgroundColor: 'var(--accent-pine)'}}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--secondary-charcoal)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-pine)'}

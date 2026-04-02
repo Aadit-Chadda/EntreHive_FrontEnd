@@ -530,7 +530,7 @@ export default function ExplorePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex"
+            className="flex-1 min-w-0 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex overflow-hidden"
           >
             <div className="flex-1 min-w-0 max-w-none px-4 lg:px-8 xl:px-12 py-6 lg:py-8">
               <div className="max-w-5xl mx-auto">
@@ -870,7 +870,7 @@ export default function ExplorePage() {
                                         router.push(`/profiles/${su.username}`);
                                       }
                                     }}
-                                    className="shrink-0 w-32 rounded-2xl border p-3 text-center transition-all hover:shadow-lg cursor-pointer select-none"
+                                    className="shrink-0 w-28 sm:w-32 rounded-2xl border p-3 text-center transition-all hover:shadow-lg cursor-pointer select-none"
                                     style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}
                                   >
                                     <div
@@ -998,7 +998,7 @@ export default function ExplorePage() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="fixed bottom-6 left-6 z-50 w-12 h-12 text-white rounded-full shadow-xl"
+              className="fixed bottom-20 sm:bottom-6 left-4 sm:left-6 lg:left-[17rem] xl:left-[19rem] z-50 w-12 h-12 text-white rounded-full shadow-xl"
               style={{ backgroundColor: 'var(--accent-pine)' }}
             >
               <ArrowUp className="w-6 h-6 mx-auto" />

@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import ConditionalLayout from '../components/ConditionalLayout';
 import { apiService } from '@/lib/api';
+import { InboxSkeleton } from '../components/LoadingSkeletons';
 import { GroupConversation, ProjectViewRequest } from '@/types';
 
 interface Conversation {
@@ -164,31 +165,8 @@ export default function InboxPage() {
     return 'Unknown User';
   };
 
-  // Loading Skeleton Component
-  const LoadingSkeleton = () => (
-    <div className="divide-y animate-pulse" style={{ borderColor: 'var(--border)' }}>
-      {[1, 2, 3].map((i) => (
-        <div key={i} className="p-4">
-          <div className="flex items-start gap-4">
-            {/* Avatar skeleton */}
-            <div className="w-12 h-12 rounded-full" style={{ background: 'var(--hover-bg)' }} />
-
-            {/* Content skeleton */}
-            <div className="flex-1 space-y-3">
-              <div className="flex justify-between">
-                <div className="space-y-2">
-                  <div className="h-4 w-32 rounded" style={{ background: 'var(--hover-bg)' }} />
-                  <div className="h-3 w-20 rounded" style={{ background: 'var(--hover-bg)' }} />
-                </div>
-                <div className="h-3 w-16 rounded" style={{ background: 'var(--hover-bg)' }} />
-              </div>
-              <div className="h-4 w-full rounded" style={{ background: 'var(--hover-bg)' }} />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  // Loading Skeleton Component - uses shared InboxSkeleton
+  const LoadingSkeleton = () => <InboxSkeleton />;
 
   // Error State Component
   const ErrorState = ({ message, onRetry }: { message: string; onRetry: () => void }) => (
@@ -213,7 +191,7 @@ export default function InboxPage() {
   return (
     <ConditionalLayout>
       <div className="min-h-screen" style={{ background: 'var(--background)' }}>
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:py-8">
           {/* Back Button */}
           <button
             onClick={() => router.push('/feed')}
@@ -237,7 +215,7 @@ export default function InboxPage() {
           {/* Header */}
           <div className="mb-8 flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold font-roca-two mb-2" style={{ color: 'var(--text-primary)' }}>
+              <h1 className="text-2xl sm:text-3xl font-bold font-roca-two mb-2" style={{ color: 'var(--text-primary)' }}>
                 Inbox
               </h1>
               <p className="font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
@@ -283,7 +261,7 @@ export default function InboxPage() {
             <div className="flex border-b" style={{ borderColor: 'var(--border)' }}>
               <button
                 onClick={() => setActiveTab('messages')}
-                className={`flex-1 px-6 py-4 text-sm font-medium font-canva-sans transition-colors relative`}
+                className={`flex-1 px-3 py-3 sm:px-6 sm:py-4 text-sm font-medium font-canva-sans transition-colors relative`}
                 style={{
                   color: activeTab === 'messages' ? 'var(--primary-orange)' : 'var(--text-secondary)'
                 }}
@@ -303,7 +281,7 @@ export default function InboxPage() {
 
               <button
                 onClick={() => setActiveTab('requests')}
-                className={`flex-1 px-6 py-4 text-sm font-medium font-canva-sans transition-colors relative`}
+                className={`flex-1 px-3 py-3 sm:px-6 sm:py-4 text-sm font-medium font-canva-sans transition-colors relative`}
                 style={{
                   color: activeTab === 'requests' ? 'var(--primary-orange)' : 'var(--text-secondary)'
                 }}
@@ -324,7 +302,7 @@ export default function InboxPage() {
               {user?.user_role === 'student' && (
                 <button
                   onClick={() => setActiveTab('sent')}
-                  className={`flex-1 px-6 py-4 text-sm font-medium font-canva-sans transition-colors relative`}
+                  className={`flex-1 px-3 py-3 sm:px-6 sm:py-4 text-sm font-medium font-canva-sans transition-colors relative`}
                   style={{
                     color: activeTab === 'sent' ? 'var(--primary-orange)' : 'var(--text-secondary)'
                   }}
@@ -346,8 +324,8 @@ export default function InboxPage() {
               <LoadingSkeleton />
             ) : activeTab === 'messages' ? (
               conversations.length === 0 && groupConversations.length === 0 ? (
-                <div className="p-12 text-center">
-                  <div className="text-5xl mb-4" style={{ color: 'var(--text-muted)' }}>💬</div>
+                <div className="p-6 sm:p-12 text-center">
+                  <div className="text-4xl sm:text-5xl mb-4" style={{ color: 'var(--text-muted)' }}>💬</div>
                   <h3 className="text-lg font-medium font-roca-two mb-2" style={{ color: 'var(--text-primary)' }}>
                     No conversations yet
                   </h3>

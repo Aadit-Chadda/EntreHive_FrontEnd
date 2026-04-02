@@ -7,6 +7,7 @@ import Image from 'next/image';
 import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import ProjectCard from '../components/ProjectCard';
+import { ProjectsGridSkeleton } from '../components/LoadingSkeletons';
 import ProjectCreateForm from '../components/ProjectCreateForm';
 import { ThemeProvider, useTheme } from '../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -218,12 +219,12 @@ export default function ProjectsPage() {
             transition={{ delay: 0.1 }}
             className="flex items-center space-x-2"
           >
-            <div className="w-16 h-16 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center overflow-hidden" style={{backgroundColor: 'var(--primary-orange)'}}>
               <Image
                 src="/Logoblacktransparent.png"
                 alt="EntreHive Logo"
-                width={64}
-                height={64}
+                width={40}
+                height={40}
                 className="w-full h-full object-contain p-1"
               />
             </div>
@@ -254,7 +255,7 @@ export default function ProjectsPage() {
           />
 
           {/* Main Content Area - Takes remaining space */}
-          <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex">
+          <div className="flex-1 min-w-0 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex overflow-hidden">
             {/* Main Projects Content - Takes maximum available space */}
             <div id="projects-section" className="flex-1 min-w-0 max-w-none">
               <div className="h-screen overflow-y-auto" style={{backgroundColor: 'var(--background)'}}>
@@ -263,7 +264,7 @@ export default function ProjectsPage() {
                   <div className="px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                       <div className="flex items-center space-x-4">
-                        <h1 className="text-2xl font-bold font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</h1>
+                        <h1 className="text-xl sm:text-2xl font-bold font-roca-two" style={{color: 'var(--text-primary)'}}>Projects</h1>
                         <span className="text-sm font-canva-sans" style={{color: 'var(--text-secondary)'}}>
                           {totalCount > 0 ? `${totalCount} project${totalCount !== 1 ? 's' : ''}` : `${sortedProjects.length} project${sortedProjects.length !== 1 ? 's' : ''}`}
                         </span>
@@ -382,9 +383,7 @@ export default function ProjectsPage() {
 
                   {/* Loading State */}
                   {isLoading ? (
-                    <div className="flex justify-center items-center py-12">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2" style={{borderColor: 'var(--primary-orange)'}}></div>
-                    </div>
+                    <ProjectsGridSkeleton />
                   ) : error ? (
                     <div className="text-center py-12">
                       <div className="mb-4 font-canva-sans" style={{color: 'var(--secondary-red)'}}>{error}</div>
@@ -399,7 +398,7 @@ export default function ProjectsPage() {
                       </button>
                     </div>
                   ) : sortedProjects.length > 0 ? (
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                       {sortedProjects.map((project, index) => {
                         // Additional safety check to ensure project has required fields
                         if (!project || !project.id) {
@@ -427,7 +426,7 @@ export default function ProjectsPage() {
 
                   {/* Pagination Controls */}
                   {!isLoading && !error && totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-between border-t pt-6" style={{ borderColor: 'var(--border)' }}>
+                    <div className="mt-8 flex flex-col sm:flex-row items-center justify-between border-t pt-6 gap-4" style={{ borderColor: 'var(--border)' }}>
                       {/* Results info */}
                       <div className="text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
                         Showing <span className="font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -468,8 +467,8 @@ export default function ProjectsPage() {
                           Previous
                         </button>
 
-                        {/* Page numbers */}
-                        <div className="flex items-center space-x-1">
+                        {/* Page numbers - hidden on very small screens */}
+                        <div className="hidden sm:flex items-center space-x-1">
                           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                             let pageNum;
                             if (totalPages <= 5) {
@@ -509,6 +508,11 @@ export default function ProjectsPage() {
                             );
                           })}
                         </div>
+
+                        {/* Mobile page indicator */}
+                        <span className="sm:hidden text-sm font-canva-sans" style={{ color: 'var(--text-secondary)' }}>
+                          {currentPage} / {totalPages}
+                        </span>
 
                         {/* Next button */}
                         <button

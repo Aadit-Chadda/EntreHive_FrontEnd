@@ -22,6 +22,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import LeftNavigation from '../../components/LeftNavigation';
 import RightSidebar from '../../components/RightSidebar';
 import { ThemeProvider } from '../../components/ThemeProvider';
+import { PostDetailSkeleton } from '../../components/LoadingSkeletons';
 
 interface PostDetailsPageProps {
   params: Promise<{ id: string }>;
@@ -230,11 +231,8 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
     return (
       <ProtectedRoute>
         <ThemeProvider>
-          <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--background)' }}>
-            <div className="flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
-              <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--primary)' }} />
-              <span>Loading post...</span>
-            </div>
+          <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+            <PostDetailSkeleton />
           </div>
         </ThemeProvider>
       </ProtectedRoute>
@@ -317,7 +315,7 @@ export default function PostDetailsPage({ params }: PostDetailsPageProps) {
           <div className="flex min-h-screen">
             <LeftNavigation showMobileNav={showMobileNav} setShowMobileNav={setShowMobileNav} />
 
-            <div className="flex-1 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex">
+            <div className="flex-1 min-w-0 min-h-screen pt-16 lg:pt-0 lg:mr-72 xl:mr-80 flex overflow-hidden">
               <div className="flex-1 min-w-0 max-w-none">
                 <div className="h-screen overflow-y-auto" style={{ backgroundColor: 'var(--background)' }}>
                   {/* Header */}

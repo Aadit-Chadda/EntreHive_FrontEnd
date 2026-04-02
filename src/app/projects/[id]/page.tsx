@@ -11,7 +11,9 @@ import { ThemeProvider } from '../../components/ThemeProvider';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ProjectData, ProjectUpdateData } from '@/types';
 import { projectApi } from '@/lib/api';
-import { Palette, Image as ImageIcon, UploadCloud } from 'lucide-react';
+import { Palette, Image as ImageIcon, UploadCloud, MessageCircle } from 'lucide-react';
+import Link from 'next/link';
+import { messagingApi } from '@/lib/api';
 import { PROJECT_BANNER_GRADIENTS, getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
 import type { ProjectBannerStyle } from '@/lib/projectBranding';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,6 +36,7 @@ export default function ProjectDetailsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
+  const [isCreatingGroupChat, setIsCreatingGroupChat] = useState(false);
 
   useEffect(() => {
     if (projectId) {
@@ -171,6 +174,29 @@ export default function ProjectDetailsPage() {
     } finally {
       setIsUpdatingBanner(false);
       setIsBannerModalOpen(false);
+    }
+  };
+
+  const handleMessageTeam = async () => {
+    if (!user || !project) return;
+    try {
+      setIsCreatingGroupChat(true);
+      const conversation = await messagingApi.createGroupConversation({
+        project_id: projectId,
+        initial_message: `Hi! I'm interested in ${project.title}.`,
+      }) as { id: string };
+      router.push(`/inbox?group=${conversation.id}`);
+    } catch (err: unknown) {
+      // If conversation already exists, redirect to it
+      const errorObj = err as { details?: { existing_conversation_id?: string } };
+      if (errorObj?.details?.existing_conversation_id) {
+        router.push(`/inbox?group=${errorObj.details.existing_conversation_id}`);
+        return;
+      }
+      console.error('Failed to create group conversation', err);
+      alert('Failed to start group conversation. Please try again.');
+    } finally {
+      setIsCreatingGroupChat(false);
     }
   };
 
@@ -470,8 +496,8 @@ export default function ProjectDetailsPage() {
                                   <h1 className="text-3xl lg:text-4xl font-bold text-white mb-3">{project.title}</h1>
                                   <div className="flex flex-wrap items-center gap-3">
                                     <span
-                                      className="inline-flex items-center px-3 py-1 text-white text-sm font-medium rounded-full"
-                                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.25)', backdropFilter: 'blur(8px)' }}
+                                      className="inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-full"
+                                      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#ffffff', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)' }}
                                     >
                                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H7m5 0v-5a2 2 0 012-2h2a2 2 0 012 2v5m-8 0V9a2 2 0 012-2h2a2 2 0 012 2v8m-6 0h4" />
@@ -479,23 +505,15 @@ export default function ProjectDetailsPage() {
                                       {PROJECT_TYPE_LABELS[project.project_type]}
                                     </span>
                                     <span
-                                      className="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border"
-                                      style={{
-                                        backgroundColor: STATUS_COLORS[project.status]?.bg,
-                                        color: STATUS_COLORS[project.status]?.text,
-                                        borderColor: STATUS_COLORS[project.status]?.border
-                                      }}
+                                      className="inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-full"
+                                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#1a1a1a', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)' }}
                                     >
-                                      <span className="w-2 h-2 rounded-full bg-current mr-2"></span>
+                                      <span className="w-2 h-2 rounded-full mr-2" style={{ backgroundColor: STATUS_COLORS[project.status]?.text }}></span>
                                       {project.status.toUpperCase()}
                                     </span>
                                     <span
-                                      className="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full border"
-                                      style={{
-                                        backgroundColor: VISIBILITY_COLORS[project.visibility]?.bg,
-                                        color: VISIBILITY_COLORS[project.visibility]?.text,
-                                        borderColor: VISIBILITY_COLORS[project.visibility]?.border
-                                      }}
+                                      className="inline-flex items-center px-3 py-1.5 text-sm font-semibold rounded-full"
+                                      style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', color: '#ffffff', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)' }}
                                     >
                                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={VISIBILITY_ICONS[project.visibility]} />
@@ -506,24 +524,16 @@ export default function ProjectDetailsPage() {
                                     </span>
                                     {!bannerHasImage ? (
                                       <span
-                                        className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border"
-                                        style={{
-                                          backgroundColor: 'rgba(0, 0, 128, 0.14)',
-                                          color: 'var(--accent-navy)',
-                                          borderColor: 'rgba(0, 0, 128, 0.24)'
-                                        }}
+                                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full"
+                                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#1a1a1a', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)' }}
                                       >
                                         <Palette className="w-3 h-3 mr-1" />
                                         {bannerGradient.name}
                                       </span>
                                     ) : (
                                       <span
-                                        className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border"
-                                        style={{
-                                          backgroundColor: 'rgba(243, 172, 59, 0.2)',
-                                          color: 'var(--primary)',
-                                          borderColor: 'rgba(243, 172, 59, 0.32)'
-                                        }}
+                                        className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full"
+                                        style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', color: '#1a1a1a', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.3)' }}
                                       >
                                         <ImageIcon className="w-3 h-3 mr-1" />
                                         Custom Banner
@@ -1033,8 +1043,9 @@ export default function ProjectDetailsPage() {
                             <div className="space-y-4">
                               {/* Project Owner */}
                               {project.owner && (
-                                <div
-                                  className="flex items-center space-x-4 p-4 rounded-xl border"
+                                <Link
+                                  href={`/profiles/${project.owner.username}`}
+                                  className="flex items-center space-x-4 p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer"
                                   style={{
                                     backgroundColor: 'rgba(243, 172, 59, 0.16)',
                                     borderColor: 'rgba(243, 172, 59, 0.32)'
@@ -1065,14 +1076,18 @@ export default function ProjectDetailsPage() {
                                       Owner
                                     </span>
                                   </div>
-                                </div>
+                                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-muted)' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </Link>
                               )}
 
                               {/* Team Members */}
                               {project.team_members && project.team_members.length > 0 && project.team_members.map(member => (
-                                <div
+                                <Link
                                   key={member.id}
-                                  className="flex items-center space-x-4 p-4 rounded-xl border"
+                                  href={`/profiles/${member.username}`}
+                                  className="flex items-center space-x-4 p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer"
                                   style={{
                                     backgroundColor: 'rgba(138, 107, 83, 0.14)',
                                     borderColor: 'rgba(138, 107, 83, 0.3)'
@@ -1103,8 +1118,24 @@ export default function ProjectDetailsPage() {
                                       Member
                                     </span>
                                   </div>
-                                </div>
+                                  <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-muted)' }}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </Link>
                               ))}
+
+                              {/* Message Team Button */}
+                              {user && (
+                                <button
+                                  onClick={handleMessageTeam}
+                                  disabled={isCreatingGroupChat}
+                                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"
+                                  style={{ backgroundColor: 'var(--accent-navy, #1a1a5e)' }}
+                                >
+                                  <MessageCircle className="w-5 h-5" />
+                                  {isCreatingGroupChat ? 'Opening chat...' : 'Message Team'}
+                                </button>
+                              )}
 
                               {/* Add Member CTA */}
                               {project.can_edit && (

@@ -111,7 +111,7 @@ export default function FeedTabs() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, delay: isInvestorOrMentor ? 0.1 : 0 }}
-        className="relative rounded-3xl shadow-lg border backdrop-blur-sm p-2"
+        className="relative rounded-2xl sm:rounded-3xl shadow-lg border backdrop-blur-sm p-1.5 sm:p-2"
         style={{
           backgroundColor: 'var(--surface)',
           borderColor: 'var(--border)',
@@ -119,7 +119,7 @@ export default function FeedTabs() {
         }}
       >
         {/* Tab Buttons */}
-        <div className="flex space-x-2 relative">
+        <div className="flex space-x-1 sm:space-x-2 relative overflow-x-auto scrollbar-hide">
           {feedTabs.map((tab, index) => (
             <motion.button
               key={tab.id}
@@ -130,7 +130,7 @@ export default function FeedTabs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
               className={`
-                relative flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl text-sm font-medium font-canva-sans transition-all duration-300 group
+                relative flex-1 flex items-center justify-center gap-1.5 sm:gap-2 px-3 py-2.5 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-medium font-canva-sans transition-all duration-300 group
                 ${activeTab === tab.id 
                   ? 'text-white shadow-lg' 
                   : 'hover:scale-105'
@@ -166,7 +166,7 @@ export default function FeedTabs() {
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeTab"
-                  className="absolute inset-0 rounded-2xl"
+                  className="absolute inset-0 rounded-xl sm:rounded-2xl"
                   style={{
                     background: 'linear-gradient(135deg, var(--primary-orange) 0%, var(--accent-terracotta) 100%)',
                     zIndex: -1
@@ -184,7 +184,7 @@ export default function FeedTabs() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="px-6 py-3 mt-2"
+          className="px-3 sm:px-6 py-2 sm:py-3 mt-2"
         >
           <p className="text-xs font-canva-sans text-center leading-relaxed" style={{color: 'var(--text-muted)'}}>
             {feedTabs.find(tab => tab.id === activeTab)?.description}

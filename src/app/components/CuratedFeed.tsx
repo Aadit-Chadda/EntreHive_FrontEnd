@@ -9,6 +9,7 @@ import PostComposerNew from './PostComposerNew';
 import PostCardNew from './PostCardNew';
 import ProjectCard from './ProjectCard';
 import CreateProjectCard from './CreateProjectCard';
+import { FeedSkeleton } from './LoadingSkeletons';
 import { FeedItem, FeedResponse, PostData, ProjectData } from '@/types';
 import { feedApi } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
@@ -114,7 +115,11 @@ export default function CuratedFeed({
       const newItems = response.results || [];
       
       if (append) {
-        setFeedItems(prev => [...(prev || []), ...newItems]);
+        setFeedItems(prev => {
+          const existingKeys = new Set((prev || []).map(i => `${i.content_type}-${i.content_id}`));
+          const unique = newItems.filter((i: any) => !existingKeys.has(`${i.content_type}-${i.content_id}`));
+          return [...(prev || []), ...unique];
+        });
       } else {
         setFeedItems(newItems);
       }
@@ -233,58 +238,7 @@ export default function CuratedFeed({
   };
 
   if (loading) {
-    return (
-      <div className="space-y-8">
-        {showComposer && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="rounded-2xl h-32 relative overflow-hidden shadow-lg" 
-            style={{ backgroundColor: 'var(--hover-bg)' }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-            <div className="absolute top-4 left-4 w-8 h-8 rounded-full" style={{ backgroundColor: 'var(--primary-orange)', opacity: 0.3 }}></div>
-            <div className="absolute top-4 left-16 w-32 h-4 rounded" style={{ backgroundColor: 'var(--border)', opacity: 0.5 }}></div>
-          </motion.div>
-        )}
-        
-        <div className="space-y-6">
-          {[...Array(3)].map((_, i) => (
-            <motion.div 
-              key={i} 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.2, duration: 0.6 }}
-              className="rounded-2xl h-64 relative overflow-hidden shadow-lg" 
-              style={{ backgroundColor: 'var(--hover-bg)' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-              
-              {/* Skeleton content */}
-              <div className="p-6">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-10 h-10 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
-                  <div className="space-y-2">
-                    <div className="w-24 h-3 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
-                    <div className="w-16 h-2 rounded" style={{ backgroundColor: 'var(--border)', opacity: 0.7 }}></div>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="w-full h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
-                  <div className="w-3/4 h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
-                  <div className="w-1/2 h-4 rounded" style={{ backgroundColor: 'var(--border)' }}></div>
-                </div>
-                <div className="flex items-center space-x-4 mt-6">
-                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
-                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
-                  <div className="w-12 h-6 rounded-full" style={{ backgroundColor: 'var(--border)' }}></div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    );
+    return <FeedSkeleton showComposer={showComposer} />;
   }
 
   if (error && (!feedItems || feedItems.length === 0)) {

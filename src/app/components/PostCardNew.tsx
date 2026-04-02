@@ -14,8 +14,38 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PostData } from '@/types';
 import { postsApi } from '@/lib/api';
+
+/** Renders post text with clickable hashtags styled in orange. */
+function HashtagContent({ text, className, style }: { text: string; className?: string; style?: React.CSSProperties }) {
+  const router = useRouter();
+  const parts = text.split(/(#\w+)/g);
+  return (
+    <p className={className} style={style}>
+      {parts.map((part, i) =>
+        /^#\w+$/.test(part) ? (
+          <span
+            key={i}
+            role="link"
+            tabIndex={0}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/explore?q=${encodeURIComponent(part)}`); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') router.push(`/explore?q=${encodeURIComponent(part)}`); }}
+            className="font-medium cursor-pointer hover:underline"
+            style={{ color: 'var(--primary-orange)' }}
+          >
+            {part}
+          </span>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </p>
+  );
+}
+
+export { HashtagContent };
 
 interface PostCardProps {
   post: PostData;
@@ -394,9 +424,11 @@ export default function PostCard({
           </div>
         ) : (
           <Link href={`/posts/${post.id}`} className="block">
-            <p className="whitespace-pre-wrap leading-relaxed transition-colors cursor-pointer" style={{color: 'var(--text-primary)'}}>
-              {post.content}
-            </p>
+            <HashtagContent
+              text={post.content}
+              className="whitespace-pre-wrap leading-relaxed transition-colors cursor-pointer"
+              style={{color: 'var(--text-primary)'}}
+            />
           </Link>
         )}
       </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Grid3X3, Users, BookOpen, Hash, ArrowUp, Sparkles,
@@ -15,6 +15,7 @@ import LeftNavigation from '../components/LeftNavigation';
 import RightSidebar from '../components/RightSidebar';
 import { useTheme } from '../components/ThemeProvider';
 import { api, feedApi } from '@/lib/api';
+import { HashtagContent } from '../components/PostCardNew';
 
 /* ─── Types ────────────────────────────────────────────────────────────── */
 
@@ -163,9 +164,10 @@ function ExplorePostCard({ post }: { post: any }) {
             className="h-32 flex items-center justify-center px-4"
             style={{ background: 'linear-gradient(135deg, var(--accent-terracotta), var(--accent-pine))' }}
           >
-            <p className="text-white/90 text-sm font-canva-sans text-center line-clamp-3">
-              {post.content?.slice(0, 100)}
-            </p>
+            <HashtagContent
+              text={post.content?.slice(0, 100) || ''}
+              className="text-white/90 text-sm font-canva-sans text-center line-clamp-3"
+            />
           </div>
         )}
         <div className="p-4 flex-1 flex flex-col">
@@ -186,9 +188,11 @@ function ExplorePostCard({ post }: { post: any }) {
               {author.full_name || author.username || 'Unknown'}
             </span>
           </div>
-          <p className="text-sm font-canva-sans line-clamp-2 flex-1" style={{ color: 'var(--text-muted)' }}>
-            {post.content}
-          </p>
+          <HashtagContent
+            text={post.content || ''}
+            className="text-sm font-canva-sans line-clamp-2 flex-1"
+            style={{ color: 'var(--text-muted)' }}
+          />
           <div className="flex items-center gap-4 mt-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
             <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5" />{post.likes_count || 0}</span>
             <span className="flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5" />{post.comments_count || 0}</span>
@@ -271,6 +275,7 @@ export default function ExplorePage() {
   const { user } = useAuth();
   const { resolvedTheme } = useTheme();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const feedEndRef = useRef<HTMLDivElement>(null);
 
   // UI state
@@ -296,6 +301,15 @@ export default function ExplorePage() {
   const [hasSearched, setHasSearched] = useState(false);
 
   const isSearchMode = searchQuery.trim().length > 0;
+
+  // ── Read ?q= from URL (e.g. from hashtag clicks) ──
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) {
+      setSearchQuery(q);
+      setSearchType('posts');
+    }
+  }, [searchParams]);
 
   // ── Drag-to-scroll hook ──
   const useDragScroll = () => {
@@ -404,22 +418,12 @@ export default function ExplorePage() {
   }, [explorePage, exploreHasMore, loadingMore]);
 
   // ── Search (debounced) ──
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults({ users: [], posts: [], projects: [], hashtags: [] });
-      setHasSearched(false);
-      return;
-    }
-    const tid = setTimeout(() => handleSearch(searchQuery), 300);
-    return () => clearTimeout(tid);
-  }, [searchQuery, searchType]);
-
-  const handleSearch = async (query: string) => {
+  const handleSearch = useCallback(async (query: string, type: SearchType, cat: string | null) => {
     if (!query.trim()) return;
     setIsSearching(true);
     try {
       const data = await api.get(
-        `/api/accounts/search/?q=${encodeURIComponent(query)}&type=${searchType}${activeCategory ? `&category=${encodeURIComponent(activeCategory)}` : ''}`
+        `/api/accounts/search/?q=${encodeURIComponent(query)}&type=${type}${cat ? `&category=${encodeURIComponent(cat)}` : ''}`
       ) as any;
       setSearchResults({
         users: data.users || [],
@@ -434,7 +438,17 @@ export default function ExplorePage() {
     } finally {
       setIsSearching(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults({ users: [], posts: [], projects: [], hashtags: [] });
+      setHasSearched(false);
+      return;
+    }
+    const tid = setTimeout(() => handleSearch(searchQuery, searchType, activeCategory), 300);
+    return () => clearTimeout(tid);
+  }, [searchQuery, searchType, activeCategory, handleSearch]);
 
   // ── Follow toggle ──
   const handleFollowToggle = async (username: string, isCurrentlyFollowing: boolean) => {

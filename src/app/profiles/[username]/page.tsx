@@ -11,12 +11,13 @@ import { ThemeProvider } from '../../components/ThemeProvider';
 import { api, messagingApi } from '@/lib/api';
 import { EnhancedUserProfile, PostSummary, ProjectSummary } from '@/types';
 import { getProfileBannerGradient, DEFAULT_PROFILE_BANNER_GRADIENT } from '@/lib/profileBranding';
+import { HashtagContent } from '../../components/PostCardNew';
 
 // Simple post display component for PostSummary
 const PostSummaryCard = ({ post, router }: { post: PostSummary; router: ReturnType<typeof useRouter> }) => (
   <div className="p-4 rounded-lg transition-colors cursor-pointer group" style={{border: '1px solid var(--border)'}} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--hover-bg)'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
     <div onClick={() => router.push(`/posts/${post.id}`)}>
-      <p className="mb-3 line-clamp-3 group-hover:text-[var(--primary-orange)] transition-colors" style={{color: 'var(--text-primary)'}}>{post.content}</p>
+      <HashtagContent text={post.content} className="mb-3 line-clamp-3 group-hover:text-[var(--primary-orange)] transition-colors" style={{color: 'var(--text-primary)'}} />
       {post.image_url && (
         <div className="mb-3">
           <img src={post.image_url} alt="Post image" className="w-full h-48 object-cover rounded-lg" />

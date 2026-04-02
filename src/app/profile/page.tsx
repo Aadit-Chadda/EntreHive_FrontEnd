@@ -12,6 +12,9 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { AuthService } from '@/lib/auth';
 import { useTour, shouldShowTour } from '@/contexts/TourContext';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('../components/RichTextEditor'), { ssr: false });
 import { User, Post, Project, UserProfile, ProfileUpdateData, PostSummary, EnhancedUserProfile, PostData, ProjectSummary } from '@/types';
 import { ApiError, apiClient, projectApi } from '@/lib/api';
 import { getProjectBannerGradient, DEFAULT_PROJECT_BANNER_GRADIENT } from '@/lib/projectBranding';
@@ -33,6 +36,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [error, setError] = useState('');
+  const [bioLimitExceeded, setBioLimitExceeded] = useState(false);
   const [success, setSuccess] = useState('');
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
   const [isUpdatingBanner, setIsUpdatingBanner] = useState(false);
@@ -197,6 +201,10 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
+    if (bioLimitExceeded) {
+      setError('Bio exceeds 500 character limit');
+      return;
+    }
     setIsLoading(true);
     setError('');
     setSuccess('');
@@ -656,7 +664,7 @@ export default function ProfilePage() {
 
                       {/* Bio */}
                       {profile.bio && (
-                        <p className="leading-relaxed" style={{color: 'var(--text-primary)'}}>{profile.bio}</p>
+                        <div className="leading-relaxed bio-content overflow-hidden break-words" style={{color: 'var(--text-primary)'}} dangerouslySetInnerHTML={{ __html: profile.bio }} />
                       )}
 
                       {/* Education & Location */}
@@ -841,26 +849,12 @@ export default function ProfilePage() {
 
                       <div>
                         <label className="block text-sm font-medium mb-2" style={{color: 'var(--text-primary)'}}>Bio</label>
-                        <textarea
-                          name="bio"
-                          value={formData.bio || ''}
-                          onChange={handleChange}
-                          rows={3}
-                          className="w-full px-3 py-2 rounded-lg focus:ring-2 focus:outline-none"
-                          style={{
-                            border: '1px solid var(--border)',
-                            backgroundColor: 'var(--surface)',
-                            color: 'var(--text-primary)'
-                          }}
-                          onFocus={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--primary-orange)';
-                            e.currentTarget.style.boxShadow = '0 0 0 2px var(--primary-orange)/20';
-                          }}
-                          onBlur={(e) => {
-                            e.currentTarget.style.borderColor = 'var(--border)';
-                            e.currentTarget.style.boxShadow = 'none';
-                          }}
+                        <RichTextEditor
+                          content={formData.bio || ''}
+                          onChange={(html) => setFormData(prev => ({ ...prev, bio: html }))}
                           placeholder="Tell us about yourself..."
+                          maxLength={500}
+                          onLimitExceeded={setBioLimitExceeded}
                         />
                       </div>
 

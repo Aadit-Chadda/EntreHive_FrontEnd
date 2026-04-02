@@ -483,9 +483,7 @@ export default function PublicProfilePage() {
 
                   {/* Bio */}
                   {profile.bio && (
-                    <div className="mb-4">
-                      <p style={{color: 'var(--text-primary)'}}>{profile.bio}</p>
-                    </div>
+                    <div className="mb-4 bio-content overflow-hidden break-words" style={{color: 'var(--text-primary)'}} dangerouslySetInnerHTML={{ __html: profile.bio }} />
                   )}
 
                   {/* Additional Info */}

@@ -10,6 +10,9 @@ import LeftNavigation from '@/app/components/LeftNavigation';
 import { Camera, X, Eye, EyeOff, Lock, Bell, Mail, MessageSquare, Heart, Users, FileText, Briefcase, UserPlus } from 'lucide-react';
 import { NotificationService, NotificationPreferences } from '@/lib/notifications';
 import { useToast } from '@/contexts/ToastContext';
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/app/components/RichTextEditor'), { ssr: false });
 
 export default function SettingsPage() {
   const { user, profile, updateProfile } = useAuth();
@@ -32,6 +35,7 @@ export default function SettingsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [bioLimitExceeded, setBioLimitExceeded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState<ProfileUpdateData>({
@@ -65,6 +69,10 @@ export default function SettingsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (bioLimitExceeded) {
+      setError('Bio exceeds 500 character limit');
+      return;
+    }
     setIsLoading(true);
     setError('');
     setSuccess('');
@@ -515,21 +523,25 @@ export default function SettingsPage() {
 
                 <div>
                   <label className="block text-sm font-medium font-canva-sans mb-2" style={{color: 'var(--text-primary)'}}>Bio</label>
-                  <textarea
-                    name="bio"
-                    value={formData.bio || ''}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    rows={4}
-                    className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans focus:outline-none focus:ring-2 disabled:opacity-60 transition-all resize-none"
-                    style={{
-                      borderColor: 'var(--border)',
-                      backgroundColor: 'var(--surface)',
-                      color: 'var(--text-primary)',
-
-                    }}
-                    placeholder="Tell us about yourself..."
-                  />
+                  {isEditing ? (
+                    <RichTextEditor
+                      content={formData.bio || ''}
+                      onChange={(html) => setFormData(prev => ({ ...prev, bio: html }))}
+                      placeholder="Tell us about yourself..."
+                      maxLength={500}
+                      onLimitExceeded={setBioLimitExceeded}
+                    />
+                  ) : (
+                    <div
+                      className="w-full px-4 py-3 border-2 rounded-xl font-canva-sans opacity-60 bio-content min-h-[100px]"
+                      style={{
+                        borderColor: 'var(--border)',
+                        backgroundColor: 'var(--surface)',
+                        color: 'var(--text-primary)',
+                      }}
+                      dangerouslySetInnerHTML={{ __html: formData.bio || '<p class="text-gray-400">Tell us about yourself...</p>' }}
+                    />
+                  )}
                 </div>
 
                 {/* Role-Specific Fields */}
